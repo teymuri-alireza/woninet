@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>pymonitor - Home</title>
+    <style>
+        * {
+            margin: 0;
+        }
+        body {
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <h1>hi there</h1>
+    <p>Your IP: <span id="local_ip"></span></p>
+    <script>
+        async function get_local_IP() {
+            const local_ip = document.getElementById("local_ip");
+            const url = "/api/localip";
+            const response = await fetch(url);
+            const data = await response.text();
+            local_ip.textContent = data;
+        }
+
+        get_local_IP();
+        
+        async function scan_ip_range() {
+            // const local_ip = document.getElementById("local_ip");
+            const url = "/api/scan";
+            const response = await fetch(url);
+            // const data = await response.text();
+            // local_ip.textContent = data;
+        }
+
+        scan_ip_range();
+    </script>
+</body>
+</html>
