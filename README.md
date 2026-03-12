@@ -6,17 +6,11 @@ A local network inspecter and monitoring system written in python3.
 
 # Features
 
-Nothing for now.
+- Logs the errors and info on STDOUT and save into a file (logs.txt).
 
 # Known Issues
 
-Nothing for now.
-
-<!-- ## Monitoting Logic -->
-
-<!-- ## Logging -->
-
-<!-- ## UI -->
+- Add a warning to warn the user if the log file exceeded a certain size; The warning should be sent to the front-end.
 
 # Contribution
 
