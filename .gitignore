@@ -1,0 +1,9 @@
+# pycache files
+__pycache__/
+*.py[cod]
+
+# logs
+logs.txt
+
+# ip scan file
+scan-files/
