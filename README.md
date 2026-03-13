@@ -2,15 +2,28 @@
 
 A local network inspecter and monitoring system written in python3.
 
+**Note: This script may require sudo privileges (for opening a server with http.server).**
+
 **Note: This project is under maintenance.**
 
 # Features
 
-- Logs the errors and info on STDOUT and save into a file (logs.txt).
+- Detailed logs both on stdout and file output (logs.txt).
 
 # Known Issues
 
-- Add a warning to warn the user if the log file exceeded a certain size; The warning should be sent to the front-end.
+- Ping takes 2 minutes for all IP addresses, use threads.
+
+# How To Run
+
+1. Clone the repo.
+2. Create a python vitual envirenment and activate it.
+3. Type these commands in the terminal:
+
+```shell
+pip3 install -r requirements.txt
+sudo python3 main.py
+```
 
 # Contribution
 

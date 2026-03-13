@@ -55,7 +55,14 @@ class HTTPHandler(http.server.SimpleHTTPRequestHandler):
             rootLogger.info(f"GET {self.path} {self.request_version} 200")
             self.send_header('Content-Type', 'application/text')
             self.end_headers()
-            resullt = scanLogic(local_IP)
+            result = scanLogic(local_IP)
+            if result == -1:
+                self.wfile.write("Error occured. Check the logs file (logs.txt)".encode())
+            elif result == 0:
+                with open("scan-files/ping_result.txt", "r") as file:
+                    ping_result = file.read()
+                    self.wfile.write(ping_result.encode())
+
         # Every other path
         else:
             self.send_response_only(404)

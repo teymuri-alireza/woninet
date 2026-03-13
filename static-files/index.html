@@ -7,15 +7,41 @@
     <style>
         * {
             margin: 0;
+            justify-self: center;
+            margin-bottom: 20px;
         }
         body {
             margin-top: 15px;
         }
+        .header-hr {
+            width: 400px;
+        }
+        .content {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+        }
+        .content * {
+            margin: 0 10px;
+        }
     </style>
 </head>
 <body>
-    <h1>hi there</h1>
-    <p>Your IP: <span id="local_ip"></span></p>
+    <h1>pymonitor</h1>
+    <hr class="header-hr"/>
+    <div class="content">
+        <h2>Your IP: </h2>
+        <p id="local_ip"></p>
+    </div>
+    <hr class="header-hr"/>
+    <p>Note: scan may take up to 2 minutes.</p>
+    <div class="content">
+        <h2>Scan result</h2>
+        <button onclick="scan_ip_range()">Start Scan</button>
+    </div>
+    <div id="ping_result">
+        <p id="result_helper"></p>
+    </div>
     <script>
         async function get_local_IP() {
             const local_ip = document.getElementById("local_ip");
@@ -26,16 +52,37 @@
         }
 
         get_local_IP();
-        
+
         async function scan_ip_range() {
-            // const local_ip = document.getElementById("local_ip");
+            await update_helper(1);
+            const ping_result = document.getElementById("ping_result");
             const url = "/api/scan";
             const response = await fetch(url);
-            // const data = await response.text();
-            // local_ip.textContent = data;
+            const data = await response.text();
+            // prettify the result
+            const data_split = data.split("ms");
+            const remove_tailing_space = data_split.slice(0, -1);
+            remove_tailing_space.forEach(element => {
+                const div = document.createElement("div");
+                div.textContent = element + " ms";
+                ping_result.appendChild(div);
+            });
+            await update_helper(0)
         }
 
-        scan_ip_range();
+        async function update_helper(code) {
+            // Text updating in the scan_ip_range function
+            // didn't work, so another function was created for
+            // this purpose
+            const result_helper = document.getElementById("result_helper");
+            if (code == 1) {
+                result_helper.textContent = "Scanning..."
+            }
+            else if (code == 0) {
+                result_helper.textContent = "Scan finished.";
+            }
+        }
+
     </script>
 </body>
 </html>

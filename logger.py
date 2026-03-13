@@ -19,7 +19,7 @@ def logger_function() -> logging.Logger:
     dateFormat = f"[%d/{monthValue}/%Y %H:%M:%S]"
     rootLogger = logging.getLogger()
 
-    if not rootLogger:
+    if not rootLogger.handlers:
         fileHandler = logging.FileHandler(filename="logs.txt")
         fileHandler.setFormatter(logging.Formatter(fmt=logFormat, datefmt=dateFormat))
         fileHandler.setLevel(logging.INFO)
