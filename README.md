@@ -13,6 +13,7 @@ A local network inspecter and monitoring system written in python3.
 # Known Issues
 
 - Ping takes 2 minutes for all IP addresses, use threads.
+- Add a warning to warn the user if the log file exceeded a certain size; The warning should be sent to the front-end.
 
 # How To Run
 
