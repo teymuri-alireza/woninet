@@ -1,4 +1,5 @@
 import ping3
+import datetime
 from logger import logger_function
 # get logger configuration
 rootLogger = logger_function()
@@ -48,6 +49,31 @@ def generateIP(ipAddr: str) -> int:
         rootLogger.error(f"Error at generateIP function in scan.py file: {e}")
         return -1
 
+def update_history() -> None:
+    """
+    Saves the result of ping scan into history.txt file with a date format similar to
+    the logger format.
+    """
+    try:
+        # preparing the date format
+        time_now = datetime.datetime.now()
+        monthList = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+        day = time_now.day
+        month = monthList[time_now.month - 1]
+        year = time_now.year
+        hour = time_now.hour
+        minute = time_now.minute
+        second = time_now.second
+        date_format = f"[{year}/{month}/{day} {hour}:{minute}:{second}]"
+        # writing into file
+        with open(f"{SCAN_FILES}/history.txt", "a") as history:
+            with open(f"{SCAN_FILES}/ping_result.txt", "r") as ping_result:
+                for line in ping_result:
+                    history.write(f"{date_format} {line.strip()}\n")
+        rootLogger.info(f"History updated at {SCAN_FILES}/history.txt")
+    except Exception as e:
+        rootLogger.error(f"Error at update_history function in scan.py file: {e}")
+
 def pingFunction() -> int:
     """
     Sends an ICMP ping request to every IP in ip_list.txt file,
@@ -69,6 +95,7 @@ def pingFunction() -> int:
                         response_split = str(response)[4:8]
                         value = response_split[0] + "." + response_split[1:] + " ms"
                         ping_result.write(f"{line.strip()}: {value}\n")
+        update_history()
         return 0
     except FileNotFoundError as e:
         rootLogger.error(f"Error at pingFunction function in scan.py file: {e}")
