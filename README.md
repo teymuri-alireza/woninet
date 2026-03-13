@@ -2,21 +2,28 @@
 
 A local network inspecter and monitoring system written in python3.
 
+**Note: This script may require sudo privileges (for opening a server with http.server).**
+
 **Note: This project is under maintenance.**
 
 # Features
 
-Nothing for now.
+- Detailed logs both on stdout and file output (logs.txt).
 
 # Known Issues
 
-Nothing for now.
+- Ping takes 2 minutes for all IP addresses, use threads.
 
-<!-- ## Monitoting Logic -->
+# How To Run
 
-<!-- ## Logging -->
+1. Clone the repo.
+2. Create a python vitual envirenment and activate it.
+3. Type these commands in the terminal:
 
-<!-- ## UI -->
+```shell
+pip3 install -r requirements.txt
+sudo python3 main.py
+```
 
 # Contribution
 
