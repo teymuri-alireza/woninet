@@ -18,7 +18,7 @@ A local network inspecter and monitoring system written in python3.
 # How To Run
 
 1. Clone the repo.
-2. Create a python vitual envirenment and activate it.
+2. Create a python virtual envirenment and activate it.
 3. Type these commands in the terminal:
 
 ```shell
