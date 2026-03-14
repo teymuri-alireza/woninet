@@ -69,6 +69,22 @@ class HTTPHandler(http.server.SimpleHTTPRequestHandler):
             self.send_response_only(404)
             rootLogger.info(f"GET {self.path} {self.request_version} 404")
             self.end_headers()
+        # serving contents of css
+        elif url == "/style.css":
+            with open(f"{path}/style.css", "rb") as css:
+                self.send_response_only(200)
+                rootLogger.info(f"GET {url} {self.request_version} 200")
+                self.send_header("Content-type", "text/css")
+                self.end_headers()
+                self.wfile.write(css.read())
+        # serving contents of javascript
+        elif url == "/app.js":
+            with open(f"{path}/app.js", "rb") as js:
+                self.send_response_only(200)
+                rootLogger.info(f"GET {url} {self.request_version} 200")
+                self.send_header("Content-type", "text/js")
+                self.end_headers()
+                self.wfile.write(js.read())
         # API calls
         elif url == "/api/localip":
             self.send_response_only(200)

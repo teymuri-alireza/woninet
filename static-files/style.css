@@ -1,0 +1,19 @@
+* {
+    margin: 0;
+    justify-self: center;
+    margin-bottom: 20px;
+}
+body {
+    margin-top: 15px;
+}
+.header-hr {
+    width: 400px;
+}
+.content {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+.content * {
+    margin: 0 10px;
+}
