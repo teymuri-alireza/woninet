@@ -56,7 +56,7 @@ class HTTPHandler(http.server.SimpleHTTPRequestHandler):
         # Home page
         if url == "/":
             self.send_response_only(200)
-            rootLogger.info(f"GET {self.path} {self.request_version} 200")
+            rootLogger.info(f"GET {url} {self.request_version} 200")
             self.end_headers()
             try:
                 with open(f"{path}/index.html", "rb") as html:
@@ -67,7 +67,7 @@ class HTTPHandler(http.server.SimpleHTTPRequestHandler):
         # The favicon is not set yet, Once set the status code should change to 200
         elif url == "/favicon.ico":
             self.send_response_only(404)
-            rootLogger.info(f"GET {self.path} {self.request_version} 404")
+            rootLogger.info(f"GET {url} {self.request_version} 404")
             self.end_headers()
         # serving contents of css
         elif url == "/style.css":
@@ -88,13 +88,13 @@ class HTTPHandler(http.server.SimpleHTTPRequestHandler):
         # API calls
         elif url == "/api/localip":
             self.send_response_only(200)
-            rootLogger.info(f"GET {self.path} {self.request_version} 200")
+            rootLogger.info(f"GET {url} {self.request_version} 200")
             self.send_header('Content-Type', 'application/text')
             self.end_headers()
             self.wfile.write(local_IP.encode())
         elif url == "/api/scan":
             self.send_response_only(200)
-            rootLogger.info(f"GET {self.path} {self.request_version} 200")
+            rootLogger.info(f"GET {url} {self.request_version} 200")
             self.send_header('Content-Type', 'application/text')
             self.end_headers()
             result = scanLogic(local_IP)
