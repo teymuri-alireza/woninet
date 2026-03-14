@@ -4,15 +4,40 @@ import socket
 import os
 from scan import scanLogic
 from logger import logger_function
+from arguments import args
 # get logger configuration
 rootLogger = logger_function()
+# global variables
+SOCKET = "8.8.8.8"
+PORT = 8000
+# functions for handling arguments
+def set_socket(socket: str) -> None:
+    """
+    Sets a new value for socket, to get private IP.
+    """
+    if socket:
+        global SOCKET
+        SOCKET = socket
+
+def set_port(port: int) -> None:
+    """
+    Sets a new vlaue for port, to serve the server.
+    """
+    if port:
+        global PORT
+        PORT = int(port)
+# get arguments
+argument = args(set_socket=set_socket, set_port=set_port)
 # get local IP address
 try:
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.connect(("8.8.8.8", 80))
+    s.connect((SOCKET, 80))
     local_IP = s.getsockname()[0]
 except OSError:
     rootLogger.error("Network is unreachable. Quitting.")
+    exit(1)
+except Exception as e:
+    rootLogger.error(f"Error at socket connection in main.py: {e}")
     exit(1)
 class HTTPHandler(http.server.SimpleHTTPRequestHandler):
     """
@@ -72,7 +97,6 @@ class HTTPHandler(http.server.SimpleHTTPRequestHandler):
             self.wfile.write(b"<h1>Page not found 404</h1>")
 
 if __name__ == "__main__":
-    PORT = 8000
     port_is_in_use = True
     while port_is_in_use:
         try:
