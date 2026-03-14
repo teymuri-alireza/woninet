@@ -1,9 +1,6 @@
 import http.server
 import socketserver
-import datetime
-import logging
 import socket
-import json
 import os
 from scan import scanLogic
 from logger import logger_function
