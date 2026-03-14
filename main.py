@@ -10,9 +10,13 @@ from logger import logger_function
 # get logger configuration
 rootLogger = logger_function()
 # get local IP address
-s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-s.connect(("8.8.8.8", 80))
-local_IP = s.getsockname()[0]
+try:
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.connect(("8.8.8.8", 80))
+    local_IP = s.getsockname()[0]
+except OSError:
+    rootLogger.error("Network is unreachable. Quitting.")
+    exit(1)
 class HTTPHandler(http.server.SimpleHTTPRequestHandler):
     """
     A custom class that inherits http.server.SimpleHTTPRequestHandler class.
