@@ -3,8 +3,8 @@ import socketserver
 import socket
 import os
 from scan import scan_logic
-from logger import logger_function
-from arguments import args
+from utilities.logger import logger_function
+from utilities.arguments import args
 # get logger configuration
 rootLogger = logger_function()
 # global variables
