@@ -6,38 +6,38 @@ rootLogger = logger_function()
 # setting scan files path
 SCAN_FILES = "scan-files"
 
-def scanLogic(ipAddr: str) -> int:
+def scan_logic(ipAddr: str) -> int:
     """
     The logic for scanning local network.
 
-    This function calles generateIP for generating 255 IP addreses (from x.x.x.1 to x.x.x.254),
-    then calls the pingFunction to check which IP address is up. Then returns the result to server (main.py).
+    This function calles generate_ip for generating 255 IP addreses (from x.x.x.1 to x.x.x.254),
+    then calls the ping_function to check which IP address is up. Then returns the result to server (main.py).
 
     Parameters:
-        ipAddr (str) : private IP of the device.
+        ipAddr (str) : Private IP of the device.
 
     Returns:
-        int : exit code of the function (0 for success, -1 for failure).
+        int : Exit code of the function (0 for success, -1 for failure).
     """
     if ipAddr.strip == "":
-        rootLogger.error("IP address is empty. Quitting scanLogic function.")
+        rootLogger.error("IP address is empty. Quitting scan_logic function.")
         return -1
-    exit_code = generateIP(ipAddr)
+    exit_code = generate_ip(ipAddr)
     if exit_code == 0:
-        exit_code = pingFunction()
+        exit_code = ping_function()
         if exit_code == 0:
             return 0
     return -1
 
-def generateIP(ipAddr: str) -> int:
+def generate_ip(ipAddr: str) -> int:
     """
     Generates 255 IPs on a local network. (from x.x.x.1 to x.x.x.254).
 
     Parameters:
-        ipAddr (str) : private IP of the device.
+        ipAddr (str) : Private IP of the device.
 
     Returns:
-        int : exit code of the function (0 for success, -1 for failure).
+        int : Exit code of the function (0 for success, -1 for failure).
     """
     try:
         ip_seperate = ipAddr.split(".")
@@ -46,7 +46,7 @@ def generateIP(ipAddr: str) -> int:
                 file.write(f"{ip_seperate[0]}.{ip_seperate[1]}.{ip_seperate[2]}.{i}\n")
         return 0
     except Exception as e:
-        rootLogger.error(f"Error at generateIP function in scan.py file: {e}")
+        rootLogger.error(f"Error at generate_ip function in scan.py file: {e}")
         return -1
 
 def update_history() -> None:
@@ -57,9 +57,9 @@ def update_history() -> None:
     try:
         # preparing the date format
         time_now = datetime.datetime.now()
-        monthList = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+        month_list = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
         day = time_now.day
-        month = monthList[time_now.month - 1]
+        month = month_list[time_now.month - 1]
         year = time_now.year
         hour = time_now.hour
         minute = time_now.minute
@@ -74,7 +74,7 @@ def update_history() -> None:
     except Exception as e:
         rootLogger.error(f"Error at update_history function in scan.py file: {e}")
 
-def pingFunction() -> int:
+def ping_function() -> int:
     """
     Sends an ICMP ping request to every IP in ip_list.txt file,
     then stores the accepted responses in ping_result.txt.
@@ -84,7 +84,7 @@ def pingFunction() -> int:
     This functions uses python ping3 module.
 
     Returns:
-        int : exit code of the functions (0 for success, -1 for failure)
+        int : Exit code of the functions (0 for success, -1 for failure).
     """
     try:
         with open(f"{SCAN_FILES}/ping_result.txt", "w") as ping_result:
@@ -98,5 +98,5 @@ def pingFunction() -> int:
         update_history()
         return 0
     except FileNotFoundError as e:
-        rootLogger.error(f"Error at pingFunction function in scan.py file: {e}")
+        rootLogger.error(f"Error at ping_function function in scan.py file: {e}")
         return -1

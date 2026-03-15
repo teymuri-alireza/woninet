@@ -4,11 +4,13 @@ A local network inspecter and monitoring system written in python3.
 
 **Note: This script may require sudo privileges (for opening a server with http.server).**
 
-**Note: This project is under maintenance.**
-
 # Features
 
 - Detailed logs both on stdout and file output (logs.txt).
+
+# Future Plans
+
+- Add CLI mode
 
 # Known Issues
 
