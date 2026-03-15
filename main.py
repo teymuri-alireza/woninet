@@ -2,7 +2,7 @@ import http.server
 import socketserver
 import socket
 import os
-from scan import scanLogic
+from scan import scan_logic
 from logger import logger_function
 from arguments import args
 # get logger configuration
@@ -46,24 +46,24 @@ class HTTPHandler(http.server.SimpleHTTPRequestHandler):
     Here is a preview of functions and paths used in this class:
 
     do_GET:
-        - "/" : home page
-        - "/api/localip" : private IP of the device
-        - "/api/scan" : scanning local network IP addresses
+        - "/" : The home page
+        - "/api/localip" : The private IP of the device
+        - "/api/scan" : Scanning local network IP addresses
     """
     def do_GET(self):
         url = self.path
-        path = "static-files"
+        static_files = "static-files"
         # Home page
         if url == "/":
             self.send_response_only(200)
             rootLogger.info(f"GET {url} {self.request_version} 200")
             self.end_headers()
             try:
-                with open(f"{path}/index.html", "rb") as html:
+                with open(f"{static_files}/index.html", "rb") as html:
                     self.wfile.write(html.read())
             except FileNotFoundError:
                 cwd = os.getcwd()
-                rootLogger.error(f"{cwd}/{path}/index.html not found.")
+                rootLogger.error(f"{cwd}/{static_files}/index.html not found.")
         # The favicon is not set yet, Once set the status code should change to 200
         elif url == "/favicon.ico":
             self.send_response_only(404)
@@ -71,7 +71,7 @@ class HTTPHandler(http.server.SimpleHTTPRequestHandler):
             self.end_headers()
         # serving contents of css
         elif url == "/style.css":
-            with open(f"{path}/style.css", "rb") as css:
+            with open(f"{static_files}/style.css", "rb") as css:
                 self.send_response_only(200)
                 rootLogger.info(f"GET {url} {self.request_version} 200")
                 self.send_header("Content-type", "text/css")
@@ -79,7 +79,7 @@ class HTTPHandler(http.server.SimpleHTTPRequestHandler):
                 self.wfile.write(css.read())
         # serving contents of javascript
         elif url == "/app.js":
-            with open(f"{path}/app.js", "rb") as js:
+            with open(f"{static_files}/app.js", "rb") as js:
                 self.send_response_only(200)
                 rootLogger.info(f"GET {url} {self.request_version} 200")
                 self.send_header("Content-type", "text/js")
@@ -97,7 +97,7 @@ class HTTPHandler(http.server.SimpleHTTPRequestHandler):
             rootLogger.info(f"GET {url} {self.request_version} 200")
             self.send_header('Content-Type', 'application/text')
             self.end_headers()
-            result = scanLogic(local_IP)
+            result = scan_logic(local_IP)
             if result == -1:
                 self.wfile.write("Error occured. Check the logs file (logs.txt)".encode())
             elif result == 0:
