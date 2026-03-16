@@ -1,6 +1,6 @@
 import ping3
 import datetime
-from logger import logger_function
+from utilities.logger import logger_function
 # get logger configuration
 rootLogger = logger_function()
 # setting scan files path
