@@ -10,3 +10,6 @@ logs.txt
 
 # ip scan file
 scan-files/
+
+# user settings
+settings.json

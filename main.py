@@ -1,4 +1,6 @@
 import socket
+import json
+import subprocess
 from scan import scan_logic
 from utilities.logger import logger_function
 from utilities.arguments import args
@@ -25,6 +27,75 @@ def set_port(port: int) -> None:
         PORT = int(port)
 # get arguments
 argument = args(set_socket=set_socket, set_port=set_port)
+
+# enter configuration settings
+if argument.config:
+    rootLogger.info("Entering configuration settings.")
+
+    # check if settings.json exist
+    output = subprocess.check_output("file settings.json",shell=True)
+    if "No such file or directory" in output.decode():
+        settings_structure = {
+            "known_ip": [],
+            "log_output": 3
+        }
+        with open("settings.json", "w") as file:
+            json.dump(settings_structure, file, indent=4)
+    # open file anyway
+    with open("settings.json", "r") as file:
+        settings = json.load(file)
+    
+    # ask for user's input
+    menu = """1. Manage known IP addresses: Only unknown IP addresses will be shown in ping result.
+2. logs: Manage log output.
+0. exit
+choose: """
+    try:
+        choice = int(input(menu))
+
+        if choice == 0:
+            rootLogger.info("Quitting.")
+            exit(0)
+    
+        elif choice == 1:
+            print("\tKnown IP settings:")
+            knwon_ip = input("\tEnter your IP (only one value): ")
+            settings["known_ip"].append(knwon_ip)
+            rootLogger.info(f"Adding {knwon_ip} to known ip list. Quitting.")
+        
+        elif choice == 2:
+            print("\tLog settings:")
+            print("""\t1. stdout only\n\t2. file only\n\t3. stdout and file""")
+            log_output = input("\tchoose: ")
+
+            if log_output not in ["1", "2", "3"]:
+                print("Invalid input")
+                exit(1)
+            else:
+                settings["log_output"] = int(log_output)
+                rootLogger.info(f"Changing log_output value to {log_output}. Quitting.")
+
+        else:
+            rootLogger.error("Invalid input. Quitting.")
+            exit(1)
+    
+    except ValueError:
+        rootLogger.error("Input must be an integer. Quitting.")
+        exit(1)
+    
+    except KeyboardInterrupt:
+        rootLogger.info("Keyboard Intrrupted. Quitting.")
+        exit(130)
+
+    except Exception as e:
+        rootLogger.error(f"Error at configuration menu in main.py: {e}")
+        exit(1)
+
+    # finally save the file
+    with open("settings.json", "w") as file:
+        json.dump(settings, file, indent=4)
+    exit(0)
+
 # get local IP address
 try:
     with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
@@ -62,7 +133,12 @@ while True:
             elif result == 0:
                 with open("scan-files/ping_result.txt", "r") as file:
                     ping_result = file.read()
-                    print(ping_result[0:-1]) # Remove trailing newline
+                    
+                    # if no result was found
+                    if ping_result.strip() == "":
+                        print("No result!")
+                    else:
+                        print(ping_result[0:-1]) # Remove trailing newline
         else:
             print("Try again.")
     except ValueError:

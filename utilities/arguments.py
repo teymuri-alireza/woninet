@@ -16,7 +16,8 @@ Examples:
     sudo python3 main.py -s 8.8.8.8
     sudo python3 main.py -p 8000 --serve
 
-Note: -p only make sense if used with --serve"""
+Note: -p only make sense if used with --serve
+Note: -c promts user for configuration then closes the proram"""
 
     parser = argparse.ArgumentParser(
         description=description,
@@ -39,6 +40,12 @@ Note: -p only make sense if used with --serve"""
         "-p", "--port",
         type=set_port,
         help="Set port for the server. (default: 8000)"
+    )
+    
+    parser.add_argument(
+        "-c", "--config",
+        action="store_true",
+        help="Modify the configuration file."
     )
 
     return parser.parse_args()
