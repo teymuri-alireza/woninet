@@ -2,15 +2,16 @@
 
 A local network inspecter and monitoring system written in python3.
 
-**Note: This script may require sudo privileges (for opening a server with http.server).**
+**Note: This script requires sudo privileges.**
 
 # Features
 
 - Detailed logs both on stdout and file output (logs.txt).
+- Supports both CLI mode and server mode.
 
 # Future Plans
 
-- Add CLI mode
+- Define known IP addresses list to alert if new IP was found.
 
 # Known Issues
 
@@ -25,7 +26,7 @@ A local network inspecter and monitoring system written in python3.
 
 ```shell
 pip3 install -r requirements.txt
-sudo python3 main.py
+sudo python3 main.py --help
 ```
 
 # Contribution
