@@ -8,10 +8,9 @@ A local network inspecter and monitoring system written in python3.
 
 - Detailed logs both on stdout and file output (logs.txt).
 - Supports both CLI mode and server mode.
+- Configuration settings for IP list and log output.
 
-# Future Plans
-
-- Define known IP addresses list to alert if new IP was found.
+<!-- # Future Plans -->
 
 # Known Issues
 
