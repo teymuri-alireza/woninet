@@ -1,0 +1,108 @@
+import http.server
+import socketserver
+import os
+from scan import scan_logic
+from utilities.logger import logger_function
+# get logger configuration
+rootLogger = logger_function()
+
+def serve_function(local_IP: str, port: int):
+    """
+    This function is called if user used the --serve option
+    and includes the HTTPHandler class and while loop for running the server.
+    
+    Parameters:
+        local_IP (str) : Private IP of the device.
+
+        port (int) : The port number for serving the server.
+    """
+    class HTTPHandler(http.server.SimpleHTTPRequestHandler):
+        """
+        A custom class that inherits http.server.SimpleHTTPRequestHandler class.
+        This class gets basic information from the main.py using the 
+        get_info function.
+
+        Here is a preview of functions and paths used in this class:
+
+        do_GET:
+            - "/" : The home page
+            - "/api/localip" : The private IP of the device
+            - "/api/scan" : Scanning local network IP addresses
+        """
+        def do_GET(self):
+            url = self.path
+            static_files = "static-files"
+            # Home page
+            if url == "/":
+                self.send_response_only(200)
+                rootLogger.info(f"GET {url} {self.request_version} 200")
+                self.end_headers()
+                try:
+                    with open(f"{static_files}/index.html", "rb") as html:
+                        self.wfile.write(html.read())
+                except FileNotFoundError:
+                    cwd = os.getcwd()
+                    rootLogger.error(f"{cwd}/{static_files}/index.html not found.")
+            # The favicon is not set yet, Once set the status code should change to 200
+            elif url == "/favicon.ico":
+                self.send_response_only(404)
+                rootLogger.info(f"GET {url} {self.request_version} 404")
+                self.end_headers()
+            # serving contents of css
+            elif url == "/style.css":
+                with open(f"{static_files}/style.css", "rb") as css:
+                    self.send_response_only(200)
+                    rootLogger.info(f"GET {url} {self.request_version} 200")
+                    self.send_header("Content-type", "text/css")
+                    self.end_headers()
+                    self.wfile.write(css.read())
+            # serving contents of javascript
+            elif url == "/app.js":
+                with open(f"{static_files}/app.js", "rb") as js:
+                    self.send_response_only(200)
+                    rootLogger.info(f"GET {url} {self.request_version} 200")
+                    self.send_header("Content-type", "text/js")
+                    self.end_headers()
+                    self.wfile.write(js.read())
+            # API calls
+            elif url == "/api/localip":
+                self.send_response_only(200)
+                rootLogger.info(f"GET {url} {self.request_version} 200")
+                self.send_header('Content-Type', 'application/text')
+                self.end_headers()
+                self.wfile.write(local_IP.encode())
+            elif url == "/api/scan":
+                self.send_response_only(200)
+                rootLogger.info(f"GET {url} {self.request_version} 200")
+                self.send_header('Content-Type', 'application/text')
+                self.end_headers()
+                result = scan_logic(local_IP)
+                if result == -1:
+                    self.wfile.write("Error occured. Check the logs file (logs.txt)".encode())
+                elif result == 0:
+                    with open("scan-files/ping_result.txt", "r") as file:
+                        ping_result = file.read()
+                        self.wfile.write(ping_result.encode())
+
+            # Every other path
+            else:
+                self.send_response_only(404)
+                rootLogger.info(f"GET {self.path} {self.request_version} 404")
+                self.end_headers()
+                self.wfile.write(b"<h1>Page not found 404</h1>")
+
+    # Running the server
+    port_is_in_use = True
+    while port_is_in_use:
+        try:
+            rootLogger.info(f"Binding 127.0.0.1:{port}...")
+            httpd = socketserver.TCPServer(("", port), HTTPHandler)
+            port_is_in_use = False
+            rootLogger.info(f"Server is up. http://127.0.0.1:{port}")
+            httpd.serve_forever()
+        except OSError:
+            rootLogger.warning(f"PORT {port} is in use.")
+            port += 1
+        except KeyboardInterrupt:
+            rootLogger.info("Keyboard Intrrupted. Shutting down.")
+            httpd.shutdown()
