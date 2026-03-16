@@ -133,7 +133,12 @@ while True:
             elif result == 0:
                 with open("scan-files/ping_result.txt", "r") as file:
                     ping_result = file.read()
-                    print(ping_result[0:-1]) # Remove trailing newline
+                    
+                    # if no result was found
+                    if ping_result.strip() == "":
+                        print("No result!")
+                    else:
+                        print(ping_result[0:-1]) # Remove trailing newline
         else:
             print("Try again.")
     except ValueError:
