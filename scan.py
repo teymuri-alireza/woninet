@@ -1,3 +1,4 @@
+import json
 import ping3
 import datetime
 from utilities.logger import logger_function
@@ -81,15 +82,25 @@ def ping_function() -> int:
 
     The response time in ping_result.txt is shortened and converts to millisecond.
 
+    This function skips scanning IP addresses in settings.json.
+
     This functions uses python ping3 module.
 
     Returns:
         int : Exit code of the functions (0 for success, -1 for failure).
     """
     try:
+        with open("settings.json", "r") as file:
+            settings = json.load(file)
+
         with open(f"{SCAN_FILES}/ping_result.txt", "w") as ping_result:
             with open(f"{SCAN_FILES}/ip_list.txt", "r") as ip_list_file:
                 for line in ip_list_file:
+
+                    if line.strip() in settings["known_ip"]:
+                        # skip the scan if IP exist in the settings.json
+                        continue
+                    
                     response = ping3.ping(src_addr="192.168.1.33",dest_addr=line.strip(), timeout=1, ttl=64)
                     if response is not None and response is not False:
                         response_split = str(response)[4:8]
