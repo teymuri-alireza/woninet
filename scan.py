@@ -1,11 +1,14 @@
+#!/usr/bin/python3
+
 import json
 import ping3
 import datetime
 from utilities.logger import logger_function
 # get logger configuration
 rootLogger = logger_function()
-# setting scan files path
-SCAN_FILES = "scan-files"
+# global variables
+SCRIPT_PATH = "/usr/local/lib/.pymonitor"
+SCAN_FILES = f"{SCRIPT_PATH}scan-files"
 
 def scan_logic(ipAddr: str) -> int:
     """

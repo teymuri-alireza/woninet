@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 import argparse
 
 def args(set_socket, set_port):

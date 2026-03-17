@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 import http.server
 import socketserver
 import os
@@ -5,6 +7,8 @@ from scan import scan_logic
 from utilities.logger import logger_function
 # get logger configuration
 rootLogger = logger_function()
+# global variables
+SCRIPT_PATH = "/usr/local/lib/.pymonitor"
 
 def serve_function(local_IP: str, port: int):
     """
@@ -31,7 +35,7 @@ def serve_function(local_IP: str, port: int):
         """
         def do_GET(self):
             url = self.path
-            static_files = "static-files"
+            static_files = f"{SCRIPT_PATH}/static-files"
             # Home page
             if url == "/":
                 self.send_response_only(200)
@@ -41,8 +45,7 @@ def serve_function(local_IP: str, port: int):
                     with open(f"{static_files}/index.html", "rb") as html:
                         self.wfile.write(html.read())
                 except FileNotFoundError:
-                    cwd = os.getcwd()
-                    rootLogger.error(f"{cwd}/{static_files}/index.html not found.")
+                    rootLogger.error(f"{static_files}/index.html not found.")
             # The favicon is not set yet, Once set the status code should change to 200
             elif url == "/favicon.ico":
                 self.send_response_only(404)

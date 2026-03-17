@@ -1,6 +1,10 @@
+#!/usr/bin/python3
+
 import json
 import logging
 import datetime
+# global variables
+SCRIPT_PATH = "/usr/local/lib/.pymonitor"
 
 def logger_function() -> logging.Logger:
     """
@@ -24,12 +28,12 @@ def logger_function() -> logging.Logger:
 
     if not rootLogger.handlers:
         # read settings.json
-        with open("settings.json", "r") as file:
+        with open(f"{SCRIPT_PATH}/settings.json", "r") as file:
             settings = json.load(file)
         log_settings = settings["log_format"]
 
         if log_settings in [2, 3]:
-            fileHandler = logging.FileHandler(filename="logs.txt")
+            fileHandler = logging.FileHandler(filename=f"{SCRIPT_PATH}/logs.txt")
             fileHandler.setFormatter(logging.Formatter(fmt=logFormat, datefmt=dateFormat))
             fileHandler.setLevel(logging.INFO)
             rootLogger.addHandler(fileHandler)
