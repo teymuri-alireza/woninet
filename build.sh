@@ -23,6 +23,8 @@ if [ ! -f "$TOOL_PATH/main.py" ]; then
     cp main.py scan.py serve.py $TOOL_PATH/
     mkdir $TOOL_PATH/utilities
     cp utilities/* $TOOL_PATH/utilities/
+    mkdir $TOOL_PATH/static-files
+    cp static-files/* $TOOL_PATH/static-files
 else
     echo "Found files in $TOOL_PATH"
 fi
