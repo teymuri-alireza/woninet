@@ -34,7 +34,7 @@ def scan_logic(ipAddr: str) -> int:
         return -1
     exit_code = generate_ip(ipAddr)
     if exit_code == 0:
-        exit_code = ping_function()
+        exit_code = ping_function(src_ip=ipAddr)
         if exit_code == 0:
             return 0
     return -1
@@ -89,7 +89,7 @@ def update_history() -> None:
     except Exception as e:
         rootLogger.error(f"Error at update_history function in scan.py file: {e}")
 
-def ping_function() -> int:
+def ping_function(src_ip: str) -> int:
     """
     Sends an ICMP ping request to every IP in ip_list.txt file,
     then stores the accepted responses in ping_result.txt.
@@ -99,6 +99,9 @@ def ping_function() -> int:
     This function skips scanning IP addresses in settings.json.
 
     This functions uses python ping3 module.
+
+    Parameters:
+        src_ip (str) : Private IP of the device
 
     Returns:
         int : Exit code of the functions (0 for success, -1 for failure).
@@ -115,7 +118,7 @@ def ping_function() -> int:
                         # skip the scan if IP exist in the settings.json
                         continue
                     
-                    response = ping3.ping(src_addr="192.168.1.33",dest_addr=line.strip(), timeout=1, ttl=64)
+                    response = ping3.ping(src_addr=src_ip,dest_addr=line.strip(), timeout=1, ttl=64)
                     if response is not None and response is not False:
                         response_split = str(response)[4:8]
                         value = response_split[0] + "." + response_split[1:] + " ms"
