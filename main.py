@@ -1,14 +1,32 @@
+#!/usr/bin/python3
+
 import socket
 import json
 import subprocess
-from scan import scan_logic
-from utilities.logger import logger_function
-from utilities.arguments import args
-# get logger configuration
-rootLogger = logger_function()
 # global variables
 SOCKET = "8.8.8.8"
 PORT = 8000
+SCRIPT_PATH = "/usr/local/lib/.pymonitor"
+
+# check if settings.json exist
+try:
+    with open(f"{SCRIPT_PATH}/settings.json", "r") as file:
+        pass
+except FileNotFoundError:
+    settings_structure = {
+        "known_ip": [],
+        "log_output": 3
+    }
+    with open(f"{SCRIPT_PATH}/settings.json", "w") as file:
+        json.dump(settings_structure, file, indent=4)
+
+# import utilities after checking setting
+from scan import scan_logic
+from utilities.logger import logger_function
+from utilities.arguments import args
+
+# get logger configuration
+rootLogger = logger_function()
 # functions for handling arguments
 def set_socket(socket: str) -> None:
     """
@@ -32,17 +50,8 @@ argument = args(set_socket=set_socket, set_port=set_port)
 if argument.config:
     rootLogger.info("Entering configuration settings.")
 
-    # check if settings.json exist
-    output = subprocess.check_output("file settings.json",shell=True)
-    if "No such file or directory" in output.decode():
-        settings_structure = {
-            "known_ip": [],
-            "log_output": 3
-        }
-        with open("settings.json", "w") as file:
-            json.dump(settings_structure, file, indent=4)
-    # open file anyway
-    with open("settings.json", "r") as file:
+    # open settings file anyway
+    with open(f"{SCRIPT_PATH}/settings.json", "r") as file:
         settings = json.load(file)
     
     # ask for user's input
@@ -92,7 +101,7 @@ choose: """
         exit(1)
 
     # finally save the file
-    with open("settings.json", "w") as file:
+    with open(f"{SCRIPT_PATH}/settings.json", "w") as file:
         json.dump(settings, file, indent=4)
     exit(0)
 
@@ -131,7 +140,7 @@ while True:
             if result == -1:
                 exit(1)
             elif result == 0:
-                with open("scan-files/ping_result.txt", "r") as file:
+                with open(f"{SCRIPT_PATH}/scan-files/ping_result.txt", "r") as file:
                     ping_result = file.read()
                     
                     # if no result was found
