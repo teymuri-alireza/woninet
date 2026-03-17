@@ -30,7 +30,7 @@ def logger_function() -> logging.Logger:
         # read settings.json
         with open(f"{SCRIPT_PATH}/settings.json", "r") as file:
             settings = json.load(file)
-        log_settings = settings["log_format"]
+        log_settings = settings["log_output"]
 
         if log_settings in [2, 3]:
             fileHandler = logging.FileHandler(filename=f"{SCRIPT_PATH}/logs.txt")
