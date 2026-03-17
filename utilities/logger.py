@@ -33,10 +33,15 @@ def logger_function() -> logging.Logger:
         log_settings = settings["log_output"]
 
         if log_settings in [2, 3]:
-            fileHandler = logging.FileHandler(filename=f"{SCRIPT_PATH}/logs.txt")
-            fileHandler.setFormatter(logging.Formatter(fmt=logFormat, datefmt=dateFormat))
-            fileHandler.setLevel(logging.INFO)
-            rootLogger.addHandler(fileHandler)
+            try:
+                fileHandler = logging.FileHandler(filename=f"{SCRIPT_PATH}/logs.txt")
+                fileHandler.setFormatter(logging.Formatter(fmt=logFormat, datefmt=dateFormat))
+                fileHandler.setLevel(logging.INFO)
+                rootLogger.addHandler(fileHandler)
+
+            except PermissionError:
+                print("Are you root?")
+                exit(1)
         
         if log_settings in [1, 3]:
             consoleHandler = logging.StreamHandler()

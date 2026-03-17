@@ -55,6 +55,11 @@ def generate_ip(ipAddr: str) -> int:
             for i in range(1,255):
                 file.write(f"{ip_seperate[0]}.{ip_seperate[1]}.{ip_seperate[2]}.{i}\n")
         return 0
+    
+    except PermissionError:
+        rootLogger.error("Are you root?")
+        exit(1)
+    
     except Exception as e:
         rootLogger.error(f"Error at generate_ip function in scan.py file: {e}")
         return -1

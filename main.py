@@ -13,12 +13,17 @@ try:
     with open(f"{SCRIPT_PATH}/settings.json", "r") as file:
         pass
 except FileNotFoundError:
-    settings_structure = {
-        "known_ip": [],
-        "log_output": 3
-    }
-    with open(f"{SCRIPT_PATH}/settings.json", "w") as file:
-        json.dump(settings_structure, file, indent=4)
+    try:
+        settings_structure = {
+            "known_ip": [],
+            "log_output": 3
+        }
+        with open(f"{SCRIPT_PATH}/settings.json", "w") as file:
+            json.dump(settings_structure, file, indent=4)
+    
+    except PermissionError:
+        print("Are you root?")
+        exit(1)
 
 # import utilities after checking setting
 from scan import scan_logic
