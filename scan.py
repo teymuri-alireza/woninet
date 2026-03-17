@@ -3,12 +3,18 @@
 import json
 import ping3
 import datetime
+import os
 from utilities.logger import logger_function
 # get logger configuration
 rootLogger = logger_function()
 # global variables
 SCRIPT_PATH = "/usr/local/lib/.pymonitor"
-SCAN_FILES = f"{SCRIPT_PATH}scan-files"
+SCAN_FILES = f"{SCRIPT_PATH}/scan-files"
+
+try:
+    os.mkdir(f"{SCAN_FILES}/")
+except FileExistsError:
+    pass
 
 def scan_logic(ipAddr: str) -> int:
     """
