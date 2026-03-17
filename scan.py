@@ -99,7 +99,7 @@ def ping_function() -> int:
         int : Exit code of the functions (0 for success, -1 for failure).
     """
     try:
-        with open("settings.json", "r") as file:
+        with open(f"{SCRIPT_PATH}/settings.json", "r") as file:
             settings = json.load(file)
 
         with open(f"{SCAN_FILES}/ping_result.txt", "w") as ping_result:
