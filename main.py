@@ -7,6 +7,7 @@ import subprocess
 SOCKET = "8.8.8.8"
 PORT = 8000
 SCRIPT_PATH = "/usr/local/lib/.pymonitor"
+VERSION = "0.0.1"
 
 # check if settings.json exist
 try:
@@ -25,7 +26,7 @@ except FileNotFoundError:
         print("Are you root?")
         exit(1)
 
-# import utilities after checking setting
+# import utilities after checking settings
 from scan import scan_logic
 from utilities.logger import logger_function
 from utilities.arguments import args
@@ -51,6 +52,11 @@ def set_port(port: int) -> None:
 # get arguments
 argument = args(set_socket=set_socket, set_port=set_port)
 
+# handle version argument
+if argument.version:
+    print(VERSION)
+    exit(0)
+
 # enter configuration settings
 if argument.config:
     rootLogger.info("Entering configuration settings.")
@@ -60,45 +66,62 @@ if argument.config:
         settings = json.load(file)
     
     # ask for user's input
-    menu = """1. Manage known IP addresses: Only unknown IP addresses will be shown in ping result.
-2. logs: Manage log output.
+    menu = """1. Manage known IP list: Only unknown IP addresses will be shown in the ping result.
+2. Manage log output.
+3. Show current settings.
 0. exit
 choose: """
     try:
         choice = int(input(menu))
 
         if choice == 0:
-            rootLogger.info("Quitting.")
+            rootLogger.info("Quitting configuration settings.")
             exit(0)
     
         elif choice == 1:
-            print("\tKnown IP settings:")
+            print("Known IP settings:")
             knwon_ip = input("\tEnter your IP (only one value): ")
             settings["known_ip"].append(knwon_ip)
-            rootLogger.info(f"Adding {knwon_ip} to known ip list. Quitting.")
+            rootLogger.info(f"Adding {knwon_ip} to known ip list.")
         
         elif choice == 2:
-            print("\tLog settings:")
-            print("""\t1. stdout only\n\t2. file only\n\t3. stdout and file""")
+            print("Log settings:")
+            print("""\t1. stdout only\n\t2. file only\n\t3. stdout and file\n\t0. Exit""")
+            print("\tNote: Logs are an important part of the app. choose wisely.")
             log_output = input("\tchoose: ")
 
-            if log_output not in ["1", "2", "3"]:
+            if log_output not in ["1", "2", "3", "0"]:
                 print("Invalid input")
                 exit(1)
             else:
+                if log_output == "0":
+                    rootLogger.info("Quitting configuration settings.")
+                    exit(0)
+                
                 settings["log_output"] = int(log_output)
-                rootLogger.info(f"Changing log_output value to {log_output}. Quitting.")
+                rootLogger.info(f"Changing log_output value to {log_output}.")
+
+        elif choice == 3:
+            rootLogger.info("Requested printing settings.")
+            print("Known IP list: ", end="")
+            if settings["known_ip"] == []:
+                print("-")
+            else:
+                for ip in settings["known_ip"]:
+                    print(ip, end=" - ")
+            
+            print(f"\nLog output: {settings["log_output"]}")
 
         else:
-            rootLogger.error("Invalid input. Quitting.")
+            rootLogger.error("Invalid input.")
             exit(1)
     
     except ValueError:
-        rootLogger.error("Input must be an integer. Quitting.")
+        rootLogger.error("Input must be an integer.")
         exit(1)
     
     except KeyboardInterrupt:
-        rootLogger.info("Keyboard Intrrupted. Quitting.")
+        rootLogger.info("Keyboard Intrrupted.")
         exit(130)
 
     except Exception as e:
@@ -108,6 +131,8 @@ choose: """
     # finally save the file
     with open(f"{SCRIPT_PATH}/settings.json", "w") as file:
         json.dump(settings, file, indent=4)
+    
+    rootLogger.info("Quitting configuration settings.")
     exit(0)
 
 # get local IP address
@@ -129,9 +154,8 @@ if argument.serve:
 
 # CLI mode
 rootLogger.info(f"Your private IP: {local_IP}")
-menu = """
-1. Scan the network
-0. Exit    
+menu = """1. Scan the network
+0. Exit
 Choose: """
 while True:
     try:
@@ -152,7 +176,7 @@ while True:
                     if ping_result.strip() == "":
                         print("No result!")
                     else:
-                        print(ping_result[0:-1]) # Remove trailing newline
+                        print(ping_result)
         else:
             print("Try again.")
     except ValueError:
