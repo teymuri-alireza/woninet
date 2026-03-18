@@ -50,4 +50,10 @@ Note: -c prompts user for configuration settings then closes the proram"""
         help="Modify the configuration file and quit."
     )
 
+    parser.add_argument(
+        "-V", "--version",
+        action="store_true",
+        help="Prints the version and quit."
+    )
+
     return parser.parse_args()

@@ -7,6 +7,7 @@ import subprocess
 SOCKET = "8.8.8.8"
 PORT = 8000
 SCRIPT_PATH = "/usr/local/lib/.pymonitor"
+VERSION = "0.0.1"
 
 # check if settings.json exist
 try:
@@ -50,6 +51,11 @@ def set_port(port: int) -> None:
         PORT = int(port)
 # get arguments
 argument = args(set_socket=set_socket, set_port=set_port)
+
+# handle version argument
+if argument.version:
+    print(VERSION)
+    exit(0)
 
 # enter configuration settings
 if argument.config:
