@@ -22,7 +22,9 @@ def logger_function() -> logging.Logger:
     monthList = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
     monthValue = monthList[monthNumber.month - 1]
 
-    logFormat = "%(asctime)s \"%(message)s"
+    fileLogFormat = "%(asctime)s - %(levelname)s - %(message)s"
+    consoleLogFormat = "%(asctime)s - %(message)s"
+
     dateFormat = f"[%d/{monthValue}/%Y %H:%M:%S]"
     rootLogger = logging.getLogger()
 
@@ -35,8 +37,8 @@ def logger_function() -> logging.Logger:
         if log_settings in [2, 3]:
             try:
                 fileHandler = logging.FileHandler(filename=f"{SCRIPT_PATH}/logs.txt")
-                fileHandler.setFormatter(logging.Formatter(fmt=logFormat, datefmt=dateFormat))
-                fileHandler.setLevel(logging.INFO)
+                fileHandler.setFormatter(logging.Formatter(fmt=fileLogFormat, datefmt=dateFormat))
+                fileHandler.setLevel(logging.DEBUG)
                 rootLogger.addHandler(fileHandler)
 
             except PermissionError:
@@ -45,7 +47,7 @@ def logger_function() -> logging.Logger:
         
         if log_settings in [1, 3]:
             consoleHandler = logging.StreamHandler()
-            consoleHandler.setFormatter(logging.Formatter(fmt=logFormat, datefmt=dateFormat))
+            consoleHandler.setFormatter(logging.Formatter(fmt=consoleLogFormat, datefmt=dateFormat))
             consoleHandler.setLevel(logging.INFO)
             rootLogger.addHandler(consoleHandler)
 
