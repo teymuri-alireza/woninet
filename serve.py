@@ -9,6 +9,15 @@ from utilities.logger import logger_function
 rootLogger = logger_function()
 # global variables
 SCRIPT_PATH = "/usr/local/lib/.pymonitor"
+# scan result path will be always stored at /usr/local/lib
+SCAN_RESULT_PATH = "/usr/local/lib/.pymonitor"
+
+# check if index.html exist in the script path, else use the current directory
+try:
+    with open(f"{SCRIPT_PATH}/static-files/index.html", "r") as file:
+        pass
+except FileNotFoundError:
+    SCRIPT_PATH = os.getcwd()
 
 def serve_function(local_IP: str, port: int):
     """
@@ -83,7 +92,7 @@ def serve_function(local_IP: str, port: int):
                 if result == -1:
                     self.wfile.write("Error occured. Check the logs file (logs.txt)".encode())
                 elif result == 0:
-                    with open("scan-files/ping_result.txt", "r") as file:
+                    with open(f"{SCAN_RESULT_PATH}/scan-files/ping_result.txt", "r") as file:
                         ping_result = file.read()
                         self.wfile.write(ping_result.encode())
 
@@ -109,3 +118,6 @@ def serve_function(local_IP: str, port: int):
         except KeyboardInterrupt:
             rootLogger.info("Keyboard Intrrupted. Shutting down.")
             httpd.shutdown()
+        
+        except Exception as e:
+            rootLogger.error(f"Error at serve.py: {e}")
