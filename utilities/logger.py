@@ -51,6 +51,6 @@ def logger_function() -> logging.Logger:
             consoleHandler.setLevel(logging.INFO)
             rootLogger.addHandler(consoleHandler)
 
-        rootLogger.setLevel(logging.INFO)
+        rootLogger.setLevel(logging.DEBUG)
     
     return rootLogger
