@@ -13,13 +13,13 @@ A local network inspecter and monitoring system written in python3.
 
 # Future Plans
 
-- Add socket setting in configuration argument and fetch socket from the settings.
 - Add -w arg for showing warnings.
 
 # Known Issues
 
 - Ping takes 2 minutes for all IP addresses, use threads.
-- Add a warning to warn the user if the log file exceeded a certain size; The warning should be sent to the front-end.
+- Add a warning to warn the user if the log file exceeded a certain size.
+- Fix no-build script run, with index.html error.
 
 # How To Run
 
@@ -46,6 +46,24 @@ sudo python3 main.py -V
 sudo pymonitor --version
 ```
 
+# Documentaion
+
+if you have any question or confusion you check the [documentation](./documentation.md) guide.
+
 # Contribution
 
 Contributions are welcome. If you have a new feature in mind or have found a bug, please consider opening a pull request or an issue.
+
+## What to contribute
+
+You can make changes or open an issue about any part of the code. Such as:
+
+- Scan logic
+- server handling and monitoring
+- CLI options
+- Configuration settings
+- Arguments and options
+- Directory paths
+- Texting and typo
+- Wrong grammar or unjust documents
+- etc
