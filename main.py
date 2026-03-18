@@ -4,10 +4,9 @@ import socket
 import json
 import subprocess
 # global variables
-SOCKET = "8.8.8.8"
 PORT = 8000
 SCRIPT_PATH = "/usr/local/lib/.pymonitor"
-VERSION = "0.0.1"
+VERSION = "0.1.0"
 
 # check if settings.json exist
 try:
@@ -17,7 +16,8 @@ except FileNotFoundError:
     try:
         settings_structure = {
             "known_ip": [],
-            "log_output": 3
+            "log_output": 3,
+            "socket": "8.8.8.8"
         }
         with open(f"{SCRIPT_PATH}/settings.json", "w") as file:
             json.dump(settings_structure, file, indent=4)
@@ -33,6 +33,13 @@ from utilities.arguments import args
 
 # get logger configuration
 rootLogger = logger_function()
+
+# fetch socket from the settings
+with open(f"{SCRIPT_PATH}/settings.json", "r") as file:
+    settings = json.load(file)
+
+SOCKET = settings["socket"]
+
 # functions for handling arguments
 def set_socket(socket: str) -> None:
     """
@@ -68,7 +75,8 @@ if argument.config:
     # ask for user's input
     menu = """1. Manage known IP list: Only unknown IP addresses will be shown in the ping result.
 2. Manage log output.
-3. Show current settings.
+3. Change socket value permanently (for private IP determination)
+4. Show current settings.
 0. exit
 choose: """
     try:
@@ -102,6 +110,18 @@ choose: """
                 rootLogger.info(f"Changing log_output value to {log_output}.")
 
         elif choice == 3:
+            print("Socket settings:")
+            print("\tCurrent value: " + settings["socket"])
+            new_socket = input("\tNew value: (0 to quit) ")
+            
+            if new_socket == "0":
+                rootLogger.debug("Quitting configuration settings.")
+                exit(0)
+            
+            settings["socket"] = new_socket
+            rootLogger.info(f"Changing socket value to {new_socket}")
+
+        elif choice == 4:
             rootLogger.debug("Requested printing settings.")
             print("Known IP list: ", end="")
             if settings["known_ip"] == []:
@@ -110,7 +130,9 @@ choose: """
                 for ip in settings["known_ip"]:
                     print(ip, end=" - ")
             
-            print(f"\nLog output: {settings["log_output"]}")
+            print(f"Log output: {settings["log_output"]}")
+
+            print(f"Socket value: {settings["socket"]}")
 
         else:
             rootLogger.error("Invalid input.")
