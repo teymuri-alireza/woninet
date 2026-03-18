@@ -85,7 +85,7 @@ def update_history() -> None:
             with open(f"{SCAN_FILES}/ping_result.txt", "r") as ping_result:
                 for line in ping_result:
                     history.write(f"{date_format} {line.strip()}\n")
-        rootLogger.info(f"History updated at {SCAN_FILES}/history.txt")
+        rootLogger.debug(f"History updated at {SCAN_FILES}/history.txt")
     except Exception as e:
         rootLogger.error(f"Error at update_history function in scan.py file: {e}")
 

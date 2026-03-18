@@ -59,7 +59,7 @@ if argument.version:
 
 # enter configuration settings
 if argument.config:
-    rootLogger.info("Entering configuration settings.")
+    rootLogger.debug("Entering configuration settings.")
 
     # open settings file anyway
     with open(f"{SCRIPT_PATH}/settings.json", "r") as file:
@@ -75,7 +75,7 @@ choose: """
         choice = int(input(menu))
 
         if choice == 0:
-            rootLogger.info("Quitting configuration settings.")
+            rootLogger.debug("Quitting configuration settings.")
             exit(0)
     
         elif choice == 1:
@@ -95,14 +95,14 @@ choose: """
                 exit(1)
             else:
                 if log_output == "0":
-                    rootLogger.info("Quitting configuration settings.")
+                    rootLogger.debug("Quitting configuration settings.")
                     exit(0)
                 
                 settings["log_output"] = int(log_output)
                 rootLogger.info(f"Changing log_output value to {log_output}.")
 
         elif choice == 3:
-            rootLogger.info("Requested printing settings.")
+            rootLogger.debug("Requested printing settings.")
             print("Known IP list: ", end="")
             if settings["known_ip"] == []:
                 print("-")
@@ -121,7 +121,7 @@ choose: """
         exit(1)
     
     except KeyboardInterrupt:
-        rootLogger.info("Keyboard Intrrupted.")
+        rootLogger.info("Keyboard Intrrupted. Shutting down.")
         exit(130)
 
     except Exception as e:
@@ -132,7 +132,7 @@ choose: """
     with open(f"{SCRIPT_PATH}/settings.json", "w") as file:
         json.dump(settings, file, indent=4)
     
-    rootLogger.info("Quitting configuration settings.")
+    rootLogger.debug("Quitting configuration settings.")
     exit(0)
 
 # get local IP address
@@ -153,6 +153,7 @@ if argument.serve:
     exit(0)
 
 # CLI mode
+rootLogger.debug("Entering CLI mode scanner.")
 rootLogger.info(f"Your private IP: {local_IP}")
 menu = """1. Scan the network
 0. Exit
@@ -180,9 +181,10 @@ while True:
         else:
             print("Try again.")
     except ValueError:
-        print("Input must be an integer.")
+        rootLogger.error("Input must be an integer.")
     except KeyboardInterrupt:
         rootLogger.info("Keyboard Intrrupted. Shutting down.")
         exit(130)
     except Exception as e:
-        print(f"Error occured: {e}")
+        rootLogger.error(f"Error occured: {e}")
+        exit(1)
