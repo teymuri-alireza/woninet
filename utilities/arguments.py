@@ -19,7 +19,8 @@ Examples:
     sudo python3 main.py -p 8000 --serve
 
 Note: -p only make sense if used with --serve
-Note: -c prompts user for configuration settings then closes the proram"""
+Note: -c prompts user for configuration settings then closes the proram
+Note: To change the socket value permanently use --config ( -c )"""
 
     parser = argparse.ArgumentParser(
         description=description,
@@ -29,7 +30,7 @@ Note: -c prompts user for configuration settings then closes the proram"""
     parser.add_argument(
         "-s", "--socket",
         type=set_socket,
-        help="Set socket for private IP determination. (default: 8.8.8.8)"
+        help="Set socket for private IP determination; for the current scan only. (default: 8.8.8.8)"
     )
 
     parser.add_argument(
