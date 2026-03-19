@@ -164,7 +164,7 @@ def serve_function(local_IP: str, port: int):
     while port_is_in_use:
         try:
             rootLogger.info(f"Binding 127.0.0.1:{port}...")
-            httpd = socketserver.TCPServer(("", port), HTTPHandler)
+            httpd = socketserver.TCPServer(("127.0.0.1", port), HTTPHandler)
             port_is_in_use = False
             rootLogger.info(f"Server is up. http://127.0.0.1:{port}")
             httpd.serve_forever()
