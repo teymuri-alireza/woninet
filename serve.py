@@ -2,6 +2,7 @@
 
 import http.server
 import socketserver
+import json
 import os
 from scan import scan_logic
 from utilities.logger import logger_function
@@ -9,6 +10,16 @@ from utilities.logger import logger_function
 rootLogger = logger_function()
 # global variables
 SCRIPT_PATH = "/usr/local/lib/.pymonitor"
+# scan result path will be always stored at /usr/local/lib
+SCAN_RESULT_PATH = "/usr/local/lib/.pymonitor"
+
+# check if index.html exist in the script path, else use the current directory
+try:
+    with open(f"{SCRIPT_PATH}/static-files/index.html", "r") as file:
+        pass
+except FileNotFoundError:
+    rootLogger.debug(f"Using {os.getcwd()} instead of {SCRIPT_PATH}")
+    SCRIPT_PATH = os.getcwd()
 
 def serve_function(local_IP: str, port: int):
     """
@@ -83,9 +94,20 @@ def serve_function(local_IP: str, port: int):
                 if result == -1:
                     self.wfile.write("Error occured. Check the logs file (logs.txt)".encode())
                 elif result == 0:
-                    with open("scan-files/ping_result.txt", "r") as file:
+                    with open(f"{SCAN_RESULT_PATH}/scan-files/ping_result.txt", "r") as file:
                         ping_result = file.read()
                         self.wfile.write(ping_result.encode())
+
+            elif url == "/api/fetch-settings":
+                self.send_response_only(200)
+                rootLogger.info(f"GET {url} {self.request_version} 200")
+                self.send_header('Content-Type', 'application/json')
+                self.end_headers()
+                try:
+                    with open(f"{SCAN_RESULT_PATH}/settings.json", "rb") as settings:
+                        self.wfile.write(settings.read())
+                except PermissionError:
+                    rootLogger.error("You need root access!")
 
             # Every other path
             else:
@@ -94,6 +116,43 @@ def serve_function(local_IP: str, port: int):
                 self.end_headers()
                 self.wfile.write(b"<h1>Page not found 404</h1>")
 
+        def do_POST(self):
+            url = self.path
+            
+            # updating settings
+            if url == "/api/update-settings":
+                try:
+                    content_length = int(self.headers.get("Content-length", 0))
+                    body = self.rfile.read(content_length)
+                    data = json.loads(body.decode())
+
+                    new_known_ip = data["known_ip_list_input"]
+                    new_log_output = data["log_output_input"]
+                    new_socket = data["socket_value_input"]
+
+                
+                    with open(f"{SCAN_RESULT_PATH}/settings.json", "r") as file:
+                        settings = json.load(file)
+                    
+                    if new_known_ip.strip() != "":
+                        settings["known_ip"] = new_known_ip
+                    
+                    if new_log_output.strip() != "":
+                        settings["log_output"] = new_log_output
+                    
+                    if new_socket.strip() != "":
+                        settings["socket"] = new_socket
+                    
+                    with open(f"{SCAN_RESULT_PATH}/settings.json", "w") as file:
+                        json.dump(settings, file, indent=4)
+                    
+                    self.send_response_only(200)
+                    rootLogger.info(f"POST {url} {self.request_version} 200")
+                except Exception as e:
+                    self.send_response_only(500)
+                    rootLogger.info(f"POST {url} {self.request_version} 500 - check logs for error")
+                    rootLogger.error(f"Error at do_POST in serve.py, path = {url}. Error: {e}")
+            
     # Running the server
     port_is_in_use = True
     while port_is_in_use:
@@ -109,3 +168,6 @@ def serve_function(local_IP: str, port: int):
         except KeyboardInterrupt:
             rootLogger.info("Keyboard Intrrupted. Shutting down.")
             httpd.shutdown()
+        
+        except Exception as e:
+            rootLogger.error(f"Error at serve.py: {e}")
