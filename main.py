@@ -2,7 +2,7 @@
 
 import socket
 import json
-import subprocess
+import os
 # global variables
 PORT = 8000
 SCRIPT_PATH = "/usr/local/lib/.pymonitor"
@@ -14,6 +14,13 @@ try:
         pass
 except FileNotFoundError:
     try:
+        # make sure the directory exist
+        try:
+            os.mkdir(SCRIPT_PATH)
+        except:
+            pass
+        
+        # The base of the settings
         settings_structure = {
             "known_ip": [],
             "log_output": 3,
