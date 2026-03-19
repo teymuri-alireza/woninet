@@ -6,7 +6,6 @@ import os
 # global variables
 PORT = 8000
 SCRIPT_PATH = "/usr/local/lib/.pymonitor"
-VERSION = "0.1.0"
 
 # check if settings.json exist
 try:
@@ -68,7 +67,8 @@ argument = args(set_socket=set_socket, set_port=set_port)
 
 # handle version argument
 if argument.version:
-    print(VERSION)
+    from utilities.version import show_version
+    print(show_version())
     exit(0)
 
 # enter configuration settings
