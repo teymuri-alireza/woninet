@@ -6,7 +6,7 @@ def args(set_socket, set_port):
     """
     The argument handler.
 
-    check `python3 main.py -h` for more info.
+    check `pymonitor -h` for more info.
     """
     description = """
 A local network inspecter and monitoring system written in python3.
@@ -14,17 +14,20 @@ This tool get your local private IP, then generate 254 IP addresses
 to scan.
 
 Examples:
-    sudo python3 main.py
-    sudo python3 main.py -s 8.8.8.8
-    sudo python3 main.py -p 8000 --serve
+    sudo pymonitor
+    sudo pymonitor -s 8.8.8.8
+    sudo pymonitor -p 8000 --serve"""
 
-Note: -p only make sense if used with --serve
-Note: -c prompts user for configuration settings then closes the proram
-Note: To change the socket value permanently use --config ( -c )"""
+    epilog = """Note:
+  -p only make sense if used with --serve.
+  -c prompts user for configuration settings then closes the proram.
+  To change the socket value permanently, use --config ( -c )."""
 
     parser = argparse.ArgumentParser(
         description=description,
-        formatter_class=argparse.RawDescriptionHelpFormatter
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        prog="pymonitor",
+        epilog=epilog
     )
 
     parser.add_argument(
