@@ -14,12 +14,14 @@ A local network inspecter and monitoring system written in python3.
 # Future Plans
 
 - Add -w arg for showing warnings.
+- Add index.html for documents and keep the changelog.
 
 # Known Issues
 
 - Ping takes 2 minutes for all IP addresses, use threads.
 - Add a warning to warn the user if the log file exceeded a certain size.
-- Fix no-build script run, with index.html error.
+- Add timer for scan button in html file to show error if got no result after a specific time.
+- Fix config setting issue in server
 
 # How To Run
 
