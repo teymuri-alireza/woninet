@@ -34,16 +34,13 @@ be executable.
 ## B. No Build
 
 You can still use the script without building with `sudo python3 main.py`
-but there might be 2 issues. First the library files will be created at `/usr/local/lib/.pymonitor`. Such as:
+but the library files will be created at `/usr/local/lib/.pymonitor`. Files such as:
 
+- settings.json
+- logs.txt
 - ip_list.txt
 - ping_result.txt
 - history.txt
-- logs.txt
-
-And the index.html for serve option will be searched at `/usr/local/lib/.pymonitor/static-files/`
-
-**Note:** We're aware that it's disturbing and will try to fix it in the next updates.
 
 # Usage
 
