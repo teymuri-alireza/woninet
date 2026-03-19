@@ -17,6 +17,7 @@ try:
     with open(f"{SCRIPT_PATH}/static-files/index.html", "r") as file:
         pass
 except FileNotFoundError:
+    rootLogger.debug(f"Using {os.getcwd()} instead of {SCRIPT_PATH}")
     SCRIPT_PATH = os.getcwd()
 
 def serve_function(local_IP: str, port: int):
