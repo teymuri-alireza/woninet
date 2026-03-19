@@ -7,6 +7,16 @@ if [[ $USER != "root" ]]; then
     exit 1
 fi
 
+echo "All files including logs and history and settings will be removed as well. Make sure you back up required files."
+
+echo "Do you want to proceed? (Y/n)"
+read PROCEED
+
+if [[ $PROCEED != "y" ]] && [[ $PROCEED != "Y" ]]; then
+    echo "quitting"
+    exit 0
+fi
+
 if [ -d "/usr/local/lib/.pymonitor" ]; then
     echo "Removing library files at /usr/local/lib/.pymonitor"
     rm -rf /usr/local/lib/.pymonitor/
