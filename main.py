@@ -1,6 +1,13 @@
+"""
+This is the main entry point of the script. Argumment handlers, configuration settings and CLI mode are
+processed in this file. The server option, loggings, argument definitions and scan logic are written in other files.
+For more info check out the documentation.md file
+"""
+
 import socket
 import json
 import os
+
 # global variables
 PORT = 8000
 SCRIPT_PATH = "/usr/local/lib/.pymonitor"
@@ -30,7 +37,7 @@ except FileNotFoundError:
         print("Are you root?")
         exit(1)
 
-# import utilities after checking settings
+# import utilities after checking settings to prevent unplanned PermissionError
 from scan import scan_logic
 from utilities.logger import logger_function
 from utilities.arguments import args
@@ -41,7 +48,6 @@ rootLogger = logger_function()
 # fetch socket from the settings
 with open(f"{SCRIPT_PATH}/settings.json", "r") as file:
     settings = json.load(file)
-
 SOCKET = settings["socket"]
 
 # functions for handling arguments
@@ -60,10 +66,11 @@ def set_port(port: int) -> None:
     if port:
         global PORT
         PORT = int(port)
-# get arguments
+
+# calling argument handler
 argument = args(set_socket=set_socket, set_port=set_port)
 
-# handle version argument
+# handle the --version argument
 if argument.version:
     from utilities.version import show_version
     print(show_version())
@@ -72,10 +79,6 @@ if argument.version:
 # enter configuration settings
 if argument.config:
     rootLogger.debug("Entering configuration settings.")
-
-    # open settings file anyway
-    with open(f"{SCRIPT_PATH}/settings.json", "r") as file:
-        settings = json.load(file)
     
     # ask for user's input
     menu = """1. Manage known IP list: Only unknown IP addresses will be shown in the ping result.
@@ -88,14 +91,13 @@ choose: """
         choice = int(input(menu))
 
         if choice == 0:
-            rootLogger.debug("Quitting configuration settings.")
             exit(0)
     
         elif choice == 1:
             print("Known IP settings:")
-            knwon_ip = input("\tEnter your IP (only one value): ")
-            settings["known_ip"].append(knwon_ip)
-            rootLogger.info(f"Adding {knwon_ip} to known ip list.")
+            known_ip = input("\tEnter your IP (only one value): ")
+            settings["known_ip"].append(known_ip)
+            rootLogger.info(f"Adding {known_ip} to known ip list.")
         
         elif choice == 2:
             print("Log settings:")
@@ -108,7 +110,6 @@ choose: """
                 exit(1)
             else:
                 if log_output == "0":
-                    rootLogger.debug("Quitting configuration settings.")
                     exit(0)
                 
                 settings["log_output"] = int(log_output)
@@ -120,20 +121,21 @@ choose: """
             new_socket = input("\tNew value: (0 to quit) ")
             
             if new_socket == "0":
-                rootLogger.debug("Quitting configuration settings.")
                 exit(0)
             
             settings["socket"] = new_socket
             rootLogger.info(f"Changing socket value to {new_socket}")
 
         elif choice == 4:
-            rootLogger.debug("Requested printing settings.")
+            rootLogger.info("Requested printing settings.")
             print("Known IP list: ", end="")
             if settings["known_ip"] == []:
                 print("-")
             else:
                 for ip in settings["known_ip"]:
                     print(ip, end=" - ")
+                
+                print() # to increase readability
             
             print(f"Log output: {settings["log_output"]}")
 
@@ -159,10 +161,9 @@ choose: """
     with open(f"{SCRIPT_PATH}/settings.json", "w") as file:
         json.dump(settings, file, indent=4)
     
-    rootLogger.debug("Quitting configuration settings.")
     exit(0)
 
-# get local IP address
+# get the local IP address
 try:
     with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
         s.connect((SOCKET, 80))
@@ -173,29 +174,36 @@ except OSError:
 except Exception as e:
     rootLogger.error(f"Error at socket connection in main.py: {e}")
     exit(1)
-# If user chose to serve the server instead of the CLI mode
+
+# If user used --serve options, instead of CLI mode
 if argument.serve:
     from serve import serve_function
     serve_function(local_IP=local_IP, port=PORT)
     exit(0)
 
-# CLI mode
+# the CLI mode
 rootLogger.debug("Entering CLI mode scanner.")
 rootLogger.info(f"Your private IP: {local_IP}")
+
 menu = """1. Scan the network
 0. Exit
 Choose: """
 while True:
     try:
         choice = input(menu)
+
         if int(choice) == 0:
             rootLogger.info("Quitting.")
             exit(0)
+        
         elif int(choice) == 1:
             rootLogger.info("Starting scan...")
             result = scan_logic(local_IP)
+            
             if result == -1:
+                # The error will be printed from the scan_logic function
                 exit(1)
+            
             elif result == 0:
                 with open(f"{SCRIPT_PATH}/scan-files/ping_result.txt", "r") as file:
                     ping_result = file.read()
@@ -205,13 +213,17 @@ while True:
                         print("No result!")
                     else:
                         print(ping_result)
+        
         else:
             print("Try again.")
+    
     except ValueError:
         rootLogger.error("Input must be an integer.")
+    
     except KeyboardInterrupt:
         rootLogger.info("Keyboard Intrrupted. Shutting down.")
         exit(130)
+    
     except Exception as e:
         rootLogger.error(f"Error occured: {e}")
         exit(1)
