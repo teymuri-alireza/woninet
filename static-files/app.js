@@ -19,6 +19,13 @@ async function scan_ip_range() {
         update_helper(2);
         return;
     }
+    
+    // if no result was found
+    if (data.trim() == "") {
+        update_helper(3)
+        return
+    }
+
     // prettify the result
     const data_split = data.split("ms");
     const remove_tailing_space = data_split.slice(0, -1);
@@ -40,6 +47,9 @@ async function update_helper(code) {
     }
     else if (code == 2) {
         result_helper.textContent = "Error occured. Check logs.txt for more info.";
+    }
+    else if (code == 3) {
+        result_helper.textContent = "No result was found.";
     }
     else if (code == 0) {
         result_helper.textContent = "Scan finished.";
