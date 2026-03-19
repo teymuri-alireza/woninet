@@ -22,6 +22,7 @@ A local network inspecter and monitoring system written in python3.
 - Add a warning to warn the user if the log file exceeded a certain size.
 - Add timer for scan button in html file to show error if got no result after a specific time.
 - Fix config setting issue in server
+- Display help and version from arguments without root access.
 
 # How To Run
 

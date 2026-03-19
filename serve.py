@@ -1,13 +1,13 @@
-#!/usr/bin/python3
-
 import http.server
 import socketserver
 import json
 import os
 from scan import scan_logic
 from utilities.logger import logger_function
+
 # get logger configuration
 rootLogger = logger_function()
+
 # global variables
 SCRIPT_PATH = "/usr/local/lib/.pymonitor"
 # scan result path will be always stored at /usr/local/lib
@@ -47,6 +47,7 @@ def serve_function(local_IP: str, port: int):
         def do_GET(self):
             url = self.path
             static_files = f"{SCRIPT_PATH}/static-files"
+            
             # Home page
             if url == "/":
                 self.send_response_only(200)
@@ -57,11 +58,13 @@ def serve_function(local_IP: str, port: int):
                         self.wfile.write(html.read())
                 except FileNotFoundError:
                     rootLogger.error(f"{static_files}/index.html not found.")
+            
             # The favicon is not set yet, Once set the status code should change to 200
             elif url == "/favicon.ico":
                 self.send_response_only(404)
                 rootLogger.info(f"GET {url} {self.request_version} 404")
                 self.end_headers()
+            
             # serving contents of css
             elif url == "/style.css":
                 with open(f"{static_files}/style.css", "rb") as css:
@@ -70,6 +73,7 @@ def serve_function(local_IP: str, port: int):
                     self.send_header("Content-type", "text/css")
                     self.end_headers()
                     self.wfile.write(css.read())
+            
             # serving contents of javascript
             elif url == "/app.js":
                 with open(f"{static_files}/app.js", "rb") as js:
@@ -78,6 +82,7 @@ def serve_function(local_IP: str, port: int):
                     self.send_header("Content-type", "text/js")
                     self.end_headers()
                     self.wfile.write(js.read())
+            
             # API calls
             elif url == "/api/localip":
                 self.send_response_only(200)
@@ -85,6 +90,7 @@ def serve_function(local_IP: str, port: int):
                 self.send_header('Content-Type', 'application/text')
                 self.end_headers()
                 self.wfile.write(local_IP.encode())
+            
             elif url == "/api/scan":
                 self.send_response_only(200)
                 rootLogger.info(f"GET {url} {self.request_version} 200")
@@ -162,9 +168,11 @@ def serve_function(local_IP: str, port: int):
             port_is_in_use = False
             rootLogger.info(f"Server is up. http://127.0.0.1:{port}")
             httpd.serve_forever()
+        
         except OSError:
             rootLogger.warning(f"PORT {port} is in use.")
             port += 1
+        
         except KeyboardInterrupt:
             rootLogger.info("Keyboard Intrrupted. Shutting down.")
             httpd.shutdown()

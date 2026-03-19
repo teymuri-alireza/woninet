@@ -1,12 +1,12 @@
-#!/usr/bin/python3
-
 import json
 import ping3
 import datetime
 import os
 from utilities.logger import logger_function
+
 # get logger configuration
 rootLogger = logger_function()
+
 # global variables
 SCRIPT_PATH = "/usr/local/lib/.pymonitor"
 SCAN_FILES = f"{SCRIPT_PATH}/scan-files"
@@ -86,6 +86,7 @@ def update_history() -> None:
                 for line in ping_result:
                     history.write(f"{date_format} {line.strip()}\n")
         rootLogger.debug(f"History updated at {SCAN_FILES}/history.txt")
+    
     except Exception as e:
         rootLogger.error(f"Error at update_history function in scan.py file: {e}")
 
@@ -125,6 +126,7 @@ def ping_function(src_ip: str) -> int:
                         ping_result.write(f"{line.strip()}: {value}\n")
         update_history()
         return 0
+    
     except FileNotFoundError as e:
         rootLogger.error(f"Error at ping_function function in scan.py file: {e}")
         return -1
