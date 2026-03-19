@@ -1,5 +1,11 @@
+// variables
+const local_ip = document.getElementById("local_ip");
+const ping_result = document.getElementById("ping_result");
+const result_helper = document.getElementById("result_helper");
+const scan_result_title = document.getElementById("scan_result_title");
+const scan_ip_btn = document.getElementById("scan_ip_btn");
+
 async function get_local_IP() {
-    const local_ip = document.getElementById("local_ip");
     const url = "/api/localip";
     const response = await fetch(url);
     const data = await response.text();
@@ -10,7 +16,6 @@ get_local_IP();
 
 async function scan_ip_range() {
     await update_helper(1);
-    const ping_result = document.getElementById("ping_result");
     const url = "/api/scan";
     const response = await fetch(url);
     const data = await response.text();
@@ -38,10 +43,9 @@ async function scan_ip_range() {
 }
 
 async function update_helper(code) {
-    // Text updating in the scan_ip_range function
-    // didn't work, so another function was created for
+    // Text changing in the scan_ip_range function
+    // didn't work, so this function was created for
     // this purpose
-    const result_helper = document.getElementById("result_helper");
     if (code == 1) {
         result_helper.textContent = "Scanning..."
     }
