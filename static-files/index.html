@@ -20,11 +20,46 @@
         <div class="scan-result-div">
             <h2 class="scan-result-title" id="scan_result_title">Scan Results:</h2>
             <button class="btn" id="scan_ip_btn" onclick="scan_ip_range()">Start Scan</button>
+            <button class="btn" id="settings_btn" onclick="open_config_settings()">Settings</button>
         </div>
         <hr class="custom-hr" />
+        <p class="settings-update-status" id="settings_update_status"></p>
         <div class="content-div">
             <div id="ping_result">
                 <p class="result-helper" id="result_helper">Nothing to show yet.</p>
+            </div>
+            <div class="settings-div hidden" id="settings_div">
+                <form method="post" action="/" onsubmit="save_config_settings()">
+                    <div class="settings-form-div">
+                        <label for="known_ip_list">Known IP list: </label>
+                        <input id="known_ip_list_input" name="known_ip_list" />
+                    </div>
+                    <div class="settings-form-div">
+                        <label for="log_output">Log output: </label>
+                        <input id="log_output_input" name="log_output" />
+                    </div>
+                    <div class="settings-form-div">
+                        <label for="socket_value">Socket value: </label>
+                        <input id="socket_value_input" name="socket_value" />
+                    </div>
+                    <div class="settings-form-div">
+                        <button type="submit" class="btn settings-btn" id="settings_save_btn">Save and close</button>
+                    </div>
+                </form>
+                <hr class="custom-hr" style="justify-self: center;" />
+                <div class="current-settings" id="current_settings">
+                    <h2>Current values:</h2>
+                    <br />
+                    <p> Known IP list: [
+                        <span id="known_ip"></span>]
+                    </p>
+                    <p>Log output: 
+                        <span id="log_output"></span>
+                    </p>
+                    <p>Socket: 
+                        <span id="socket"></span>
+                    </p>
+                </div>
             </div>
         </div>
     </main>
