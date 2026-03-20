@@ -6,14 +6,14 @@ Read this file if you have any question or confusion about this program.
 
 ## A. build.sh
 
-In this section the process that the `build.sh` script takes to build the
-scipt is explaind:
+This section explaines the process that the `build.sh` script takes to build pymonitor:
 
-1. Any old directory or file will be removed first. There won't be any error if no old directory or file is found.
+**Note:** In the process of copying files, if any old file is found,
+the script gives the following error: `Found files in {path}, use ./uninstall first`.
 
-2. A directory will be created at `/usr/local/lib/.pymonitor` which will be used as the library and includes the files required to run the script.
+1. A directory will be created at `/usr/local/lib/.pymonitor` which will be used as the library and includes the files required to run the script.
 
-3. Then a binary file will be created at `/usr/local/bin/pymonitor` which has the following content inside:
+2. Then a binary file will be created at `/usr/local/bin/pymonitor` which has the following content inside:
 
 ```shell
 #!/bin/sh
@@ -26,10 +26,10 @@ moduels. If you're using a virtual envirenment, it's good practice to
 change `python3` to `path/to/venv/bin/python3` to be able to use the
 installed moduels.
 
-4. In the end, using `chmod +x /usr/local/bin/pymonitor` the command will
+3. In the end, using `chmod +x /usr/local/bin/pymonitor` the command will
 be executable.
 
-5. Finally you can verify the installtion using `sudo pymonitor --version`
+4. Finally you can verify the installtion using `sudo pymonitor --version`
 
 ## B. No Build
 
@@ -45,27 +45,27 @@ but the library files will be created at `/usr/local/lib/.pymonitor`. Files such
 # Usage
 
 You can read the help from `pymonitor -h` to see the accepted arguments.
-We'll write the description for each argument here:
+Also the description for each argument is written here:
 
 ## 1. **-s , --socket** 
 
 - *Set socket for private IP determination; for the current scan only. (default: 8.8.8.8)*
 
-This script uses an IP address as a socket for private IP determination;
+pymonitor uses an IP address as a socket for private IP determination;
 The default value is the famous `8.8.8.8` but you can change it using
 ```shell
 sudo pymonitor -s 1.1.1.1
 ```
 
-**Note:** This will change the socket IP for the current scan, and the socket will be fetch from the settings in later scans. To change this value
+**Note:** This will change the socket IP for the current scan only, and the socket will be fetched from the settings for later scans. To change this value
 permanently, check the `-c` argument.
 
 ## 2. **--serve** 
 
 - *Serve the server instead of CLI mode*
 
-The default mode for this script is the cli mode. If you'd rather see the
-HTML file and work with buttons and this kind of UI, use this option.
+pymonitor's default mode is the cli mode. If you'd rather see the
+HTML file and run a server instead, use this option.
 
 ## 3. **-p , --port** 
 
@@ -89,13 +89,13 @@ file`. Number `3` is the default value.
 
 **Note:** Logs are an important part of the script. you should choose wisely.
 
-- *Change socket value permanently:* As explained in the above, you can
+- *Change socket value permanently:* As explained above, you can
 change the value of socket in the `settings.json` with this option.
 
 - *Show current settings*
 
-**Note:** The config options is only available form the CLI interface.
+**Note:** The config options is available form both CLI and server mode.
 
 # Uninstallation
 
-using `sudo ./uninstall.sh` you can remove any directory at `/usr/local/lib/.pymonitor` or any file at `/usr/local/bin/pymonitor`
+Using `sudo ./uninstall.sh`, you can remove any directory at `/usr/local/lib/.pymonitor` or any file at `/usr/local/bin/pymonitor`
