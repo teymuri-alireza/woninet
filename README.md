@@ -8,8 +8,8 @@ A local network inspecter and monitoring system written in python3.
 
 - Uses threads for faster scans.
 - Supports both CLI mode and server mode.
-- Detailed logs both on stdout and file output (logs.txt).
-- Configuration settings for IP list, log output and socket address.
+- Detailed logs stdout.
+- Configuration settings for known IP list and socket address.
 - Simple build.sh file for easier set up.
 
 # Future Plans
@@ -19,7 +19,6 @@ A local network inspecter and monitoring system written in python3.
 
 # Known Issues
 
-- Add a warning to warn the user if the log file exceeded a certain size.
 - Add timer for scan button in html file to show error if got no result after a specific time.
 - Display help and version from arguments without root access.
 
