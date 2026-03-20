@@ -139,26 +139,13 @@ def serve_function(local_IP: str, port: int):
                     data = json.loads(body.decode())
 
                     new_known_ip = data["known_ip_list_input"]
-                    new_log_output = data["log_output_input"]
                     new_socket = data["socket_value_input"]
-
                 
                     with open(f"{SCAN_RESULT_PATH}/settings.json", "r") as file:
                         settings = json.load(file)
                     
                     if new_known_ip.strip() != "":
                         settings["known_ip"].append(new_known_ip)
-                    
-                    if new_log_output.strip() != "":
-                        if new_log_output not in ["1", "2", "3"]:
-                            log_error = "Invalid input for log output"
-                            self.send_response_only(400)
-                            self.send_header('Content-Type', 'application/json')
-                            self.end_headers()
-                            rootLogger.error(f"POST {url} {self.request_version} 400 - Error: {log_error}")
-                            return
-                        else:
-                            settings["log_output"] = int(new_log_output)
                     
                     if new_socket.strip() != "":
                         settings["socket"] = new_socket
@@ -174,7 +161,6 @@ def serve_function(local_IP: str, port: int):
 
                 except Exception as e:
                     self.send_response_only(500)
-                    rootLogger.info(f"POST {url} {self.request_version} 500 - check logs for error")
                     rootLogger.error(f"POST {url} {self.request_version} 500 - Error: {e}")
             
     # Running the server

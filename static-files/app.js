@@ -8,7 +8,6 @@ const settings_div = document.getElementById("settings_div");
 const settings_btn = document.getElementById("settings_btn");
 const settings_save_btn = document.getElementById("settings_save_btn");
 const known_ip = document.getElementById("known_ip");
-const log_output = document.getElementById("log_output");
 const socket = document.getElementById("socket");
 
 async function get_local_IP() {
@@ -56,7 +55,7 @@ async function update_helper(code) {
         result_helper.textContent = "Scanning..."
     }
     else if (code == 2) {
-        result_helper.textContent = "Error occured. Check logs.txt for more info.";
+        result_helper.textContent = "Error occured. Check logs for more info.";
     }
     else if (code == 3) {
         result_helper.textContent = "No result was found.";
@@ -83,7 +82,6 @@ async function save_config_settings(event) {
 
     // get inputs values
     const known_ip_list_input = document.getElementById("known_ip_list_input").value;
-    const log_output_input = document.getElementById("log_output_input").value;
     const socket_value_input = document.getElementById("socket_value_input").value;
     
     // send a POST request to update the settings
@@ -91,7 +89,7 @@ async function save_config_settings(event) {
     const response = await fetch(url,{
         method: "POST",
         headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({ known_ip_list_input, log_output_input, socket_value_input })
+        body: JSON.stringify({ known_ip_list_input, socket_value_input })
     });
     
     const settings_update_status = document.getElementById("settings_update_status");
@@ -106,7 +104,6 @@ async function save_config_settings(event) {
 
     // clear input fields
     document.getElementById("known_ip_list_input").value = "";
-    document.getElementById("log_output_input").value = "";
     document.getElementById("socket_value_input").value = "";
 
     // fetch setting and update the data
@@ -121,11 +118,9 @@ async function fetch_settings() {
     const data_parsed = JSON.parse(data);
     
     const known_ip_list = data_parsed.known_ip;
-    const log_output_value = data_parsed.log_output;
     const socket_value = data_parsed.socket;
 
     known_ip.textContent = known_ip_list;
-    log_output.textContent = log_output_value;
     socket.textContent = socket_value;
 }
 
