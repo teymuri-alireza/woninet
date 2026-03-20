@@ -29,7 +29,7 @@
                 <p class="result-helper" id="result_helper">Nothing to show yet.</p>
             </div>
             <div class="settings-div hidden" id="settings_div">
-                <form method="post" action="/" onsubmit="save_config_settings()">
+                <form method="post" onsubmit="save_config_settings(event)">
                     <div class="settings-form-div">
                         <label for="known_ip_list">Known IP list: </label>
                         <input id="known_ip_list_input" name="known_ip_list" />
@@ -44,6 +44,7 @@
                     </div>
                     <div class="settings-form-div">
                         <button type="submit" class="btn settings-btn" id="settings_save_btn">Save and close</button>
+                        <button type="button" class="btn settings-btn" onclick="close_config_settings()">Close the settings</button>
                     </div>
                 </form>
                 <hr class="custom-hr" style="justify-self: center;" />

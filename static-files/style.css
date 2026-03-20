@@ -104,6 +104,7 @@ main {
 }
 
 .settings-update-status {
+    margin-top: 16px;
     color: var(--success);
 }
 .settings-div {
