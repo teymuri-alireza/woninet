@@ -65,10 +65,6 @@ main {
     margin-top: 40px;
     justify-items: center;
 }
-.scan-warning {
-    color: var(--tomato);
-    margin-bottom: 15px;
-}
 .scan-result-div {
     display: flex;
     align-items: center;
