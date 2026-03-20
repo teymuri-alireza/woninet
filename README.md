@@ -6,10 +6,11 @@ A local network inspecter and monitoring system written in python3.
 
 # Features
 
-- Detailed logs both on stdout and file output (logs.txt).
+- Uses threads for faster scans.
 - Supports both CLI mode and server mode.
-- Configuration settings for IP list and log output.
-- Simple build.sh file for easier set up
+- Detailed logs both on stdout and file output (logs.txt).
+- Configuration settings for IP list, log output and socket address.
+- Simple build.sh file for easier set up.
 
 # Future Plans
 
@@ -18,10 +19,8 @@ A local network inspecter and monitoring system written in python3.
 
 # Known Issues
 
-- Ping takes 2 minutes for all IP addresses, use threads.
 - Add a warning to warn the user if the log file exceeded a certain size.
 - Add timer for scan button in html file to show error if got no result after a specific time.
-- Fix config setting issue in server
 - Display help and version from arguments without root access.
 
 # How To Run
@@ -59,7 +58,7 @@ Contributions are welcome. If you have a new feature in mind or have found a bug
 
 ## What to contribute
 
-You can make changes or open an issue about any part of the code. Such as:
+You can make changes or open an issue in any part of the code. Such as:
 
 - Scan logic
 - server handling and monitoring
