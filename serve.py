@@ -134,7 +134,7 @@ def serve_function(local_IP: str, port: int):
             # updating settings
             if url == "/api/update-settings":
                 try:
-                    content_length = int(self.headers.get("Content-length", 0))
+                    content_length = int(self.headers.get("Content-Length", 0))
                     body = self.rfile.read(content_length)
                     data = json.loads(body.decode())
 
@@ -147,10 +147,18 @@ def serve_function(local_IP: str, port: int):
                         settings = json.load(file)
                     
                     if new_known_ip.strip() != "":
-                        settings["known_ip"] = new_known_ip
+                        settings["known_ip"].append(new_known_ip)
                     
                     if new_log_output.strip() != "":
-                        settings["log_output"] = new_log_output
+                        if new_log_output not in ["1", "2", "3"]:
+                            log_error = "Invalid input for log output"
+                            self.send_response_only(400)
+                            self.send_header('Content-Type', 'application/json')
+                            self.end_headers()
+                            rootLogger.error(f"POST {url} {self.request_version} 400 - Error: {log_error}")
+                            return
+                        else:
+                            settings["log_output"] = int(new_log_output)
                     
                     if new_socket.strip() != "":
                         settings["socket"] = new_socket
@@ -159,11 +167,15 @@ def serve_function(local_IP: str, port: int):
                         json.dump(settings, file, indent=4)
                     
                     self.send_response_only(200)
+                    self.send_header('Content-Type', 'application/json')
+                    self.end_headers()
+
                     rootLogger.info(f"POST {url} {self.request_version} 200")
+
                 except Exception as e:
                     self.send_response_only(500)
                     rootLogger.info(f"POST {url} {self.request_version} 500 - check logs for error")
-                    rootLogger.error(f"Error at do_POST in serve.py, path = {url}. Error: {e}")
+                    rootLogger.error(f"POST {url} {self.request_version} 500 - Error: {e}")
             
     # Running the server
     port_is_in_use = True

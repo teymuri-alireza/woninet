@@ -29,7 +29,7 @@
                 <p class="result-helper" id="result_helper">Nothing to show yet.</p>
             </div>
             <div class="settings-div hidden" id="settings_div">
-                <form method="post" action="/" onsubmit="save_config_settings()">
+                <form method="post" onsubmit="save_config_settings(event)">
                     <div class="settings-form-div">
                         <label for="known_ip_list">Known IP list: </label>
                         <input id="known_ip_list_input" name="known_ip_list" />

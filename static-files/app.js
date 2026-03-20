@@ -75,6 +75,45 @@ async function open_config_settings() {
     scan_ip_btn.classList.add("hidden");
     scan_result_title.textContent = "Configuration Settings:"
 
+    await fetch_settings();
+}
+
+async function save_config_settings(event) {
+    event.preventDefault()
+
+    // get inputs values
+    const known_ip_list_input = document.getElementById("known_ip_list_input").value;
+    const log_output_input = document.getElementById("log_output_input").value;
+    const socket_value_input = document.getElementById("socket_value_input").value;
+    
+    // send a POST request to update the settings
+    const url = "/api/update-settings";
+    const response = await fetch(url,{
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ known_ip_list_input, log_output_input, socket_value_input })
+    });
+    
+    const settings_update_status = document.getElementById("settings_update_status");
+    if (response.status === 200) {
+        settings_update_status.textContent = "Settings Updated Successfully.";
+        settings_update_status.style.color = "#47cf3a";
+    }
+    else if (response.status === 400) {
+        settings_update_status.textContent = "Updating Settings Failed. Check logs.";
+        settings_update_status.style.color = "#ff6347";
+    }
+
+    // clear input fields
+    document.getElementById("known_ip_list_input").value = "";
+    document.getElementById("log_output_input").value = "";
+    document.getElementById("socket_value_input").value = "";
+
+    // fetch setting and update the data
+    await fetch_settings();
+}
+
+async function fetch_settings() {
     // fetch current settings from the server and show in the settings menu
     const url = "/api/fetch-settings";
     const response = await fetch(url);
