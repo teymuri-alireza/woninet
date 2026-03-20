@@ -81,9 +81,8 @@ if argument.config:
     
     # ask for user's input
     menu = """1. Manage known IP list: Only unknown IP addresses will be shown in the ping result.
-2. Manage log output.
-3. Change socket value permanently (for private IP determination)
-4. Show current settings.
+2. Change socket value permanently (for private IP determination)
+9. Show current settings.
 0. exit
 choose: """
     try:
@@ -97,24 +96,8 @@ choose: """
             known_ip = input("\tEnter your IP (only one value): ")
             settings["known_ip"].append(known_ip)
             rootLogger.info(f"Adding {known_ip} to known ip list.")
-        
+
         elif choice == 2:
-            print("Log settings:")
-            print("""\t1. stdout only\n\t2. file only\n\t3. stdout and file\n\t0. Exit""")
-            print("\tNote: Logs are an important part of the app. choose wisely.")
-            log_output = input("\tchoose: ")
-
-            if log_output not in ["1", "2", "3", "0"]:
-                print("Invalid input")
-                exit(1)
-            else:
-                if log_output == "0":
-                    exit(0)
-                
-                settings["log_output"] = int(log_output)
-                rootLogger.info(f"Changing log_output value to {log_output}.")
-
-        elif choice == 3:
             print("Socket settings:")
             print("\tCurrent value: " + settings["socket"])
             new_socket = input("\tNew value: (0 to quit) ")
@@ -125,7 +108,7 @@ choose: """
             settings["socket"] = new_socket
             rootLogger.info(f"Changing socket value to {new_socket}")
 
-        elif choice == 4:
+        elif choice == 9:
             rootLogger.info("Requested printing settings.")
             print("Known IP list: ", end="")
             if settings["known_ip"] == []:
@@ -136,8 +119,6 @@ choose: """
                 
                 print() # to increase readability
             
-            print(f"Log output: {settings["log_output"]}")
-
             print(f"Socket value: {settings["socket"]}")
 
         else:
