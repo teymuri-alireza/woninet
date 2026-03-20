@@ -34,15 +34,21 @@ def serve_function(local_IP: str, port: int):
     class HTTPHandler(http.server.SimpleHTTPRequestHandler):
         """
         A custom class that inherits http.server.SimpleHTTPRequestHandler class.
-        This class gets basic information from the main.py using the 
-        get_info function.
+        This class gets the basic information like device's private IP
+        and the server's port from the main.py file.
 
         Here is a preview of functions and paths used in this class:
 
         do_GET:
             - "/" : The home page
-            - "/api/localip" : The private IP of the device
+            - "/style.css" : Serves contents of css file
+            - "/app.js" : Serves contents of js file
+            - "/api/localip" : Sends the private IP of the device to the client
             - "/api/scan" : Scanning local network IP addresses
+            - "/api/fetch-settings" : Reads the current settings and sends to the client
+        
+        do_POST:
+            - "/api/update-settings" : Updates the configuration settings
         """
         def do_GET(self):
             url = self.path
