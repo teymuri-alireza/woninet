@@ -27,28 +27,33 @@ def logger_function() -> logging.Logger:
     rootLogger = logging.getLogger()
 
     if not rootLogger.handlers:
-        # read settings.json
-        with open(f"{SCRIPT_PATH}/settings.json", "r") as file:
-            settings = json.load(file)
-        log_settings = settings["log_output"]
+        try:
+            # read settings.json
+            with open(f"{SCRIPT_PATH}/settings.json", "r") as file:
+                settings = json.load(file)
+            log_settings = settings["log_output"]
 
-        if log_settings in [2, 3]:
-            try:
-                fileHandler = logging.FileHandler(filename=f"{SCRIPT_PATH}/logs.txt")
-                fileHandler.setFormatter(logging.Formatter(fmt=fileLogFormat, datefmt=dateFormat))
-                fileHandler.setLevel(logging.DEBUG)
-                rootLogger.addHandler(fileHandler)
+            if log_settings in [2, 3]:
+                try:
+                    fileHandler = logging.FileHandler(filename=f"{SCRIPT_PATH}/logs.txt")
+                    fileHandler.setFormatter(logging.Formatter(fmt=fileLogFormat, datefmt=dateFormat))
+                    fileHandler.setLevel(logging.DEBUG)
+                    rootLogger.addHandler(fileHandler)
 
-            except PermissionError:
-                print("Are you root?")
-                exit(1)
+                except PermissionError:
+                    print("Are you root?")
+                    exit(1)
+            
+            if log_settings in [1, 3]:
+                consoleHandler = logging.StreamHandler()
+                consoleHandler.setFormatter(logging.Formatter(fmt=consoleLogFormat, datefmt=dateFormat))
+                consoleHandler.setLevel(logging.INFO)
+                rootLogger.addHandler(consoleHandler)
+
+            rootLogger.setLevel(logging.DEBUG)
         
-        if log_settings in [1, 3]:
-            consoleHandler = logging.StreamHandler()
-            consoleHandler.setFormatter(logging.Formatter(fmt=consoleLogFormat, datefmt=dateFormat))
-            consoleHandler.setLevel(logging.INFO)
-            rootLogger.addHandler(consoleHandler)
-
-        rootLogger.setLevel(logging.DEBUG)
+        except json.JSONDecodeError as e:
+            rootLogger.error(f"Error at logger.py: {e}")
+            exit(1)
     
     return rootLogger
