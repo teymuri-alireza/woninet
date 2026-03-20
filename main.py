@@ -27,7 +27,6 @@ except FileNotFoundError:
         # The base of the settings
         settings_structure = {
             "known_ip": [],
-            "log_output": 3,
             "socket": "8.8.8.8"
         }
         with open(f"{SCRIPT_PATH}/settings.json", "w") as file:
