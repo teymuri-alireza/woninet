@@ -37,7 +37,6 @@ You can still use the script without building with `sudo python3 main.py`
 but the library files will be created at `/usr/local/lib/.pymonitor`. Files such as:
 
 - settings.json
-- logs.txt
 - ip_list.txt
 - ping_result.txt
 - history.txt
@@ -82,12 +81,6 @@ You can access the configuration settings and change the following values
 in the `settings.json` file:
 
 - *Managing known IP list:* You can add or remove known IP addresses. Only the unknown IP addresses will be shown in the result.
-
-- *Managing log output:* You can choose how you would see the logs. Options
-`1` is for `stdout only`, `2` is for `file only` and `3` is for `stdout and
-file`. Number `3` is the default value.
-
-**Note:** Logs are an important part of the script. you should choose wisely.
 
 - *Change socket value permanently:* As explained above, you can
 change the value of socket in the `settings.json` with this option.
