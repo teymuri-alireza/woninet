@@ -2,6 +2,7 @@ import json
 import ping3
 import datetime
 import os
+from concurrent.futures import ThreadPoolExecutor
 from utilities.logger import logger_function
 
 # get logger configuration
@@ -92,14 +93,11 @@ def update_history() -> None:
 
 def ping_function(src_ip: str) -> int:
     """
-    Sends an ICMP ping request to every IP in ip_list.txt file,
+    Sends an ICMP ping request, using python ping3 module
+    to every IP in ip_list.txt file,
     then stores the accepted responses in ping_result.txt.
 
-    The response time in ping_result.txt is shortened and converts to millisecond.
-
     This function skips scanning IP addresses in settings.json.
-
-    This functions uses python ping3 module.
 
     Parameters:
         src_ip (str) : Private IP of the device
@@ -113,17 +111,28 @@ def ping_function(src_ip: str) -> int:
 
         with open(f"{SCAN_FILES}/ping_result.txt", "w") as ping_result:
             with open(f"{SCAN_FILES}/ip_list.txt", "r") as ip_list_file:
-                for line in ip_list_file:
+                def ping_main_logic(line: str) -> None:
+                        """
+                        This function is used in ThreadPoolExecutor for faster scans.
 
-                    if line.strip() in settings["known_ip"]:
-                        # skip the scan if IP exist in the settings.json
-                        continue
-                    
-                    response = ping3.ping(src_addr=src_ip,dest_addr=line.strip(), timeout=1, ttl=64)
-                    if response is not None and response is not False:
-                        response_split = str(response)[4:8]
-                        value = response_split[0] + "." + response_split[1:] + " ms"
-                        ping_result.write(f"{line.strip()}: {value}\n")
+                        The response time in is shortened and converts to millisecond.
+
+                        Parameters:
+                            line (str) : Every IP of the private network, gathered from generate_ip function.
+                        """
+                        response = ping3.ping(src_addr=src_ip,dest_addr=line.strip(), timeout=1, ttl=64)
+                        if response is not None and response is not False:
+                            response_split = str(response)[4:8]
+                            value = response_split[0] + "." + response_split[1:] + " ms"
+                            ping_result.write(f"{line.strip()}: {value}\n")
+                
+                with ThreadPoolExecutor(max_workers=20) as executor:
+                    for line in ip_list_file:
+                        if line.strip() in settings["known_ip"]:
+                            # skip the scan if IP exist in the settings.json
+                            continue
+                        
+                        executor.submit(ping_main_logic, line)
         update_history()
         return 0
     
