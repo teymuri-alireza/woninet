@@ -4,7 +4,7 @@ A local network inspecter and monitoring system written in python3.
 
 **Note: This script requires sudo privileges.**
 
-# Features
+## Features
 
 - Uses threads for faster scans.
 - Supports both CLI mode and server mode.
@@ -12,21 +12,22 @@ A local network inspecter and monitoring system written in python3.
 - Configuration settings for known IP list and socket address.
 - Simple build.sh file for easier set up.
 
-# Future Plans
+## Future Plans
 
-- Add -w arg for showing warnings.
-- Add index.html for documents and keep the changelog.
+- Add -o for saving output.
 
-# Known Issues
+## Known Issues
 
 - Add timer for scan button in html file to show error if got no result after a specific time.
 - Display help and version from arguments without root access.
+- Add remove logic for known IP list settings.
+- Add IP address validation logic.
 
-# How To Run
+## How To Run
 
 - Clone the repo.
 
-## Run using virtual
+### Run using virtual envirenment
 
 - Create a python virtual envirenment and activate it.
 - Type these commands in the terminal:
@@ -36,7 +37,7 @@ pip3 install -r requirements.txt
 sudo python3 main.py -V
 ```
 
-## Use build.sh
+### Use build.sh
 
 - Use `sudo ./build.sh`. This script copy files into
 `/usr/local/lib/.pymonitor` and create a command at `/usr/local/bin/pymonitor`.
@@ -47,15 +48,20 @@ sudo python3 main.py -V
 sudo pymonitor --version
 ```
 
-# Documentaion
+## Requirements
 
-if you have any question or confusion you check the [documentation](./documentation.md) guide.
+- Unix-based operating systems
+- ping3 v4.0.4 (pyhton3 module)
 
-# Contribution
+## Documentaion
+
+if you have any question or confusion you can check the [documentation](./documentation.md) guide.
+
+## Contribution
 
 Contributions are welcome. If you have a new feature in mind or have found a bug, please consider opening a pull request or an issue.
 
-## What to contribute
+### What to contribute
 
 You can make changes or open an issue in any part of the code. Such as:
 
@@ -67,4 +73,7 @@ You can make changes or open an issue in any part of the code. Such as:
 - Directory paths
 - Texting and typo
 - Wrong grammar or unjust documents
-- etc
+
+### What not to contribute
+
+Don't change the version value. The maintainer will bump version after specific merges or chnages.

@@ -7,6 +7,7 @@ For more info check out the documentation.md file
 import socket
 import json
 import os
+import datetime
 
 # global variables
 PORT = 8000
@@ -75,6 +76,11 @@ if argument.version:
     print(show_version())
     exit(0)
 
+# check verbosity
+if argument.verbose:
+    from logging import DEBUG
+    rootLogger.setLevel(DEBUG)
+
 # enter configuration settings
 if argument.config:
     rootLogger.debug("Entering configuration settings.")
@@ -109,7 +115,7 @@ choose: """
             rootLogger.info(f"Changing socket value to {new_socket}")
 
         elif choice == 9:
-            rootLogger.info("Requested printing settings.")
+            rootLogger.debug("Requested displaying settings.")
             print("Known IP list: ", end="")
             if settings["known_ip"] == []:
                 print("-")
@@ -140,7 +146,8 @@ choose: """
     # finally save the file
     with open(f"{SCRIPT_PATH}/settings.json", "w") as file:
         json.dump(settings, file, indent=4)
-    
+        rootLogger.debug(f"Saving the {SCRIPT_PATH}/settings.json")
+
     exit(0)
 
 # get the local IP address
@@ -157,13 +164,14 @@ except Exception as e:
 
 # If user used --serve options, instead of CLI mode
 if argument.serve:
+    rootLogger.debug("Entering server mode.")
     from serve import serve_function
     serve_function(local_IP=local_IP, port=PORT)
     exit(0)
 
 # the CLI mode
 rootLogger.debug("Entering CLI mode scanner.")
-rootLogger.info(f"Your private IP: {local_IP}")
+print(f"Your private IP: {local_IP}")
 
 menu = """1. Scan the network
 0. Exit
@@ -173,11 +181,11 @@ while True:
         choice = input(menu)
 
         if int(choice) == 0:
-            rootLogger.info("Quitting.")
             exit(0)
         
         elif int(choice) == 1:
-            rootLogger.info("Starting scan...")
+            print("Starting scan...")
+            scan_start_time = datetime.datetime.now()
             result = scan_logic(local_IP)
             
             if result == -1:
@@ -189,10 +197,15 @@ while True:
                     ping_result = file.read()
                     
                     # if no result was found
+                    scan_finish_time = datetime.datetime.now()
                     if ping_result.strip() == "":
                         print("No result!")
                     else:
-                        print(ping_result)
+                        print(ping_result, end="")
+                    
+                    time_took = scan_finish_time - scan_start_time
+                    rootLogger.debug(f"Time took: {str(time_took)[0:-4]}")
+                    print()
         
         else:
             print("Try again.")
