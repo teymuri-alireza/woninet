@@ -7,5 +7,5 @@ def show_version():
     Returns:
         str : Current version of the program.
     """
-    Version = "0.6.0"
+    Version = "0.6.1"
     return Version

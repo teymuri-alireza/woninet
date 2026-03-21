@@ -1,8 +1,5 @@
 import logging
 
-# global variables
-SCRIPT_PATH = "/usr/local/lib/.pymonitor"
-
 def logger_function() -> logging.Logger:
     """
     Returns the rootLogger, which uses a simple format for logging.

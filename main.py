@@ -8,6 +8,10 @@ import socket
 import json
 import os
 import datetime
+from utilities.logger import logger_function
+
+# get logger configuration
+rootLogger = logger_function()
 
 # global variables
 PORT = 8000
@@ -32,24 +36,30 @@ except FileNotFoundError:
         }
         with open(f"{SCRIPT_PATH}/settings.json", "w") as file:
             json.dump(settings_structure, file, indent=4)
+            rootLogger.info(f"Creating settings at {SCRIPT_PATH}/settings.json")
     
     except PermissionError:
-        print("Are you root?")
-        exit(1)
+        # postpone error to load -h and -V without root access
+        pass
 
 # import utilities after checking settings to prevent unplanned PermissionError
 from scan import scan_logic
-from utilities.logger import logger_function
 from utilities.arguments import args
 from utilities.validate_ip import validate_ip
 
-# get logger configuration
-rootLogger = logger_function()
+try:
+    # fetch socket from the settings
+    with open(f"{SCRIPT_PATH}/settings.json", "r") as file:
+        settings = json.load(file)
+    SOCKET = settings["socket"]
 
-# fetch socket from the settings
-with open(f"{SCRIPT_PATH}/settings.json", "r") as file:
-    settings = json.load(file)
-SOCKET = settings["socket"]
+except FileNotFoundError:
+    # postpone error to load -h and -V without root access
+    pass
+
+except PermissionError:
+    # postpone error to load -h and -V without root access
+    pass
 
 # functions for handling arguments
 def set_socket(socket: str) -> None:
@@ -84,6 +94,19 @@ if argument.version:
 if argument.verbose:
     from logging import DEBUG
     rootLogger.setLevel(DEBUG)
+
+try:
+    # load settings
+    with open(f"{SCRIPT_PATH}/settings.json", "r") as file:
+        settings = json.load(file)
+
+except FileNotFoundError:
+    rootLogger.error("It seems like it's your first time running pymonitor. Run with 'sudo' to create settings.json.")
+    exit(1)
+
+except PermissionError:
+    rootLogger.error("Are you root?")
+    exit(1)
 
 # enter configuration settings
 if argument.config:
