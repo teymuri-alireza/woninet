@@ -75,6 +75,11 @@ if argument.version:
     print(show_version())
     exit(0)
 
+# check verbosity
+if argument.verbose:
+    from logging import DEBUG
+    rootLogger.setLevel(DEBUG)
+
 # enter configuration settings
 if argument.config:
     rootLogger.debug("Entering configuration settings.")

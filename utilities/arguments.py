@@ -45,6 +45,12 @@ Examples:
         type=set_port,
         help="Set port for the server. (default: 8000)"
     )
+
+    parser.add_argument(
+        "-v", "--verbose",
+        action="store_true",
+        help="Talks more."
+    )
     
     parser.add_argument(
         "-c", "--config",

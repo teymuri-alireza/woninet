@@ -27,7 +27,7 @@ def logger_function() -> logging.Logger:
 
         consoleHandler = logging.StreamHandler()
         consoleHandler.setFormatter(logging.Formatter(fmt=consoleLogFormat, datefmt=dateFormat))
-        consoleHandler.setLevel(logging.INFO)
+        consoleHandler.setLevel(logging.DEBUG)
         rootLogger.addHandler(consoleHandler)
 
         rootLogger.setLevel(logging.INFO)
