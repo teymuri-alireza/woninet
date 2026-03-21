@@ -20,8 +20,8 @@ A local network inspecter and monitoring system written in python3.
 ## Known Issues
 
 - Add timer for scan button in html file to show error if got no result after a specific time.
-- Display help and version from arguments without root access.
-- Add remove logic for known IP list settings.
+- Add OS error for non-Unix-based operating systems
+- Fix -p error. (No idea why it happens)
 
 ## How To Run
 
