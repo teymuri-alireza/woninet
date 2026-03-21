@@ -146,17 +146,34 @@ def serve_function(local_IP: str, port: int):
                         settings = json.load(file)
                     
                     if new_known_ip.strip() != "":
-                        if validate_ip(new_known_ip.strip()):
-                            settings["known_ip"].append(new_known_ip)
-                        else:
-                            # if error occured
-                            self.send_response_only(400)
-                            self.send_header('Content-Type', 'application/json')
-                            self.end_headers()
-                            return
-                    
+                        seperate_input = new_known_ip.split(",")
+                        for ip in seperate_input:
+                            ip = ip.strip()
+                            if ip == "":
+                                continue
+
+                            # remove IP address, if they exist
+                            if ip in settings["known_ip"]:
+                                settings["known_ip"].remove(ip)
+                                rootLogger.debug(f"Removing {ip} from known ip list.")
+                            else:
+                                # validation and adding
+                                if validate_ip(ip):
+                                    settings["known_ip"].append(ip)
+                                    rootLogger.debug(f"Adding {ip} to known ip list.")
+                                else:
+                                    # if error occured
+                                    self.send_response_only(400)
+                                    self.send_header('Content-Type', 'application/json')
+                                    self.end_headers()
+                                    return
+
+                        # sorting values
+                        settings["known_ip"].sort()
+
                     if new_socket.strip() != "":
                         settings["socket"] = new_socket
+                        rootLogger.debug(f"Changing socket value to {new_socket}")
                     
                     with open(f"{SCAN_RESULT_PATH}/settings.json", "w") as file:
                         json.dump(settings, file, indent=4)

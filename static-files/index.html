@@ -41,13 +41,20 @@
                         <button type="submit" class="btn settings-btn" id="settings_save_btn">Save and close</button>
                         <button type="button" class="btn settings-btn" onclick="close_config_settings()">Close the settings</button>
                     </div>
+                    <div class="settings-form-div">
+                        <p>Help:</p>
+                        <ul>
+                            <li>seperate IP addresses with comma ( , )</li>
+                            <li>re-entrying an IP address will remove it.</li>
+                        </ul>
+                    </div>
                 </form>
                 <hr class="custom-hr" style="justify-self: center;" />
                 <div class="current-settings" id="current_settings">
                     <h2>Current values:</h2>
                     <br />
-                    <p> Known IP list: [
-                        <span id="known_ip"></span>]
+                    <p> Known IP list:
+                        [<span id="known_ip"></span>]
                     </p>
                     <p>Socket: 
                         <span id="socket"></span>

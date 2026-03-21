@@ -103,13 +103,32 @@ choose: """
     
         elif choice == 1:
             print("Known IP settings:")
-            known_ip = input("\tEnter your IP (only one value): ")
-            if validate_ip(known_ip):
-                settings["known_ip"].append(known_ip)
-                rootLogger.info(f"Adding {known_ip} to known ip list.")
-            else:
-                # The error will be printed from the validate_ip function
-                exit(1)
+            print("Help: 1. seperate IP addresses with comma ( , )")
+            print("      2. re-entrying an IP address will remove it.")
+            ip_input = input("\tEnter your IP address: ")
+            
+            seperate_input = ip_input.split(",")
+            for ip in seperate_input:
+                ip = ip.strip()
+                if ip == "":
+                    continue
+
+                # remove IP address, if they exist
+                if ip in settings["known_ip"]:
+                    settings["known_ip"].remove(ip)
+                    rootLogger.info(f"Removing {ip} from known ip list.")
+                else:
+                    # validation and adding
+                    if validate_ip(ip):
+                        settings["known_ip"].append(ip)
+                        rootLogger.info(f"Adding {ip} to known ip list.")
+                    else:
+                        # The error will be printed from the validate_ip function
+                        print("Value(s) are not saved.")
+                        exit(1)
+
+            # sorting values
+            settings["known_ip"].sort()
 
         elif choice == 2:
             print("Socket settings:")
