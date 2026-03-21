@@ -4,6 +4,7 @@ import json
 import os
 from scan import scan_logic
 from utilities.logger import logger_function
+from utilities.validate_ip import validate_ip
 
 # get logger configuration
 rootLogger = logger_function()
@@ -145,7 +146,14 @@ def serve_function(local_IP: str, port: int):
                         settings = json.load(file)
                     
                     if new_known_ip.strip() != "":
-                        settings["known_ip"].append(new_known_ip)
+                        if validate_ip(new_known_ip.strip()):
+                            settings["known_ip"].append(new_known_ip)
+                        else:
+                            # if error occured
+                            self.send_response_only(400)
+                            self.send_header('Content-Type', 'application/json')
+                            self.end_headers()
+                            return
                     
                     if new_socket.strip() != "":
                         settings["socket"] = new_socket
