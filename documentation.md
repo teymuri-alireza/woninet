@@ -44,7 +44,7 @@ but the library files will be created at `/usr/local/lib/.pymonitor`. Files such
 # Usage
 
 You can read the help from `pymonitor -h` to see the accepted arguments.
-Also the description for each argument is written here:
+Also the description for some arguments is written here:
 
 ## 1. **-s , --socket** 
 
@@ -92,3 +92,8 @@ change the value of socket in the `settings.json` with this option.
 # Uninstallation
 
 Using `sudo ./uninstall.sh`, you can remove any directory at `/usr/local/lib/.pymonitor` or any file at `/usr/local/bin/pymonitor`
+
+# Version
+
+pymonitor uses Semantic version rules; Therefore after every breaking changes in the code logic there'll be a MAJOR bump. New functionality
+and updates will bump one MINOR. Some changes in the UI and fixes will bump one PATCH.
