@@ -107,6 +107,9 @@ choose: """
             if validate_ip(known_ip):
                 settings["known_ip"].append(known_ip)
                 rootLogger.info(f"Adding {known_ip} to known ip list.")
+            else:
+                # The error will be printed from the validate_ip function
+                exit(1)
 
         elif choice == 2:
             print("Socket settings:")
@@ -131,6 +134,7 @@ choose: """
                 print() # to increase readability
             
             print(f"Socket value: {settings["socket"]}")
+            exit(0)
 
         else:
             rootLogger.error("Invalid input.")
