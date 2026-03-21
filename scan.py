@@ -55,6 +55,7 @@ def generate_ip(ipAddr: str) -> int:
         with open(f"{SCAN_FILES}/ip_list.txt", "w") as file:
             for i in range(1,255):
                 file.write(f"{ip_seperate[0]}.{ip_seperate[1]}.{ip_seperate[2]}.{i}\n")
+        rootLogger.debug(f"254 IP address generated based on {ip_seperate[0]}.{ip_seperate[1]}.{ip_seperate[2]}.x")
         return 0
     
     except PermissionError:
@@ -122,6 +123,7 @@ def ping_function(src_ip: str) -> int:
                         """
                         response = ping3.ping(src_addr=src_ip,dest_addr=line.strip(), timeout=1, ttl=64)
                         if response is not None and response is not False:
+                            rootLogger.debug(f"{line.strip()} is up.")
                             response_split = str(response)[4:8]
                             value = response_split[0] + "." + response_split[1:] + " ms"
                             ping_result.write(f"{line.strip()}: {value}\n")
