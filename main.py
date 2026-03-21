@@ -41,6 +41,7 @@ except FileNotFoundError:
 from scan import scan_logic
 from utilities.logger import logger_function
 from utilities.arguments import args
+from utilities.validate_ip import validate_ip
 
 # get logger configuration
 rootLogger = logger_function()
@@ -64,6 +65,9 @@ def set_port(port: int) -> None:
     Sets a new vlaue for port, to serve the server.
     """
     if port:
+        if port < 1 or port > 65535:
+            rootLogger.error("PORT must be between 1 and 65535.")
+            exit(1)
         global PORT
         PORT = int(port)
 
@@ -100,8 +104,12 @@ choose: """
         elif choice == 1:
             print("Known IP settings:")
             known_ip = input("\tEnter your IP (only one value): ")
-            settings["known_ip"].append(known_ip)
-            rootLogger.info(f"Adding {known_ip} to known ip list.")
+            if validate_ip(known_ip):
+                settings["known_ip"].append(known_ip)
+                rootLogger.info(f"Adding {known_ip} to known ip list.")
+            else:
+                # The error will be printed from the validate_ip function
+                exit(1)
 
         elif choice == 2:
             print("Socket settings:")
@@ -126,6 +134,7 @@ choose: """
                 print() # to increase readability
             
             print(f"Socket value: {settings["socket"]}")
+            exit(0)
 
         else:
             rootLogger.error("Invalid input.")
