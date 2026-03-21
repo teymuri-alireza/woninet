@@ -16,6 +16,9 @@ try:
     os.mkdir(f"{SCAN_FILES}/")
 except FileExistsError:
     pass
+except PermissionError:
+    # postpone error to load -h and -V without root access
+    pass
 
 def scan_logic(ipAddr: str) -> int:
     """
@@ -89,6 +92,10 @@ def update_history() -> None:
                     history.write(f"{date_format} {line.strip()}\n")
         rootLogger.debug(f"History updated at {SCAN_FILES}/history.txt")
     
+    except PermissionError:
+        rootLogger.error("Are you root?")
+        exit(1)
+
     except Exception as e:
         rootLogger.error(f"Error at update_history function in scan.py file: {e}")
 
@@ -138,6 +145,10 @@ def ping_function(src_ip: str) -> int:
         update_history()
         return 0
     
+    except PermissionError:
+        rootLogger.error("Are you root?")
+        exit(1)
+
     except FileNotFoundError as e:
         rootLogger.error(f"Error at ping_function function in scan.py file: {e}")
         return -1
