@@ -10,6 +10,7 @@ A local network inspecter and monitoring system written in python3.
 - Supports both CLI mode and server mode.
 - Detailed logs stdout.
 - Configuration settings for known IP list and socket address.
+- IP validation logic.
 - Simple build.sh file for easier set up.
 
 ## Future Plans
@@ -21,7 +22,6 @@ A local network inspecter and monitoring system written in python3.
 - Add timer for scan button in html file to show error if got no result after a specific time.
 - Display help and version from arguments without root access.
 - Add remove logic for known IP list settings.
-- Add IP address validation logic.
 
 ## How To Run
 
