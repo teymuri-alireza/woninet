@@ -194,11 +194,15 @@ choose: """
         rootLogger.error(f"Error at configuration menu in main.py: {e}")
         exit(1)
 
-    # finally save the file
-    with open(f"{SCRIPT_PATH}/settings.json", "w") as file:
-        json.dump(settings, file, indent=4)
-        rootLogger.debug(f"Saving the {SCRIPT_PATH}/settings.json")
-
+    try:
+        # finally save the file
+        with open(f"{SCRIPT_PATH}/settings.json", "w") as file:
+            json.dump(settings, file, indent=4)
+            rootLogger.debug(f"Saving the {SCRIPT_PATH}/settings.json")
+    
+    except PermissionError:
+        print("Aborting. Are you root?")
+    
     exit(0)
 
 # get the local IP address
@@ -252,6 +256,7 @@ while True:
                     if ping_result.strip() == "":
                         print("No result!")
                     else:
+                        print("Scan finished.")
                         print(ping_result, end="")
                     
                     time_took = scan_finish_time - scan_start_time
@@ -265,7 +270,7 @@ while True:
         rootLogger.error("Input must be an integer.")
     
     except KeyboardInterrupt:
-        rootLogger.info("Keyboard Intrrupted. Shutting down.")
+        rootLogger.info("Keyboard Interrupted. Wait for shutting down.")
         exit(130)
     
     except Exception as e:
