@@ -89,6 +89,13 @@ change the value of socket in the `settings.json` with this option.
 
 **Note:** The config options is available form both CLI and server mode.
 
+## 5. **-m , --monitor**
+
+- *Keeps scanning until KeyboardInterrupt.*
+
+The monitor mode keeps scanning until captures a keyboard interrupt. This mode is only available for the cli mode. You can use `-m`
+to keep scanning your network and check if there were new IPs found.
+
 # Uninstallation
 
 Using `sudo ./uninstall.sh`, you can remove any directory at `/usr/local/lib/.pymonitor` or any file at `/usr/local/bin/pymonitor`
