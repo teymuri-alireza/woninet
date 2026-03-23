@@ -15,7 +15,7 @@ rootLogger = logger_function()
 
 # global variables
 PORT = 8000
-SCRIPT_PATH = "/usr/local/lib/.pymonitor"
+SCRIPT_PATH = "/usr/local/lib/pymonitor"
 
 # check if settings.json exist
 try:

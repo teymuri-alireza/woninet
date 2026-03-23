@@ -17,11 +17,11 @@ if [[ $PROCEED != "y" ]] && [[ $PROCEED != "Y" ]]; then
     exit 0
 fi
 
-if [ -d "/usr/local/lib/.pymonitor" ]; then
-    echo "Removing library files at /usr/local/lib/.pymonitor"
-    rm -rf /usr/local/lib/.pymonitor/
+if [ -d "/usr/local/lib/pymonitor" ]; then
+    echo "Removing library files at /usr/local/lib/pymonitor"
+    rm -rf /usr/local/lib/pymonitor/
 else
-    echo "Library directory not found: /usr/local/lib/.pymonitor"
+    echo "Library directory not found: /usr/local/lib/pymonitor"
 fi
 
 if [ -f "/usr/local/bin/pymonitor" ]; then

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "This script moves the required files into /usr/local/lib/.pymonitor"
+echo "This script moves the required files into /usr/local/lib/pymonitor"
 echo "And create a command at /usr/local/bin/pymonitor"
 
 if [[ $USER != "root" ]]; then
@@ -53,7 +53,7 @@ fi
 
 echo "Adding command in /usr/local/bin/"
 
-echo -e "#!/bin/sh\n\nexec python3 /usr/local/lib/.pymonitor/main.py \$@" > /usr/local/bin/pymonitor
+echo -e "#!/bin/sh\n\nexec python3 /usr/local/lib/pymonitor/main.py \$@" > /usr/local/bin/pymonitor
 
 chmod +x /usr/local/bin/pymonitor
 

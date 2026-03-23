@@ -10,9 +10,9 @@ from utilities.validate_ip import validate_ip
 rootLogger = logger_function()
 
 # global variables
-SCRIPT_PATH = "/usr/local/lib/.pymonitor"
+SCRIPT_PATH = "/usr/local/lib/pymonitor"
 # scan result path will be always stored at /usr/local/lib
-SCAN_RESULT_PATH = "/usr/local/lib/.pymonitor"
+SCAN_RESULT_PATH = "/usr/local/lib/pymonitor"
 
 # check if index.html exist in the script path, else use the current directory
 try:

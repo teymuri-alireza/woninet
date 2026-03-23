@@ -11,14 +11,14 @@ This section explaines the process that the `build.sh` script takes to build pym
 **Note:** In the process of copying files, if any old file is found,
 the script gives the following error: `Found files in {path}, use ./uninstall first`.
 
-1. A directory will be created at `/usr/local/lib/.pymonitor` which will be used as the library and includes the files required to run the script.
+1. A directory will be created at `/usr/local/lib/pymonitor` which will be used as the library and includes the files required to run the script.
 
 2. Then a binary file will be created at `/usr/local/bin/pymonitor` which has the following content inside:
 
 ```shell
 #!/bin/sh
 
-exec python3 /usr/local/lib/.pymonitor/main.py $@
+exec python3 /usr/local/lib/pymonitor/main.py $@
 ```
 
 **Note:** this script is using python3 and will use the globally installed
@@ -34,7 +34,7 @@ be executable.
 ## B. No Build
 
 You can still use the script without building with `sudo python3 main.py`
-but the library files will be created at `/usr/local/lib/.pymonitor`. Files such as:
+but the library files will be created at `/usr/local/lib/pymonitor`. Files such as:
 
 - settings.json
 - ip_list.txt
@@ -98,7 +98,7 @@ to keep scanning your network and check if there were new IPs found.
 
 # Uninstallation
 
-Using `sudo ./uninstall.sh`, you can remove any directory at `/usr/local/lib/.pymonitor` or any file at `/usr/local/bin/pymonitor`
+Using `sudo ./uninstall.sh`, you can remove any directory at `/usr/local/lib/pymonitor` or any file at `/usr/local/bin/pymonitor`
 
 # Version
 

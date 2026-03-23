@@ -9,7 +9,7 @@ from utilities.logger import logger_function
 rootLogger = logger_function()
 
 # global variables
-SCRIPT_PATH = "/usr/local/lib/.pymonitor"
+SCRIPT_PATH = "/usr/local/lib/pymonitor"
 SCAN_FILES = f"{SCRIPT_PATH}/scan-files"
 
 try:
