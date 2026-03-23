@@ -95,6 +95,11 @@ if argument.verbose:
     from logging import DEBUG
     rootLogger.setLevel(DEBUG)
 
+# check monitor mode
+MONITOR_MODE = False
+if argument.monitor:
+    MONITOR_MODE = True
+
 try:
     # load settings
     with open(f"{SCRIPT_PATH}/settings.json", "r") as file:
@@ -194,11 +199,15 @@ choose: """
         rootLogger.error(f"Error at configuration menu in main.py: {e}")
         exit(1)
 
-    # finally save the file
-    with open(f"{SCRIPT_PATH}/settings.json", "w") as file:
-        json.dump(settings, file, indent=4)
-        rootLogger.debug(f"Saving the {SCRIPT_PATH}/settings.json")
-
+    try:
+        # finally save the file
+        with open(f"{SCRIPT_PATH}/settings.json", "w") as file:
+            json.dump(settings, file, indent=4)
+            rootLogger.debug(f"Saving the {SCRIPT_PATH}/settings.json")
+    
+    except PermissionError:
+        print("Aborting. Are you root?")
+    
     exit(0)
 
 # get the local IP address
@@ -227,9 +236,17 @@ print(f"Your private IP: {local_IP}")
 menu = """1. Scan the network
 0. Exit
 Choose: """
+
+# logging monitor mode
+if MONITOR_MODE:
+    rootLogger.info("Monitor mode is on.")
+
 while True:
     try:
-        choice = input(menu)
+        if MONITOR_MODE:
+            choice = 1
+        else:
+            choice = input(menu)
 
         if int(choice) == 0:
             exit(0)
@@ -252,10 +269,16 @@ while True:
                     if ping_result.strip() == "":
                         print("No result!")
                     else:
+                        print("Scan finished.")
                         print(ping_result, end="")
                     
-                    time_took = scan_finish_time - scan_start_time
-                    rootLogger.debug(f"Time took: {str(time_took)[0:-4]}")
+                    if not MONITOR_MODE:
+                        # The monitor mode suppose to run scans one after another.
+                        # printing time and logger in update_history after each turn is disturning
+                        time_took = scan_finish_time - scan_start_time
+                        rootLogger.debug(f"Time took: {str(time_took)[0:-4]}")
+                        rootLogger.debug(f"History updated at {SCRIPT_PATH}/scan-files/history.txt")
+
                     print()
         
         else:
@@ -265,7 +288,7 @@ while True:
         rootLogger.error("Input must be an integer.")
     
     except KeyboardInterrupt:
-        rootLogger.info("Keyboard Intrrupted. Shutting down.")
+        rootLogger.info("Keyboard Interrupted. Wait for shutting down.")
         exit(130)
     
     except Exception as e:

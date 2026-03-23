@@ -90,7 +90,7 @@ def update_history() -> None:
             with open(f"{SCAN_FILES}/ping_result.txt", "r") as ping_result:
                 for line in ping_result:
                     history.write(f"{date_format} {line.strip()}\n")
-        rootLogger.debug(f"History updated at {SCAN_FILES}/history.txt")
+        # root logger moved to main.py to handle monitor mode
     
     except PermissionError:
         rootLogger.error("Are you root?")

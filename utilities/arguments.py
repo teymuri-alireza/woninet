@@ -12,9 +12,9 @@ This tool get your local private IP, then generate 254 IP addresses
 to scan.
 
 Examples:
-    sudo pymonitor
-    sudo pymonitor -s 8.8.8.8
-    sudo pymonitor -p 8000 --serve"""
+  sudo pymonitor
+  sudo pymonitor -s 8.8.8.8
+  sudo pymonitor -p 8000 --serve"""
 
     epilog = """Note:
   -p only make sense if used with --serve.
@@ -26,6 +26,12 @@ Examples:
         formatter_class=argparse.RawDescriptionHelpFormatter,
         prog="pymonitor",
         epilog=epilog
+    )
+
+    parser.add_argument(
+        "-m", "--monitor",
+        action="store_true",
+        help="Keeps scanning until KeyboardInterrupt. (Only works in cli mode)"
     )
 
     parser.add_argument(
