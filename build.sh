@@ -12,7 +12,7 @@ echo
 
 # define variables for paths
 LIB_PATH=/usr/local/lib
-TOOL_PATH="${LIB_PATH}/.pymonitor"
+TOOL_PATH="${LIB_PATH}/pymonitor"
 
 # create directory
 if [ ! -d $TOOL_PATH ]; then
