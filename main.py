@@ -95,6 +95,11 @@ if argument.verbose:
     from logging import DEBUG
     rootLogger.setLevel(DEBUG)
 
+# check monitor mode
+MONITOR_MODE = False
+if argument.monitor:
+    MONITOR_MODE = True
+
 try:
     # load settings
     with open(f"{SCRIPT_PATH}/settings.json", "r") as file:
@@ -231,9 +236,17 @@ print(f"Your private IP: {local_IP}")
 menu = """1. Scan the network
 0. Exit
 Choose: """
+
+# logging monitor mode
+if MONITOR_MODE:
+    rootLogger.info("Monitor mode is on.")
+
 while True:
     try:
-        choice = input(menu)
+        if MONITOR_MODE:
+            choice = 1
+        else:
+            choice = input(menu)
 
         if int(choice) == 0:
             exit(0)
@@ -259,8 +272,13 @@ while True:
                         print("Scan finished.")
                         print(ping_result, end="")
                     
-                    time_took = scan_finish_time - scan_start_time
-                    rootLogger.debug(f"Time took: {str(time_took)[0:-4]}")
+                    if not MONITOR_MODE:
+                        # The monitor mode suppose to run scans one after another.
+                        # printing time and logger in update_history after each turn is disturning
+                        time_took = scan_finish_time - scan_start_time
+                        rootLogger.debug(f"Time took: {str(time_took)[0:-4]}")
+                        rootLogger.debug(f"History updated at {SCRIPT_PATH}/scan-files/history.txt")
+
                     print()
         
         else:

@@ -29,6 +29,12 @@ Examples:
     )
 
     parser.add_argument(
+        "-m", "--monitor",
+        action="store_true",
+        help="Keeps scanning until KeyboardInterrupt. (Only works in cli mode)"
+    )
+
+    parser.add_argument(
         "-s", "--socket",
         type=set_socket,
         help="Set socket for private IP determination; for the current scan only. (default: 8.8.8.8)"
