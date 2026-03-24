@@ -13,3 +13,9 @@ scan-files/
 
 # user settings
 settings.json
+
+# vs code directory
+.vscode/
+
+# nmap scan (-n argument)
+output.json

@@ -254,7 +254,16 @@ while True:
         elif int(choice) == 1:
             print("Starting scan...")
             scan_start_time = datetime.datetime.now()
-            result = scan_logic(local_IP)
+            # check --nmap value
+            if argument.nmap == []:
+                # set a default value
+                nmap_command = ["-sS", "-O"]
+            elif argument.nmap == None:
+                nmap_command = None
+            else:
+                nmap_command = argument.nmap
+            
+            result = scan_logic(local_IP, nmap_command=nmap_command)
             
             if result == -1:
                 # The error will be printed from the scan_logic function

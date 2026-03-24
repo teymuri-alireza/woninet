@@ -14,12 +14,15 @@ to scan.
 Examples:
   sudo pymonitor
   sudo pymonitor -s 8.8.8.8
-  sudo pymonitor -p 8000 --serve"""
+  sudo pymonitor -p 8000 --serve
+  sudo pymonitor -v -n \{Nmap scans with default command: -sS -O\}
+  sudo pymonitor -v -n \"-A -sX\""""
 
     epilog = """Note:
   -p only make sense if used with --serve.
   -c prompts user for configuration settings then closes the proram.
-  To change the socket value permanently, use --config ( -c )."""
+  To change the socket value permanently, use --config ( -c ).
+  -n and -m only work in cli mode."""
 
     parser = argparse.ArgumentParser(
         description=description,
@@ -32,6 +35,13 @@ Examples:
         "-m", "--monitor",
         action="store_true",
         help="Keeps scanning until KeyboardInterrupt. (Only works in cli mode)"
+    )
+
+    parser.add_argument(
+        "-n", "--nmap",
+        type=str,
+        nargs='*',
+        help="Performs a nmap scan against found IP addresses."
     )
 
     parser.add_argument(
