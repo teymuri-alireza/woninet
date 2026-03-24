@@ -22,7 +22,7 @@ A local network inspecter and monitoring system written in python3.
 - Add timer for scan button in html file to show error if got no result after a specific time.
 - Add OS error for non-Unix-based operating systems
 - Fix -p error. (No idea why it happens)
-- ping scan doesn't capture every host, and also may capture hosts which are down.
+- Fix unrecognized arguments for nmap scan.
 
 ## How To Run
 
