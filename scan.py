@@ -1,5 +1,6 @@
 import json
 import ping3
+import nmap
 import datetime
 import os
 from concurrent.futures import ThreadPoolExecutor
@@ -20,7 +21,7 @@ except PermissionError:
     # postpone error to load -h and -V without root access
     pass
 
-def scan_logic(ipAddr: str) -> int:
+def scan_logic(ipAddr: str, nmap_command: list) -> int:
     """
     The logic for scanning local network.
 
@@ -29,6 +30,8 @@ def scan_logic(ipAddr: str) -> int:
 
     Parameters:
         ipAddr (str) : Private IP of the device.
+
+        nmap_command (list | None) : The nmap command to perform against found IP addresses.
 
     Returns:
         int : Exit code of the function (0 for success, -1 for failure).
@@ -39,6 +42,10 @@ def scan_logic(ipAddr: str) -> int:
     exit_code = generate_ip(ipAddr)
     if exit_code == 0:
         exit_code = ping_function(src_ip=ipAddr)
+
+        if nmap_command is not None:
+            nmap_scan(nmap_command=nmap_command)
+
         if exit_code == 0:
             return 0
     return -1
@@ -152,3 +159,38 @@ def ping_function(src_ip: str) -> int:
     except FileNotFoundError as e:
         rootLogger.error(f"Error at ping_function function in scan.py file: {e}")
         return -1
+
+def nmap_scan(nmap_command: str):
+    """
+    Performs a nmap scan against found IP addresses.
+    
+    Parameters:
+        nmap_command (str) : The filename to be used for output.
+    """
+    # nmap command is not None here because it was handled in the scan_logic function.
+    try:
+        output = {}
+        port_scanner = nmap.PortScanner()
+        rootLogger.debug("Initializing nmap port scanner.")
+        with open(f"{SCAN_FILES}/ping_result.txt", "r") as ping_result:
+            for ip in ping_result:
+                # prettify the ip address
+                ip = ip.split(":")[0]
+                ip = ip.strip()
+                rootLogger.debug(f"Nmap scan for {ip}...")
+                # join options
+                nmap_args = " ".join(nmap_command)
+                output[ip] = port_scanner.scan(hosts=ip, arguments=nmap_args, ports="1-1000" ,sudo=True)
+        
+        # saving results
+        filename = "output.json"
+        with open(filename, "w") as results:
+            rootLogger.info(f"Saving nmap scan results to {filename}")
+            json.dump(output, results, indent=4)
+
+    except PermissionError:
+        rootLogger.error("You need root access. Quitting.")
+        exit(1)
+
+    except Exception as e:
+        rootLogger.error(f"Error at nmap_scan function in scan.py: {e}")
