@@ -46,7 +46,29 @@ but the library files will be created at `/usr/local/lib/pymonitor`. Files such 
 You can read the help from `pymonitor -h` to see the accepted arguments.
 Also the description for some arguments is written here:
 
-## 1. **-s , --socket** 
+## 1. **-m , --monitor**
+
+- *Keeps scanning until KeyboardInterrupt.*
+
+The monitor mode keeps scanning until captures a keyboard interrupt. This mode is only available for the cli mode. You can use `-m`
+to keep scanning your network and check if there were new IPs found.
+
+## 2. **-n , --nmap**
+
+- *Performs a nmap scan against found IP addresses.*
+
+This option activates the nmap scan using python3 module with the dafualt arguments of `-sS -O`. Nmap arguments can be overwritten if
+some value is passed like this:
+
+```shell
+sudo pymonitor -n "-sX -A"
+sudo pymonitor -n "-Pn"
+sudo pymonitor -n "{Any other option}"
+```
+
+Then the result of the nmap scan is saved into `output.json` in the current working directory.
+
+## 3. **-s , --socket** 
 
 - *Set socket for private IP determination; for the current scan only. (default: 8.8.8.8)*
 
@@ -59,21 +81,21 @@ sudo pymonitor -s 1.1.1.1
 **Note:** This will change the socket IP for the current scan only, and the socket will be fetched from the settings for later scans. To change this value
 permanently, check the `-c` argument.
 
-## 2. **--serve** 
+## 4. **--serve** 
 
 - *Serve the server instead of CLI mode*
 
 pymonitor's default mode is the cli mode. If you'd rather see the
 HTML file and run a server instead, use this option.
 
-## 3. **-p , --port** 
+## 5. **-p , --port** 
 
 - *Set port for the server. (default: 8000)*
 
 Using this options you can set the port for your server. Notice this option
 only make sense if used with --serve.
 
-## 4. **-c , --config** 
+## 6. **-c , --config** 
 
 - *Modify the configuration file and quit.*
 
@@ -88,13 +110,6 @@ change the value of socket in the `settings.json` with this option.
 - *Show current settings*
 
 **Note:** The config options is available form both CLI and server mode.
-
-## 5. **-m , --monitor**
-
-- *Keeps scanning until KeyboardInterrupt.*
-
-The monitor mode keeps scanning until captures a keyboard interrupt. This mode is only available for the cli mode. You can use `-m`
-to keep scanning your network and check if there were new IPs found.
 
 # Uninstallation
 
