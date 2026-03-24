@@ -8,21 +8,21 @@ def args(set_socket, set_port):
     """
     description = """
 A local network inspecter and monitoring system written in python3.
-This tool get your local private IP, then generate 254 IP addresses
-to scan.
-
-Examples:
-  sudo pymonitor
-  sudo pymonitor -s 8.8.8.8
-  sudo pymonitor -p 8000 --serve
-  sudo pymonitor -v -n \{Nmap scans with default command: -sS -O\}
-  sudo pymonitor -v -n \"-A -sX\""""
+This tool get your local private IP, then generate 254 IP addresses 
+to scan."""
 
     epilog = """Note:
   -p only make sense if used with --serve.
   -c prompts user for configuration settings then closes the proram.
   To change the socket value permanently, use --config ( -c ).
-  -n and -m only work in cli mode."""
+  -n and -m only work in cli mode.
+
+Examples:
+  sudo pymonitor
+  sudo pymonitor -s 8.8.8.8
+  sudo pymonitor -p 8000 --serve
+  sudo pymonitor -v -n
+  sudo pymonitor -v -n \"-A -sX\""""
 
     parser = argparse.ArgumentParser(
         description=description,
