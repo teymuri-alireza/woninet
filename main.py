@@ -70,16 +70,17 @@ def set_socket(socket: str) -> None:
         global SOCKET
         SOCKET = socket
 
-def set_port(port: int) -> None:
+def set_port(port: str) -> None:
     """
     Sets a new vlaue for port, to serve the server.
     """
     if port:
+        port = int(port)
         if port < 1 or port > 65535:
             rootLogger.error("PORT must be between 1 and 65535.")
             exit(1)
         global PORT
-        PORT = int(port)
+        PORT = port
 
 # calling argument handler
 argument = args(set_socket=set_socket, set_port=set_port)
