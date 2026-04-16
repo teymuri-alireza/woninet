@@ -5,8 +5,8 @@ For more info check out the documentation.md file
 """
 
 import socket
-import os
 import datetime
+from utilities.arguments import args
 from utilities.logger import logger_function
 
 # get logger configuration
@@ -14,11 +14,6 @@ rootLogger = logger_function()
 
 # global variables
 SOCKET = "8.8.8.8"
-
-# import utilities after checking settings to prevent unplanned PermissionError
-from scan import scan_logic
-from utilities.arguments import args
-from utilities.validate_ip import validate_ip
 
 # calling argument handler
 argument = args()
