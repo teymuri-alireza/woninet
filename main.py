@@ -13,37 +13,15 @@ from utilities.logger import logger_function
 rootLogger = logger_function()
 
 # global variables
-PORT = 8000
-SCRIPT_PATH = "/usr/local/lib/pymonitor"
+SOCKET = "8.8.8.8"
 
 # import utilities after checking settings to prevent unplanned PermissionError
 from scan import scan_logic
 from utilities.arguments import args
 from utilities.validate_ip import validate_ip
 
-# functions for handling arguments
-def set_socket(socket: str) -> None:
-    """
-    Sets a new value for socket, to get private IP.
-    """
-    if socket:
-        global SOCKET
-        SOCKET = socket
-
-def set_port(port: str) -> None:
-    """
-    Sets a new vlaue for port, to serve the server.
-    """
-    if port:
-        port = int(port)
-        if port < 1 or port > 65535:
-            rootLogger.error("PORT must be between 1 and 65535.")
-            exit(1)
-        global PORT
-        PORT = port
-
 # calling argument handler
-argument = args(set_socket=set_socket, set_port=set_port)
+argument = args()
 
 # handle the --version argument
 if argument.version:
@@ -55,11 +33,6 @@ if argument.version:
 if argument.verbose:
     from logging import DEBUG
     rootLogger.setLevel(DEBUG)
-
-# check monitor mode
-MONITOR_MODE = False
-if argument.monitor:
-    MONITOR_MODE = True
 
 # get the local IP address
 try:
