@@ -46,13 +46,6 @@ except Exception as e:
     rootLogger.error(f"Error at socket connection in main.py: {e}")
     exit(1)
 
-# If user used --serve options, instead of CLI mode
-if argument.serve:
-    rootLogger.debug("Entering server mode.")
-    from serve import serve_function
-    serve_function(local_IP=local_IP, port=PORT)
-    exit(0)
-
 # the CLI mode
 rootLogger.debug("Entering CLI mode scanner.")
 print(f"Your private IP: {local_IP}")
