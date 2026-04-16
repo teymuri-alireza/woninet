@@ -88,6 +88,9 @@ class PingCollector(BaseCollector):
 
                 try:
                     latency = future.result()
+                except PermissionError:
+                    rootLogger.error("pymonitor requires sudo to scan.")
+                    exit(1)
                 except Exception as e:
                     rootLogger.error(f"Error at PingCollector class: {e}")
                     latency = None
@@ -188,6 +191,9 @@ if __name__ == "__main__":
         monitor.start()
     except KeyboardInterrupt:
         rootLogger.info("Keyboard Interrupted. Wait for shutting down.")
+    except PermissionError:
+        rootLogger.error("pymonitor requires sudo to scan.")
+        exit(1)
     except Exception as e:
         rootLogger.error(f"Error occured: {e}")
         exit(1)
