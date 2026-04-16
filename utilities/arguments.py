@@ -7,11 +7,9 @@ def args():
     check `pymonitor -h` for more info.
     """
     description = """
-A local network inspecter and monitoring system written in python3.
-This tool get your local private IP, then generate 254 IP addresses 
-to scan."""
+A local network inspecter and monitoring system written in python3. This tool creates 254 IP addresses based on your local IP, then ping each of them and prints the found IP addresses."""
 
-    epilog = """"""
+    epilog = ""
 
     parser = argparse.ArgumentParser(
         description=description,
