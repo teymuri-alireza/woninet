@@ -1,8 +1,9 @@
 import socket
 import time
-import threading
+import ping3
 from datetime import datetime
 from typing import List, Dict
+from concurrent.futures import ThreadPoolExecutor
 from utilities.logger import logger_function
 from utilities.arguments import args
 
@@ -59,37 +60,57 @@ class MetricRecord:
 class BaseCollector:
     interval = 10
 
-    def collect(self, devices: Dict[str, Device]) -> List[MetricRecord]:
+    def collect(self, devices: Dict[str, Device], ip_addr: str) -> List[MetricRecord]:
         raise NotImplementedError
 
-    def run(self, devices: Dict[str, Device], store_callback):
-        while True:
-            result = self.collect(devices)
+    def run(self, devices: Dict[str, Device], ip_addr, store_callback):
+        # while True:
+            result = self.collect(devices, ip_addr=ip_addr)
             store_callback(result)
-            time.sleep(self.interval)
+            # time.sleep(self.interval)
 
 
 class PingCollector(BaseCollector):
     interval = 5
 
-    def collect(self, devices: Dict[str, Device]) -> List[MetricRecord]:
+    def collect(self, devices: Dict[str, Device], ip_addr: str) -> List[MetricRecord]:
         results = []
-        for ip, dev in devices.items():
-            latency = self.ping(ip)
-            dev.update_seen()
-            results.append(MetricRecord(ip, "latency_ms", latency))
+        with ThreadPoolExecutor(max_workers=20) as executor:
+            futures = {}
+
+            for ip, dev in devices.items():
+                future = executor.submit(self.ping, ip, ip_addr)
+                futures[future] = (ip, dev)
+            
+            for future in futures:
+                ip, dev = futures[future]
+                dev.update_seen()
+
+                try:
+                    latency = future.result()
+                except Exception as e:
+                    rootLogger.error(f"Error at PingCollector class: {e}")
+                    latency = None
+
+                results.append(MetricRecord(ip, "latency_ms", latency))
+        
         return results
 
     @staticmethod
-    def ping(ip):
-        # Requires Logic
-        return 1000
+    def ping(ip, src_addr):
+        response = ping3.ping(src_addr=src_addr, dest_addr=ip.strip(), timeout=1, ttl=64)
+        if response is None or response is False:
+            return None # Unreachable
+        latency = response * 1000 # Convert to milliseconds
+        rootLogger.debug(f"ip address: {ip} - latency: {latency:.2f} ms")
+        return latency
 
 # Device Discovery
 class DiscoveryEngine:
     def scan_subnet(self, ip_addr: str) -> Dict[str, Device]:
         ip_split = ip_addr.split(".")
         subnet = f"{ip_split[0]}.{ip_split[1]}.{ip_split[2]}"
+        rootLogger.debug(f"Discover subnet base on {subnet}.x")
         devices = {}
         for i in range(1, 255):
             ip = f"{subnet}.{i}"
@@ -106,6 +127,9 @@ class StorageEngine:
 
     def get_history(self, ip: str, metric: str) -> List[MetricRecord]:
         return [m for m in self.history if m.device_ip == ip and m.metric == metric]
+    
+    def clear_history(self):
+        self.history: List[MetricRecord] = []
 
 # Alert
 class AlertRule:
@@ -123,12 +147,16 @@ class AlertEngine:
     def evaluate(self):
         for rule in self.rules:
             for record in self.storage.history:
-                if record.metric == rule.metric and record.value > rule.threshold:
-                    print(f"[ALERT] {record.device_ip} exceeded {rule.metric}: {record.value}")
+                if record.value is not None and record.value is not False:
+                    if record.metric == rule.metric and record.value > rule.threshold:
+                        rootLogger.warning(f"[ALERT] {record.device_ip} exceeded {rule.metric}: {record.value:.2f}")
+        self.storage.clear_history()
 
 # Main Collector
 class NetworkMonitorCore:
     def __init__(self, ip_addr: str):
+        rootLogger.info(f"Initializing network monitor for {ip_addr}")
+        
         self.discovery = DiscoveryEngine()
         self.storage = StorageEngine()
 
@@ -146,19 +174,20 @@ class NetworkMonitorCore:
         )
 
     def start(self):
-        for collector in self.collectors:
-            thread = threading.Thread(
-                target=collector.run,
-                args=(self.devices, self.storage.store),
-                daemon=True
-            )
-            thread.start()
 
         while True:
-            self.alert_engine.evaluate()
-            time.sleep(3)
+            for collector in self.collectors:
+                collector.run(self.devices, local_ip, self.storage.store)
+                self.alert_engine.evaluate()
+            time.sleep(5)
 
 
 if __name__ == "__main__":
-    monitor = NetworkMonitorCore(ip_addr=local_ip)
-    monitor.start()
+    try:
+        monitor = NetworkMonitorCore(ip_addr=local_ip)
+        monitor.start()
+    except KeyboardInterrupt:
+        rootLogger.info("Keyboard Interrupted. Wait for shutting down.")
+    except Exception as e:
+        rootLogger.error(f"Error occured: {e}")
+        exit(1)
