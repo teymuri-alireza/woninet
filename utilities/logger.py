@@ -7,6 +7,8 @@ def logger_function() -> logging.Logger:
     The default output is console (stdout) and the level is info.
     """
     consoleLogFormat = "%(message)s"
+    fileLogFormat = "%(asctime)s - %(levelname)s - %(message)s"
+    dateFormat = "%Y-%M-%d %H:%M:%S"
 
     rootLogger = logging.getLogger()
 
@@ -15,7 +17,13 @@ def logger_function() -> logging.Logger:
         consoleHandler = logging.StreamHandler()
         consoleHandler.setFormatter(logging.Formatter(fmt=consoleLogFormat, datefmt=None))
         consoleHandler.setLevel(logging.DEBUG)
+
+        fileHandler = logging.FileHandler("logs.txt")
+        fileHandler.setFormatter(logging.Formatter(fileLogFormat, datefmt=dateFormat))
+        fileHandler.setLevel(logging.DEBUG)
+
         rootLogger.addHandler(consoleHandler)
+        rootLogger.addHandler(fileHandler)
 
         rootLogger.setLevel(logging.INFO)
 
