@@ -5,7 +5,6 @@ For more info check out the documentation.md file
 """
 
 import socket
-import json
 import os
 import datetime
 from utilities.logger import logger_function
@@ -17,49 +16,10 @@ rootLogger = logger_function()
 PORT = 8000
 SCRIPT_PATH = "/usr/local/lib/pymonitor"
 
-# check if settings.json exist
-try:
-    with open(f"{SCRIPT_PATH}/settings.json", "r") as file:
-        pass
-except FileNotFoundError:
-    try:
-        # make sure the directory exist
-        try:
-            os.mkdir(SCRIPT_PATH)
-        except:
-            pass
-        
-        # The base of the settings
-        settings_structure = {
-            "known_ip": [],
-            "socket": "8.8.8.8"
-        }
-        with open(f"{SCRIPT_PATH}/settings.json", "w") as file:
-            json.dump(settings_structure, file, indent=4)
-            rootLogger.info(f"Creating settings at {SCRIPT_PATH}/settings.json")
-    
-    except PermissionError:
-        # postpone error to load -h and -V without root access
-        pass
-
 # import utilities after checking settings to prevent unplanned PermissionError
 from scan import scan_logic
 from utilities.arguments import args
 from utilities.validate_ip import validate_ip
-
-try:
-    # fetch socket from the settings
-    with open(f"{SCRIPT_PATH}/settings.json", "r") as file:
-        settings = json.load(file)
-    SOCKET = settings["socket"]
-
-except FileNotFoundError:
-    # postpone error to load -h and -V without root access
-    pass
-
-except PermissionError:
-    # postpone error to load -h and -V without root access
-    pass
 
 # functions for handling arguments
 def set_socket(socket: str) -> None:
@@ -100,116 +60,6 @@ if argument.verbose:
 MONITOR_MODE = False
 if argument.monitor:
     MONITOR_MODE = True
-
-try:
-    # load settings
-    with open(f"{SCRIPT_PATH}/settings.json", "r") as file:
-        settings = json.load(file)
-
-except FileNotFoundError:
-    rootLogger.error("It seems like it's your first time running pymonitor. Run with 'sudo' to create settings.json.")
-    exit(1)
-
-except PermissionError:
-    rootLogger.error("Are you root?")
-    exit(1)
-
-# enter configuration settings
-if argument.config:
-    rootLogger.debug("Entering configuration settings.")
-    
-    # ask for user's input
-    menu = """1. Manage known IP list: Only unknown IP addresses will be shown in the ping result.
-2. Change socket value permanently (for private IP determination)
-9. Show current settings.
-0. exit
-choose: """
-    try:
-        choice = int(input(menu))
-
-        if choice == 0:
-            exit(0)
-    
-        elif choice == 1:
-            print("Known IP settings:")
-            print("Help: 1. seperate IP addresses with comma ( , )")
-            print("      2. re-entrying an IP address will remove it.")
-            ip_input = input("\tEnter your IP address: ")
-            
-            seperate_input = ip_input.split(",")
-            for ip in seperate_input:
-                ip = ip.strip()
-                if ip == "":
-                    continue
-
-                # remove IP address, if they exist
-                if ip in settings["known_ip"]:
-                    settings["known_ip"].remove(ip)
-                    rootLogger.info(f"Removing {ip} from known ip list.")
-                else:
-                    # validation and adding
-                    if validate_ip(ip):
-                        settings["known_ip"].append(ip)
-                        rootLogger.info(f"Adding {ip} to known ip list.")
-                    else:
-                        # The error will be printed from the validate_ip function
-                        print("Value(s) are not saved.")
-                        exit(1)
-
-            # sorting values
-            settings["known_ip"].sort()
-
-        elif choice == 2:
-            print("Socket settings:")
-            print("\tCurrent value: " + settings["socket"])
-            new_socket = input("\tNew value: (0 to quit) ")
-            
-            if new_socket == "0":
-                exit(0)
-            
-            settings["socket"] = new_socket
-            rootLogger.info(f"Changing socket value to {new_socket}")
-
-        elif choice == 9:
-            rootLogger.debug("Requested displaying settings.")
-            print("Known IP list: ", end="")
-            if settings["known_ip"] == []:
-                print("-")
-            else:
-                for ip in settings["known_ip"]:
-                    print(ip, end=" - ")
-                
-                print() # to increase readability
-            
-            print(f"Socket value: {settings["socket"]}")
-            exit(0)
-
-        else:
-            rootLogger.error("Invalid input.")
-            exit(1)
-    
-    except ValueError:
-        rootLogger.error("Input must be an integer.")
-        exit(1)
-    
-    except KeyboardInterrupt:
-        rootLogger.info("Keyboard Intrrupted. Shutting down.")
-        exit(130)
-
-    except Exception as e:
-        rootLogger.error(f"Error at configuration menu in main.py: {e}")
-        exit(1)
-
-    try:
-        # finally save the file
-        with open(f"{SCRIPT_PATH}/settings.json", "w") as file:
-            json.dump(settings, file, indent=4)
-            rootLogger.debug(f"Saving the {SCRIPT_PATH}/settings.json")
-    
-    except PermissionError:
-        print("Aborting. Are you root?")
-    
-    exit(0)
 
 # get the local IP address
 try:
