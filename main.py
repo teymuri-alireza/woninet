@@ -40,16 +40,27 @@ except Exception as e:
 
 # Data Models
 class Device:
+    """
+    Represents a discovered network device.
+    Stores identity information and the latest known metrics.
+    """
     def __init__(self, ip: str):
         self.ip = ip
         self.last_seen = None
         self.metrics = {} # Bandwidth, CPU, etc
     
     def update_seen(self):
+        """
+        Update timestamp indicating the device responded recently.
+        """
         self.last_seen = datetime.now()
 
 
 class MetricRecord:
+    """
+    Represents a single collected metric measurement
+    for a specific device at a specific time.
+    """
     def __init__(self, device_ip: str, metric: str, value: float, timestamp=None):
         self.device_ip = device_ip
         self.metric = metric
@@ -58,22 +69,39 @@ class MetricRecord:
 
 # Collectors
 class BaseCollector:
+    """
+    Abstract base class for all monitoring collectors.
+    Each collector periodically gathers metrics from devices.
+    """
     interval = 10
 
     def collect(self, devices: Dict[str, Device], ip_addr: str) -> List[MetricRecord]:
+        """
+        Collect metrics from devices.
+        Must be implemented by subclasses.
+        """
         raise NotImplementedError
 
     def run(self, devices: Dict[str, Device], ip_addr, store_callback):
-        # while True:
-            result = self.collect(devices, ip_addr=ip_addr)
-            store_callback(result)
-            # time.sleep(self.interval)
+        """
+        Main execution loop for the collector.
+        Runs forever and periodically sends collected metrics to storage.
+        """
+        result = self.collect(devices, ip_addr=ip_addr)
+        store_callback(result)
 
 
 class PingCollector(BaseCollector):
+    """
+    Collector that measures ICMP latency to devices.
+    Used for availability and response-time monitoring.
+    """
     interval = 5
 
     def collect(self, devices: Dict[str, Device], ip_addr: str) -> List[MetricRecord]:
+        """
+        Ping all devices and record latency metrics.
+        """
         results = []
         with ThreadPoolExecutor(max_workers=20) as executor:
             futures = {}
@@ -110,6 +138,9 @@ class PingCollector(BaseCollector):
 
 # Device Discovery
 class DiscoveryEngine:
+    """
+    build a dictionary of reachable devices.
+    """
     def scan_subnet(self, ip_addr: str) -> Dict[str, Device]:
         ip_split = ip_addr.split(".")
         subnet = f"{ip_split[0]}.{ip_split[1]}.{ip_split[2]}"
@@ -122,20 +153,36 @@ class DiscoveryEngine:
 
 # Storage
 class StorageEngine:
+    """
+    Stores collected metric data.
+    """
     def __init__(self):
         self.history: List[MetricRecord] = []
 
     def store(self, metrics: List[MetricRecord]):
+        """
+        Persist newly collected metrics.
+        """
         self.history.extend(metrics)
 
     def get_history(self, ip: str, metric: str) -> List[MetricRecord]:
+        """
+        Retrieve historical metric records for a device.
+        """
         return [m for m in self.history if m.device_ip == ip and m.metric == metric]
     
     def clear_history(self):
+        """
+        Clears and refreshes history to prevent confusion in Alert section.
+        """
         self.history: List[MetricRecord] = []
 
 # Alert
 class AlertRule:
+    """
+    Defines a monitoring rule that triggers an alert
+    when a metric exceeds a defined threshold.
+    """
     def __init__(self, metric: str, threshold: float, duration: int):
         self.metric = metric
         self.threshold = threshold
@@ -143,11 +190,19 @@ class AlertRule:
 
 
 class AlertEngine:
+    """
+    Evaluates stored metrics against alert rules
+    and generates alerts when conditions are violated.
+    """
     def __init__(self, storage: StorageEngine, rules: List[AlertRule]):
         self.storage = storage
         self.rules = rules
 
     def evaluate(self):
+        """
+        Scan stored metrics and trigger alerts
+        when thresholds are exceeded.
+        """
         for rule in self.rules:
             for record in self.storage.history:
                 if record.value is not None and record.value is not False:
@@ -157,6 +212,10 @@ class AlertEngine:
 
 # Main Collector
 class NetworkMonitorCore:
+    """
+    Central controller coordinating discovery, collectors,
+    storage, and alert processing.
+    """
     def __init__(self, ip_addr: str):
         rootLogger.info(f"Initializing network monitor for {ip_addr}")
         
@@ -177,7 +236,9 @@ class NetworkMonitorCore:
         )
 
     def start(self):
-
+        """
+        Start the collectors and continuously evaluate alerts.
+        """
         while True:
             for collector in self.collectors:
                 collector.run(self.devices, local_ip, self.storage.store)
