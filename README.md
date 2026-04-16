@@ -7,21 +7,16 @@ A local network inspecter and monitoring system written in python3.
 ## Features
 
 - Uses threads for faster scans.
-- Supports both CLI mode and server mode.
-- Detailed logs stdout.
-- Configuration settings for known IP list and socket address.
-- IP validation logic.
-- Simple build.sh file for easier set up.
+- Detailed log output.
+<!-- - Simple build.sh file for easier set up. -->
 
 ## Future Plans
 
-- Add -o for saving output.
+- Fetch latency limit as argument from user.
 
-## Known Issues
+<!-- ## Known Issues -->
 
-- Add timer for scan button in html file to show error if got no result after a specific time.
-- Add OS error for non-Unix-based operating systems
-- Fix unrecognized arguments for nmap scan.
+<!-- - Add OS error for non-Unix-based operating systems -->
 
 ## How To Run
 
@@ -37,7 +32,7 @@ pip3 install -r requirements.txt
 sudo python3 main.py -V
 ```
 
-### Use build.sh
+<!-- ### Use build.sh
 
 - Use `sudo ./build.sh`. This script copy files into
 `/usr/local/lib/pymonitor` and create a command at `/usr/local/bin/pymonitor`.
@@ -46,13 +41,12 @@ sudo python3 main.py -V
 
 ```shell
 sudo pymonitor --version
-```
+``` -->
 
 ## Requirements
 
 - Unix-based operating systems
 - ping3 v4.0.4 (pyhton3 module)
-- nmap v0.6.1 (python3 module)
 
 ## Documentaion
 
@@ -67,11 +61,8 @@ Contributions are welcome. If you have a new feature in mind or have found a bug
 You can make changes or open an issue in any part of the code. Such as:
 
 - Scan logic
-- server handling and monitoring
-- CLI options
-- Configuration settings
+<!-- - server handling and monitoring -->
 - Arguments and options
-- Directory paths
 - Texting and typo
 - Wrong grammar or unjust documents
 
