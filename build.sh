@@ -1,60 +1,56 @@
 #!/bin/bash
 
-echo "This script moves the required files into /usr/local/lib/pymonitor"
-echo "And create a command at /usr/local/bin/pymonitor"
-
 if [[ $USER != "root" ]]; then
     echo "$0 requires root access."
     exit 1
 fi
 
-echo
-
 # define variables for paths
-LIB_PATH=/usr/local/lib
-TOOL_PATH="${LIB_PATH}/pymonitor"
+LIB_PATH=/usr/local/lib/pymonitor
+BIN_PATH=/usr/local/bin/
 
 # create directory
-if [ ! -d $TOOL_PATH ]; then
-    echo "Creating .pymonitor at $TOOL_PATH"
-    mkdir $TOOL_PATH
+if [ ! -d $LIB_PATH ]; then
+    echo "Creating pymonitor at $LIB_PATH"
+    mkdir $LIB_PATH
 else
-    echo "Found the script's directory at $TOOL_PATH"
-fi
-
-# copy major files, if they don't exist
-if [ ! -f "$TOOL_PATH/main.py" ] && [ ! -f "$TOOL_PATH/scan.py" ] && [ ! -f "$TOOL_PATH/serve.py" ]; then
-    echo "copying main.py scan.py serve.py"
-    cp main.py scan.py serve.py $TOOL_PATH/
-else
-    echo "Found files in $TOOL_PATH, use ./uninstall first."
+    echo "$LIB_PATH exists. Remove $LIB_PATH and $BIN_PATH/pymonitor then try again."
     exit 1
 fi
 
-# copy the utilities directory and files, if they don't exist
-if [ ! -d "$TOOL_PATH/utilities" ] && [ ! -f "$TOOL_PATH/utilities/arguments.py" ] && [ ! -f "$TOOL_PATH/utilities/logger.py" ] && [ ! -f "$TOOL_PATH/utilities/version.py" ]; then
+# copy main.py
+if [ ! -f "$LIB_PATH/main.py" ]; then
+    echo "copying main.py"
+    cp main.py $LIB_PATH/
+else
+    echo "Found main.py in $LIB_PATH, Remove $LIB_PATH and $BIN_PATH/pymonitor then try again."
+    exit 1
+fi
+
+# copy the utilities directory and files
+if [ ! -d "$LIB_PATH/utilities" ] && [ ! -f "$LIB_PATH/utilities/arguments.py" ] && [ ! -f "$LIB_PATH/utilities/logger.py" ] && [ ! -f "$LIB_PATH/utilities/version.py" ]; then
     echo "copying utilities files"
-    mkdir $TOOL_PATH/utilities
-    cp utilities/* $TOOL_PATH/utilities/
+    mkdir $LIB_PATH/utilities
+    cp utilities/* $LIB_PATH/utilities/
 else
-    echo "Found files in $TOOL_PATH/utilities, use ./uninstall first."
+    echo "Found files in $LIB_PATH/utilities, Remove $LIB_PATH and $BIN_PATH/pymonitor then try again."
     exit 1
 fi
 
-# copy the static files for server, if they don't exist
-if [ ! -d "$TOOL_PATH/static-files" ] && [ ! -f "$TOOL_PATH/static-files/index.html" ] && [ ! -f "$TOOL_PATH/static-files/app.js" ] && [ ! -f "$TOOL_PATH/static-files/style.css" ]; then
-    echo "copying static files"
-    mkdir $TOOL_PATH/static-files
-    cp static-files/* $TOOL_PATH/static-files
-else
-    echo "Found files in $TOOL_PATH/static-files, use ./uninstall first."
-    exit 1
-fi
+# # copy the static files for server, if they don't exist
+# if [ ! -d "$LIB_PATH/static-files" ] && [ ! -f "$LIB_PATH/static-files/index.html" ] && [ ! -f "$LIB_PATH/static-files/app.js" ] && [ ! -f "$LIB_PATH/static-files/style.css" ]; then
+#     echo "copying static files"
+#     mkdir $LIB_PATH/static-files
+#     cp static-files/* $LIB_PATH/static-files
+# else
+#     echo "Found files in $LIB_PATH/static-files, use ./uninstall first."
+#     exit 1
+# fi
 
-echo "Adding command in /usr/local/bin/"
+echo "Adding command in $BIN_PATH"
 
-echo -e "#!/bin/sh\n\nexec python3 /usr/local/lib/pymonitor/main.py \$@" > /usr/local/bin/pymonitor
+echo -e "#!/bin/sh\n\nexec python3 /usr/local/lib/pymonitor/main.py \$@" > $BIN_PATH/pymonitor
 
-chmod +x /usr/local/bin/pymonitor
+chmod +x $BIN_PATH/pymonitor
 
-echo "done. verify with: pymonitor -h"
+echo "done. verify with: pymonitor -V"

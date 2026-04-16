@@ -6,7 +6,13 @@ Read this file if you have any question or confusion about this program.
 
 ## A. build.sh
 
-This part is under maintenance for update 1.0.0
+This file create a directory at `/usr/local/lib/pymonitor` and copy main.py and utilities inside. Then create a command at `/usr/local/bin/pymonitor` which contains the script below:
+
+```shell
+#!/bin/sh
+
+exec python3 /usr/local/lib/pymonitor/main.py \$@
+```
 
 ## B. No Build
 
