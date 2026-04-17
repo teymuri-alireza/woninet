@@ -42,13 +42,17 @@ except Exception as e:
 class Device:
     """
     Represents a discovered network device.
-    Stores identity information and the latest known metrics.
+    Stores identity information and the latest known metrics and state.
     """
     def __init__(self, ip: str):
         self.ip: str = ip
         self.last_seen: Optional[datetime] = None
         self.metrics: Dict[str, float] = {} # Bandwidth, CPU, etc
     
+        self.exists: bool = False # True if ARP has seen this IP
+        self.reachable: bool = False # True if ICMP is sane and within latency threshold
+        self.mac: Optional[str] = None # MAC address from ARP table
+        self.latency: Optional[float] = None
     def update_seen(self):
         """
         Update timestamp indicating the device responded recently.
