@@ -7,7 +7,7 @@ def args():
     check `pymonitor -h` for more info.
     """
     description = """
-A local network inspecter and monitoring system written in python3. This tool creates 254 IP addresses based on your local IP, then ping each of them and prints the found IP addresses."""
+A local network monitoring system. It enumerates all candidate IP addresses in your /24 subnet and performs ARP + ICMP host detection to determine existence, reachability, and latency. Metrics are collected continuously and processed through an alert engine."""
 
     epilog = ""
 

@@ -1,8 +1,10 @@
 import socket
 import time
 import ping3
+import re
+import subprocess
 from datetime import datetime
-from typing import List, Dict
+from typing import List, Dict, Optional
 from concurrent.futures import ThreadPoolExecutor
 from utilities.logger import logger_function
 from utilities.arguments import args
@@ -42,13 +44,17 @@ except Exception as e:
 class Device:
     """
     Represents a discovered network device.
-    Stores identity information and the latest known metrics.
+    Stores identity information and the latest known metrics and state.
     """
     def __init__(self, ip: str):
-        self.ip = ip
-        self.last_seen = None
-        self.metrics = {} # Bandwidth, CPU, etc
+        self.ip: str = ip
+        self.last_seen: Optional[datetime] = None
+        self.metrics: Dict[str, float] = {} # Bandwidth, CPU, etc
     
+        self.exists: bool = False # True if ARP has seen this IP
+        self.reachable: bool = False # True if ICMP is sane and within latency threshold
+        self.mac: Optional[str] = None # MAC address from ARP table
+        self.latency: Optional[float] = None
     def update_seen(self):
         """
         Update timestamp indicating the device responded recently.
@@ -66,6 +72,110 @@ class MetricRecord:
         self.metric = metric
         self.value = value
         self.timestamp = timestamp or datetime.now()
+
+# ARP and ICMP detection
+class HostStatus:
+    """
+    Combined ARP + ICMP status for a given IP
+    """
+    def __init__(self, ip: str, exists: bool = False, reachable: bool = False, latency: Optional[float] = None, mac: Optional[str] = None):
+        self.ip = ip
+        self.exists = exists
+        self.reachable = reachable
+        self.latency = latency # in milliseconds
+        self.mac = mac
+
+
+def get_arp_mac(ip: str) -> Optional[str]:
+    """
+    Return MAC address from ARP table for the given IP, or None if not present.
+
+    Notes:
+        - Uses `arp -an` output and parses it.
+        - Works on most Unix-like systems. If fails, it simply returns None and rely on ICMP only.
+    """
+    try:
+        # Suppress strerr to avoid clutter when ARP table is empty or limited
+        output = subprocess.check_output(["arp", "-an"], stderr=subprocess.DEVNULL)
+        output = output.decode()
+    except Exception as e:
+        rootLogger.debug(f"Failed to read ARP table: {e}")
+        return None
+
+    regex = rf"\({re.escape(ip)}\)\s+at\s+([0-9a-fA-F:]+)\s"
+    match = re.search(regex, output)
+    if match:
+        return match.group(1)
+    return None
+
+
+def detect_host(ip: str, src_addr: str, timeout: float = 1.0) -> HostStatus:
+    """
+    Combined ARP + ICMP detection for accurate device status.
+
+    Rules:
+        - If ARP_FAIL and ICMP_FAIL -> Host does NOT exist (exists=False, reachable=False)
+        - If ARP_OK and ICMP_FAIL -> Host exists but unreachable / ICMP blocked
+        - If ARP_OK and ICMP_OK < 300 ms -> Host is reachable
+        - If ARP_OK and ICMP_OK >= 300 ms -> Treat as ARP-timeout noise (unreachable)
+    """
+    status = HostStatus(ip=ip)
+
+    # Skip source ip to prevent confusion.
+    if ip == src_addr:
+        status.exists = None
+        status.reachable = None
+        status.mac = None
+        status.latency = None
+        return status
+
+    # ARP check
+    mac = get_arp_mac(ip=ip)
+    if mac:
+        status.exists = True
+        status.mac = mac
+    
+    # ICMP check
+    try:
+        response = ping3.ping(src_addr=src_addr, dest_addr=ip.strip(), timeout=timeout, ttl=64)
+    except PermissionError:
+        raise
+    except Exception as e:
+        rootLogger.error(f"Error during ICMP ping at detect_host function, to {ip}: {e}")
+        response = None
+    
+    latency: Optional[float] = None
+    if response is not None and response is not False:
+        latency = response * 1000 # Convert to milliseconds
+        # rootLogger.debug(f"IP address: {ip} - raw latency: {latency:.2f}")
+
+    status.latency = latency
+
+    # Classification logic
+    if not mac and latency is None:
+        # Host is not in ARP table and doesn't respond to ICMP
+        status.exists = False
+        status.reachable = False
+        return status
+    
+    if mac and latency is None:
+        # Device exists but doesn't respond to ICMP
+        status.exists = True
+        status.reachable = False
+        return status
+
+    if latency is not None:
+        if latency < 300.0:
+            # Acceptable latency (reachable)
+            status.exists = bool(mac)
+            status.reachable = True
+        else:
+            # High-latency ICMP, often ARP resolution noise (unreachable)
+            status.exists = bool(mac)
+            status.reachable = False
+
+    return status
+
 
 # Collectors
 class BaseCollector:
@@ -93,52 +203,82 @@ class BaseCollector:
 
 class PingCollector(BaseCollector):
     """
-    Collector that measures ICMP latency to devices.
-    Used for availability and response-time monitoring.
+    Collector that measures ICMP latency to devices,
+    enhanced with ARP-based existence detection.
     """
     interval = 5
 
     def collect(self, devices: Dict[str, Device], ip_addr: str) -> List[MetricRecord]:
         """
-        Ping all devices and record latency metrics.
+        For each device:
+            - Use ARP + ICMP to determine existence and reachability.
+            - Update Device fields.
+            - Record latency metric only when reachable and latency is sane.
         """
-        results = []
-        with ThreadPoolExecutor(max_workers=20) as executor:
-            futures = {}
+        results: List[MetricRecord] = []
 
-            for ip, dev in devices.items():
-                future = executor.submit(self.ping, ip, ip_addr)
-                futures[future] = (ip, dev)
+        def worker(ip: str, dev: Device) -> MetricRecord:
+            try:
+                status = detect_host(ip=ip, src_addr=ip_addr, timeout=1)
+            except PermissionError:
+                raise
+
+            # Update device state from status
+            dev.exists = status.exists
+            dev.reachable = status.reachable
+            dev.mac = status.mac
+            dev.latency = status.latency
+
+            if status.reachable:
+                # Only consider reachable hosts as recently seen
+                dev.update_seen()
             
-            for future, (ip, dev) in futures.items():
+            value = status.latency if status.reachable else None
+
+            if value is not None:
+                rootLogger.debug(
+                    f"Device {ip}: exists={dev.exists}, reachable={dev.reachable}, "
+                    f"MAC={dev.mac}, latency={value:.2f} ms"
+                )
+            else:
+                if dev.exists:
+                    rootLogger.debug(
+                        f"Device {ip}: exists={dev.exists}, reachable{dev.reachable}, "
+                        f"MAC={dev.mac}, latency=None"
+                    )
+                pass
+            
+            return MetricRecord(ip, "latency_ms", value)
+
+        with ThreadPoolExecutor(max_workers=20) as executor:
+            future_to_ip = {
+                executor.submit(worker, ip, dev): ip
+                for ip, dev in devices.items()
+            }
+
+            for future in future_to_ip:
                 try:
-                    latency = future.result()
-                    if latency is not None:
-                        dev.update_seen()
+                    metric = future.result()
                 except PermissionError:
                     rootLogger.error("pymonitor requires sudo to scan.")
-                    raise
+                    exit(1)
                 except Exception as e:
-                    rootLogger.error(f"Error at PingCollector class: {e}")
-                    latency = None
+                    ip = future_to_ip[future]
+                    rootLogger.error(f"Error in PingCollector for {ip}: {e}")
+                    continue
+                else:
+                    results.append(metric)
 
-                results.append(MetricRecord(ip, "latency_ms", latency))
-        
         return results
 
-    @staticmethod
-    def ping(ip, src_addr):
-        response = ping3.ping(src_addr=src_addr, dest_addr=ip.strip(), timeout=1, ttl=64)
-        if response is None or response is False:
-            return None # Unreachable
-        latency = response * 1000 # Convert to milliseconds
-        rootLogger.debug(f"ip address: {ip} - latency: {latency:.2f} ms")
-        return latency
-
 # Device Discovery
-class DiscoveryEngine:
+class SubnetEnumerator:
     """
-    build a dictionary of reachable devices.
+    Build a dictionary of candidate devices within the local /24 subnet.
+
+    Note:
+        This does NOT confirm reachability; it only enumerates IPs.
+        Logic in PingCollector will determine existence and reachability.
     """
     def scan_subnet(self, ip_addr: str) -> Dict[str, Device]:
         ip_split = ip_addr.split(".")
@@ -218,10 +358,10 @@ class NetworkMonitorCore:
     def __init__(self, ip_addr: str):
         rootLogger.info(f"Initializing network monitor for {ip_addr}")
         
-        self.discovery = DiscoveryEngine()
+        self.subnet_enumerator = SubnetEnumerator()
         self.storage = StorageEngine()
 
-        self.devices = self.discovery.scan_subnet(ip_addr)
+        self.devices = self.subnet_enumerator.scan_subnet(ip_addr)
 
         self.collectors = [
             PingCollector(),
