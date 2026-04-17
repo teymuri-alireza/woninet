@@ -1,6 +1,8 @@
 import socket
 import time
 import ping3
+import re
+import subprocess
 from datetime import datetime
 from typing import List, Dict, Optional
 from concurrent.futures import ThreadPoolExecutor
