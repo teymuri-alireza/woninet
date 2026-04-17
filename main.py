@@ -117,7 +117,7 @@ class PingCollector(BaseCollector):
                         dev.update_seen()
                 except PermissionError:
                     rootLogger.error("pymonitor requires sudo to scan.")
-                    exit(1)
+                    raise
                 except Exception as e:
                     rootLogger.error(f"Error at PingCollector class: {e}")
                     latency = None
