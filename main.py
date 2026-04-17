@@ -110,15 +110,14 @@ class PingCollector(BaseCollector):
                 future = executor.submit(self.ping, ip, ip_addr)
                 futures[future] = (ip, dev)
             
-            for future in futures:
-                ip, dev = futures[future]
-                dev.update_seen()
-
+            for future, (ip, dev) in futures.items():
                 try:
                     latency = future.result()
+                    if latency is not None:
+                        dev.update_seen()
                 except PermissionError:
                     rootLogger.error("pymonitor requires sudo to scan.")
-                    exit(1)
+                    raise
                 except Exception as e:
                     rootLogger.error(f"Error at PingCollector class: {e}")
                     latency = None
@@ -173,9 +172,9 @@ class StorageEngine:
     
     def clear_history(self):
         """
-        Clears and refreshes history to prevent confusion in Alert section.
+        Clears history to prevent confusion in Alert section.
         """
-        self.history: List[MetricRecord] = []
+        self.history = []
 
 # Alert
 class AlertRule:
