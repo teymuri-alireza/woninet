@@ -113,6 +113,8 @@ class PingCollector(BaseCollector):
             for future, (ip, dev) in futures.items():
                 try:
                     latency = future.result()
+                    if latency is not None:
+                        dev.update_seen()
                 except PermissionError:
                     rootLogger.error("pymonitor requires sudo to scan.")
                     exit(1)
