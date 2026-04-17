@@ -272,9 +272,13 @@ class PingCollector(BaseCollector):
         return results
 
 # Device Discovery
-class DiscoveryEngine:
+class SubnetEnumerator:
     """
-    build a dictionary of reachable devices.
+    Build a dictionary of candidate devices within the local /24 subnet.
+
+    Note:
+        This does NOT confirm reachability; it only enumerates IPs.
+        Logic in PingCollector will determine existence and reachability.
     """
     def scan_subnet(self, ip_addr: str) -> Dict[str, Device]:
         ip_split = ip_addr.split(".")
@@ -354,10 +358,10 @@ class NetworkMonitorCore:
     def __init__(self, ip_addr: str):
         rootLogger.info(f"Initializing network monitor for {ip_addr}")
         
-        self.discovery = DiscoveryEngine()
+        self.subnet_enumerator = SubnetEnumerator()
         self.storage = StorageEngine()
 
-        self.devices = self.discovery.scan_subnet(ip_addr)
+        self.devices = self.subnet_enumerator.scan_subnet(ip_addr)
 
         self.collectors = [
             PingCollector(),
