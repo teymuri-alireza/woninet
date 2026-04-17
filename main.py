@@ -110,10 +110,7 @@ class PingCollector(BaseCollector):
                 future = executor.submit(self.ping, ip, ip_addr)
                 futures[future] = (ip, dev)
             
-            for future in futures:
-                ip, dev = futures[future]
-                dev.update_seen()
-
+            for future, (ip, dev) in futures.items():
                 try:
                     latency = future.result()
                 except PermissionError:
