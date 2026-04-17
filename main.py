@@ -2,7 +2,7 @@ import socket
 import time
 import ping3
 from datetime import datetime
-from typing import List, Dict
+from typing import List, Dict, Optional
 from concurrent.futures import ThreadPoolExecutor
 from utilities.logger import logger_function
 from utilities.arguments import args
@@ -45,9 +45,9 @@ class Device:
     Stores identity information and the latest known metrics.
     """
     def __init__(self, ip: str):
-        self.ip = ip
-        self.last_seen = None
-        self.metrics = {} # Bandwidth, CPU, etc
+        self.ip: str = ip
+        self.last_seen: Optional[datetime] = None
+        self.metrics: Dict[str, float] = {} # Bandwidth, CPU, etc
     
     def update_seen(self):
         """
