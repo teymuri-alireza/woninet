@@ -173,9 +173,9 @@ class StorageEngine:
     
     def clear_history(self):
         """
-        Clears and refreshes history to prevent confusion in Alert section.
+        Clears history to prevent confusion in Alert section.
         """
-        self.history: List[MetricRecord] = []
+        self.history = []
 
 # Alert
 class AlertRule:
