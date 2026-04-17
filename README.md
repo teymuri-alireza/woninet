@@ -1,71 +1,116 @@
 # pymonitor
 
-A local network inspecter and monitoring system written in python3.
+A local network monitoring system.
+It enumerates all candidate IP addresses in your /24 subnet and performs ARP + ICMP host detection to determine existence,
+reachability, and latency. Metrics are collected continuously and processed through an alert engine.
 
 **Note: This script requires sudo privileges.**
 
 ## Features
 
-- Uses threads for faster scans.
-- Detailed log output.
-<!-- - Simple build.sh file for easier set up. -->
+- **ARP + ICMP Host Detection** (Distinguishes real devices from nonexistent IPs and filters out Wi‑Fi ARP‑delay noise.)
+
+- **Continuous Monitoring Loop**
+
+- **Alert Engine** (Evaluates real‑time alert rules (e.g., latency thresholds))
+
+- **Threaded Collectors**
+
+- **Structured Device Model** (Tracks metadata such as last‑seen timestamp, MAC address (when available), reachability, and latency.)
+
+- **In‑Memory Storage Engine**
+
+- **Detailed Logging**
+
+- **Simple `build.sh` Setup**
 
 ## Future Plans
 
-- Fetch latency limit as argument from user.
+- Pass latency limit and alert rules as command line argument.
+- Add ARP table caching to further reduce Wi‑Fi latency noise.
+- Optional SQLite storage for long‑term historical metrics.
+- Web‑based dashboard for real‑time monitoring.
 
-<!-- ## Known Issues -->
+## Known Issues
 
-<!-- - Add OS error for non-Unix-based operating systems -->
+- No Persistent Storage Yet
+- Monitoring Scope Limited to /24 Subnet
+
 
 ## How To Run
 
-- Clone the repo.
+Clone the repo First.
+
+```shell
+git clone https://github.com/teymuri-alireza/pymonitor
+cd pymonitor
+```
 
 ### Run using virtual envirenment
 
-- Create a python virtual envirenment and activate it.
-- Type these commands in the terminal:
+1. Create a Python virtual envirenment and activate it:
+
+```shell
+python3 -m venv venv
+source venv/bin/activate
+```
+
+2. Install dependencies and run the monitor:
 
 ```shell
 pip3 install -r requirements.txt
 sudo python3 main.py -V
 ```
 
-<!-- ### Use build.sh
+### Use build.sh
 
-- Use `sudo ./build.sh`. This script copy files into
-`/usr/local/lib/pymonitor` and create a command at `/usr/local/bin/pymonitor`.
+1. Run:
 
-**Note: `Build.sh` only works if required modules are installed globally. To activate the `build.sh` in a pyhton envirenment, you may want to edit `/usr/local/bin/pymonitor` file to use `/path/to/venv/bin/python3` isntead of `python3`**
+```shell
+sudo ./build.sh
+```
+
+This script will:
+
+- Copy the project files into/usr/local/lib/pymonitor
+- Create a global launcher command at/usr/local/bin/pymonitor
+
+2. Test the installed command:
 
 ```shell
 sudo pymonitor --version
-``` -->
+```
+
+**Note:**
+
+build.sh only works if required modules are installed globally.
+
+If you want to use a virtual environment, edit `/usr/local/bin/pymonitor` and replace python3 with the path to your venv’s Python interpreter, for example:
+
+`/path/to/venv/bin/python3`
 
 ## Requirements
 
 - Unix-based operating systems
+- Python 3.8+
 - ping3 v4.0.4 (pyhton3 module)
+- Root privileges
 
 ## Documentaion
 
-if you have any question or confusion you can check the [documentation](./documentation.md) guide.
+if you have any question or need clarification, check the [documentation](./documentation.md) guide.
 
 ## Contribution
 
 Contributions are welcome. If you have a new feature in mind or have found a bug, please consider opening a pull request or an issue.
 
-### What to contribute
+### What You Can Contribute
 
-You can make changes or open an issue in any part of the code. Such as:
-
-- Scan logic
-<!-- - server handling and monitoring -->
-- Arguments and options
-- Texting and typo
-- Wrong grammar or unjust documents
+- Scan logic improvements
+- Arguments, flags and CLI enhancements
+- Code quality, structure or performance
+- Fixes for typoes, grammar or documentation errors
 
 ### What not to contribute
 
-Don't change the version value. The maintainer will bump version after specific merges or chnages.
+Don't modify the version number. Versioning is handled by the maintainer after significant merges or changes.
