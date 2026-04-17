@@ -201,47 +201,73 @@ class BaseCollector:
 
 class PingCollector(BaseCollector):
     """
-    Collector that measures ICMP latency to devices.
-    Used for availability and response-time monitoring.
+    Collector that measures ICMP latency to devices,
+    enhanced with ARP-based existence detection.
     """
     interval = 5
 
     def collect(self, devices: Dict[str, Device], ip_addr: str) -> List[MetricRecord]:
         """
-        Ping all devices and record latency metrics.
+        For each device:
+            - Use ARP + ICMP to determine existence and reachability.
+            - Update Device fields.
+            - Record latency metric only when reachable and latency is sane.
         """
-        results = []
-        with ThreadPoolExecutor(max_workers=20) as executor:
-            futures = {}
+        results: List[MetricRecord] = []
 
-            for ip, dev in devices.items():
-                future = executor.submit(self.ping, ip, ip_addr)
-                futures[future] = (ip, dev)
+        def worker(ip: str, dev: Device) -> MetricRecord:
+            try:
+                status = detect_host(ip=ip, src_addr=ip_addr, timeout=1)
+            except PermissionError:
+                raise
+
+            # Update device state from status
+            dev.exists = status.exists
+            dev.reachable = status.reachable
+            dev.mac = status.mac
+            dev.latency = status.latency
+
+            if status.reachable:
+                # Only consider reachable hosts as recently seen
+                dev.update_seen()
             
-            for future, (ip, dev) in futures.items():
+            value = status.latency if status.reachable else None
+
+            if value is not None:
+                rootLogger.debug(
+                    f"Device {ip}: exists={dev.exists}, reachable={dev.reachable}, "
+                    f"MAC={dev.mac}, latency={value:.2f} ms"
+                )
+            else:
+                if dev.exists:
+                    rootLogger.debug(
+                        f"Device {ip}: exists={dev.exists}, reachable{dev.reachable}, "
+                        f"MAC={dev.mac}, latency=None"
+                    )
+                pass
+            
+            return MetricRecord(ip, "latency_ms", value)
+
+        with ThreadPoolExecutor(max_workers=20) as executor:
+            future_to_ip = {
+                executor.submit(worker, ip, dev): ip
+                for ip, dev in devices.items()
+            }
+
+            for future in future_to_ip:
                 try:
-                    latency = future.result()
-                    if latency is not None:
-                        dev.update_seen()
+                    metric = future.result()
                 except PermissionError:
                     rootLogger.error("pymonitor requires sudo to scan.")
-                    raise
+                    exit(1)
                 except Exception as e:
-                    rootLogger.error(f"Error at PingCollector class: {e}")
-                    latency = None
+                    ip = future_to_ip[future]
+                    rootLogger.error(f"Error in PingCollector for {ip}: {e}")
+                    continue
+                else:
+                    results.append(metric)
 
-                results.append(MetricRecord(ip, "latency_ms", latency))
-        
         return results
-
-    @staticmethod
-    def ping(ip, src_addr):
-        response = ping3.ping(src_addr=src_addr, dest_addr=ip.strip(), timeout=1, ttl=64)
-        if response is None or response is False:
-            return None # Unreachable
-        latency = response * 1000 # Convert to milliseconds
-        rootLogger.debug(f"ip address: {ip} - latency: {latency:.2f} ms")
-        return latency
 
 # Device Discovery
 class DiscoveryEngine:
