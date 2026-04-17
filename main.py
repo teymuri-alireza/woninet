@@ -84,6 +84,97 @@ class HostStatus:
         self.mac = mac
 
 
+def get_arp_mac(ip: str) -> Optional[str]:
+    """
+    Return MAC address from ARP table for the given IP, or None if not present.
+
+    Notes:
+        - Uses `arp -an` output and parses it.
+        - Works on most Unix-like systems. If fails, it simply returns None and rely on ICMP only.
+    """
+    try:
+        # Suppress strerr to avoid clutter when ARP table is empty or limited
+        output = subprocess.check_output(["arp", "-an"], stderr=subprocess.DEVNULL)
+        output = output.decode()
+    except Exception as e:
+        rootLogger.debug(f"Failed to read ARP table: {e}")
+        return None
+
+    regex = rf"\({re.escape(ip)}\)\s+at\s+([0-9a-fA-F:]+)\s"
+    match = re.search(regex, output)
+    if match:
+        return match.group(1)
+    return None
+
+
+def detect_host(ip: str, src_addr: str, timeout: float = 1.0) -> HostStatus:
+    """
+    Combined ARP + ICMP detection for accurate device status.
+
+    Rules:
+        - If ARP_FAIL and ICMP_FAIL -> Host does NOT exist (exists=False, reachable=False)
+        - If ARP_OK and ICMP_FAIL -> Host exists but unreachable / ICMP blocked
+        - If ARP_OK and ICMP_OK < 300 ms -> Host is reachable
+        - If ARP_OK and ICMP_OK >= 300 ms -> Treat as ARP-timeout noise (unreachable)
+    """
+    status = HostStatus(ip=ip)
+
+    # Skip source ip to prevent confusion.
+    if ip == src_addr:
+        status.exists = None
+        status.reachable = None
+        status.mac = None
+        status.latency = None
+        return status
+
+    # ARP check
+    mac = get_arp_mac(ip=ip)
+    if mac:
+        status.exists = True
+        status.mac = mac
+    
+    # ICMP check
+    try:
+        response = ping3.ping(src_addr=src_addr, dest_addr=ip.strip(), timeout=timeout, ttl=64)
+    except PermissionError:
+        raise
+    except Exception as e:
+        rootLogger.error(f"Error during ICMP ping at detect_host function, to {ip}: {e}")
+        response = None
+    
+    latency: Optional[float] = None
+    if response is not None and response is not False:
+        latency = response * 1000 # Convert to milliseconds
+        # rootLogger.debug(f"IP address: {ip} - raw latency: {latency:.2f}")
+
+    status.latency = latency
+
+    # Classification logic
+    if not mac and latency is None:
+        # Host is not in ARP table and doesn't respond to ICMP
+        status.exists = False
+        status.reachable = False
+        return status
+    
+    if mac and latency is None:
+        # Device exists but doesn't respond to ICMP
+        status.exists = True
+        status.reachable = False
+        return status
+
+    if latency is not None:
+        if latency < 300.0:
+            # Acceptable latency (reachable)
+            status.exists = bool(mac)
+            status.reachable = True
+        else:
+            # High-latency ICMP, often ARP resolution noise (unreachable)
+            status.exists = bool(mac)
+            status.reachable = False
+
+    return status
+
+
 # Collectors
 class BaseCollector:
     """
