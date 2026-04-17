@@ -71,6 +71,19 @@ class MetricRecord:
         self.value = value
         self.timestamp = timestamp or datetime.now()
 
+# ARP and ICMP detection
+class HostStatus:
+    """
+    Combined ARP + ICMP status for a given IP
+    """
+    def __init__(self, ip: str, exists: bool = False, reachable: bool = False, latency: Optional[float] = None, mac: Optional[str] = None):
+        self.ip = ip
+        self.exists = exists
+        self.reachable = reachable
+        self.latency = latency # in milliseconds
+        self.mac = mac
+
+
 # Collectors
 class BaseCollector:
     """
