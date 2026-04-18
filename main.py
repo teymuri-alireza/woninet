@@ -39,7 +39,8 @@ except Exception as e:
     rootLogger.error(f"Error at socket connection in main.py: {e}")
     exit(1)
 
-if __name__ == "__main__":
+
+def main():
     try:
         monitor = NetworkMonitorCore(ip_addr=local_ip)
         monitor.start()
