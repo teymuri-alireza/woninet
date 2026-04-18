@@ -35,6 +35,7 @@ else:
 # Fetch The Local IP Address
 try:
     with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
+        rootLogger.trace(f"Sending a dummy UDP request to {SOCKET}:80")
         s.connect((SOCKET, 80))
         local_ip = s.getsockname()[0]
 except OSError:
@@ -151,7 +152,6 @@ def detect_host(ip: str, src_addr: str, timeout: float = 1.0) -> HostStatus:
     latency: Optional[float] = None
     if response is not None and response is not False:
         latency = response * 1000 # Convert to milliseconds
-        # rootLogger.debug(f"IP address: {ip} - raw latency: {latency:.2f}")
 
     status.latency = latency
 
@@ -247,7 +247,12 @@ class PingCollector(BaseCollector):
             else:
                 if dev.exists:
                     rootLogger.debug(
-                        f"Device {ip}: exists={dev.exists}, reachable{dev.reachable}, "
+                        f"Device {ip}: exists={dev.exists}, reachable={dev.reachable}, "
+                        f"MAC={dev.mac}, latency=None"
+                    )
+                else:
+                    rootLogger.trace(
+                        f"Device {ip}: exists={dev.exists}, reachable={dev.reachable}, "
                         f"MAC={dev.mac}, latency=None"
                     )
                 pass
@@ -287,7 +292,7 @@ class SubnetEnumerator:
     def scan_subnet(self, ip_addr: str) -> Dict[str, Device]:
         ip_split = ip_addr.split(".")
         subnet = f"{ip_split[0]}.{ip_split[1]}.{ip_split[2]}"
-        rootLogger.debug(f"Discover subnet base on {subnet}.x")
+        rootLogger.debug(f"Building a dictionaty of IP addresses base on {subnet}.x")
         devices = {}
         for i in range(1, 255):
             ip = f"{subnet}.{i}"
