@@ -8,7 +8,7 @@ def logger_function() -> logging.Logger:
     """
     consoleLogFormat = "%(message)s"
     fileLogFormat = "%(asctime)s - %(levelname)s - %(message)s"
-    dateFormat = "%Y-%M-%d %H:%M:%S"
+    dateFormat = "%Y-%m-%d %H:%M:%S"
 
     rootLogger = logging.getLogger()
 
