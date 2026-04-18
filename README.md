@@ -37,7 +37,6 @@ reachability, and latency. Metrics are collected continuously and processed thro
 - No Persistent Storage Yet
 - Monitoring Scope Limited to /24 Subnet
 
-
 ## How To Run
 
 Clone the repo First.
@@ -47,48 +46,25 @@ git clone https://github.com/teymuri-alireza/woninet
 cd woninet
 ```
 
-### Run using virtual envirenment
+### Installing from pip
 
-1. Create a Python virtual envirenment and activate it:
+(work in progress — the package will be available on PyPI soon)
+
+### Run in a virtual envirenment
+
+1. Create and activate a virtual environment:
 
 ```shell
 python3 -m venv venv
 source venv/bin/activate
 ```
 
-2. Install dependencies and run the monitor:
+2. Install dependencies and run woninet:
 
 ```shell
 pip3 install -r requirements.txt
-sudo python3 main.py -V
+sudo python3 -m woninet --version
 ```
-
-### Use build.sh
-
-1. Run:
-
-```shell
-sudo ./build.sh
-```
-
-This script will:
-
-- Copy the project files into/usr/local/lib/woninet
-- Create a global launcher command at/usr/local/bin/woninet
-
-2. Test the installed command:
-
-```shell
-sudo woninet --version
-```
-
-**Note:**
-
-build.sh only works if required modules are installed globally.
-
-If you want to use a virtual environment, edit `/usr/local/bin/woninet` and replace python3 with the path to your venv’s Python interpreter, for example:
-
-`/path/to/venv/bin/python3`
 
 ## Requirements
 
