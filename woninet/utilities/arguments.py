@@ -4,7 +4,7 @@ def args():
     """
     The argument handler.
 
-    check `pymonitor -h` for more info.
+    check `woninet -h` for more info.
     """
     description = """
 A local network monitoring system. It enumerates all candidate IP addresses in your /24 subnet and performs ARP + ICMP host detection to determine existence, reachability, and latency. Metrics are collected continuously and processed through an alert engine."""
@@ -14,7 +14,7 @@ A local network monitoring system. It enumerates all candidate IP addresses in y
     parser = argparse.ArgumentParser(
         description=description,
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        prog="pymonitor",
+        prog="woninet",
         epilog=epilog
     )
 

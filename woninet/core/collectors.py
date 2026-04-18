@@ -184,7 +184,7 @@ class PingCollector(BaseCollector):
                 try:
                     metric = future.result()
                 except PermissionError:
-                    rootLogger.error("pymonitor requires sudo to scan.")
+                    rootLogger.error("woninet requires sudo to scan.")
                     exit(1)
                 except Exception as e:
                     ip = future_to_ip[future]
