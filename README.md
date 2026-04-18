@@ -1,4 +1,4 @@
-# pymonitor
+# woninet
 
 A local network monitoring system.
 It enumerates all candidate IP addresses in your /24 subnet and performs ARP + ICMP host detection to determine existence,
@@ -43,8 +43,8 @@ reachability, and latency. Metrics are collected continuously and processed thro
 Clone the repo First.
 
 ```shell
-git clone https://github.com/teymuri-alireza/pymonitor
-cd pymonitor
+git clone https://github.com/teymuri-alireza/woninet
+cd woninet
 ```
 
 ### Run using virtual envirenment
@@ -73,20 +73,20 @@ sudo ./build.sh
 
 This script will:
 
-- Copy the project files into/usr/local/lib/pymonitor
-- Create a global launcher command at/usr/local/bin/pymonitor
+- Copy the project files into/usr/local/lib/woninet
+- Create a global launcher command at/usr/local/bin/woninet
 
 2. Test the installed command:
 
 ```shell
-sudo pymonitor --version
+sudo woninet --version
 ```
 
 **Note:**
 
 build.sh only works if required modules are installed globally.
 
-If you want to use a virtual environment, edit `/usr/local/bin/pymonitor` and replace python3 with the path to your venv’s Python interpreter, for example:
+If you want to use a virtual environment, edit `/usr/local/bin/woninet` and replace python3 with the path to your venv’s Python interpreter, for example:
 
 `/path/to/venv/bin/python3`
 

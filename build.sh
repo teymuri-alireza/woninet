@@ -6,15 +6,15 @@ if [[ $USER != "root" ]]; then
 fi
 
 # define variables for paths
-LIB_PATH=/usr/local/lib/pymonitor
+LIB_PATH=/usr/local/lib/woninet
 BIN_PATH=/usr/local/bin/
 
 # create directory
 if [ ! -d $LIB_PATH ]; then
-    echo "Creating pymonitor at $LIB_PATH"
+    echo "Creating woninet at $LIB_PATH"
     mkdir $LIB_PATH
 else
-    echo "$LIB_PATH exists. Remove $LIB_PATH and $BIN_PATH/pymonitor then try again."
+    echo "$LIB_PATH exists. Remove $LIB_PATH and $BIN_PATH/woninet then try again."
     exit 1
 fi
 
@@ -23,7 +23,7 @@ if [ ! -f "$LIB_PATH/main.py" ]; then
     echo "copying main.py"
     cp main.py $LIB_PATH/
 else
-    echo "Found main.py in $LIB_PATH, Remove $LIB_PATH and $BIN_PATH/pymonitor then try again."
+    echo "Found main.py in $LIB_PATH, Remove $LIB_PATH and $BIN_PATH/woninet then try again."
     exit 1
 fi
 
@@ -33,7 +33,7 @@ if [ ! -d "$LIB_PATH/utilities" ] && [ ! -f "$LIB_PATH/utilities/arguments.py" ]
     mkdir $LIB_PATH/utilities
     cp utilities/* $LIB_PATH/utilities/
 else
-    echo "Found files in $LIB_PATH/utilities, Remove $LIB_PATH and $BIN_PATH/pymonitor then try again."
+    echo "Found files in $LIB_PATH/utilities, Remove $LIB_PATH and $BIN_PATH/woninet then try again."
     exit 1
 fi
 
@@ -49,8 +49,8 @@ fi
 
 echo "Adding command in $BIN_PATH"
 
-echo -e "#!/bin/sh\n\nexec python3 /usr/local/lib/pymonitor/main.py \$@" > $BIN_PATH/pymonitor
+echo -e "#!/bin/sh\n\nexec python3 /usr/local/lib/woninet/main.py \$@" > $BIN_PATH/woninet
 
-chmod +x $BIN_PATH/pymonitor
+chmod +x $BIN_PATH/woninet
 
-echo "done. verify with: pymonitor -V"
+echo "done. verify with: woninet -V"

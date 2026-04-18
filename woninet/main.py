@@ -47,7 +47,7 @@ def main():
     except KeyboardInterrupt:
         rootLogger.info("Keyboard Interrupted. Wait for shutting down.")
     except PermissionError:
-        rootLogger.error("pymonitor requires sudo to scan.")
+        rootLogger.error("woninet requires sudo to scan.")
         exit(1)
     except Exception as e:
         rootLogger.error(f"Error occured: {e}")

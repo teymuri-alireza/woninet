@@ -1,2 +1,2 @@
-# pymonitor/core/__init__.py
+# woninet/core/__init__.py
 # (This file intentionally left blank)

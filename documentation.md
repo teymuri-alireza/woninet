@@ -1,13 +1,13 @@
-# pymonitor Documentation
+# woninet Documentation
 
 Read this file if you have any questions or need clarification about how this program works internally.
 
 # Code Logic
 
-This section explains the full sequence of operations pymonitor performs to scan and monitor the local network.
+This section explains the full sequence of operations woninet performs to scan and monitor the local network.
 
 ## 1. Determining the Source IP
-pymonitor begins by identifying the local machine’s primary IPv4 address.
+woninet begins by identifying the local machine’s primary IPv4 address.
 
 It does this by:
 
@@ -42,7 +42,7 @@ It is the central controller of the system.
 
 ## 3. Subnet Enumeration (/24 Range)
 
-pymonitor uses the SubnetEnumerator class to generate a dictionary of candidate devices within the local `/24` subnet.
+woninet uses the SubnetEnumerator class to generate a dictionary of candidate devices within the local `/24` subnet.
 
 For a source IP such as:
 
@@ -72,7 +72,7 @@ For each candidate device, a two‑stage detection pipeline runs:
 
 ### Stage A — ARP Check
 
-`pymonitor` checks the system ARP table to see if the target IP already has a known MAC address.
+`woninet` checks the system ARP table to see if the target IP already has a known MAC address.
 
 This determines:
 
@@ -92,7 +92,7 @@ No ICMP probing is attempted for non-existing hosts.
 
 ### Stage B — ICMP Ping (if ARP succeeded)
 
-If ARP confirms existence, `pymonitor` sends an ICMP ping using `ping3`.
+If ARP confirms existence, `woninet` sends an ICMP ping using `ping3`.
 
 Latency is interpreted carefully:
 
@@ -139,13 +139,13 @@ If a rule is triggered, an alert event is logged.
 
 ## 7. Looping and Scheduling
 
-`pymonitor` runs this entire detection + evaluation cycle continuously until the user stops the program.
+`woninet` runs this entire detection + evaluation cycle continuously until the user stops the program.
 
 Optional intervals (seconds) determine how often probes are executed.
 
 # Versioning
 
-pymonitor follows Semantic Versioning (SemVer) rules:
+woninet follows Semantic Versioning (SemVer) rules:
 
 - MAJOR: Breaking changes in logic or architecture
 - MINOR: New features or improvements
