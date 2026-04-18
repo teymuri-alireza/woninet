@@ -1,5 +1,17 @@
 import logging
 
+# Trace level definition
+TRACE_LEVEL = 5
+logging.addLevelName(TRACE_LEVEL, "TRACE")
+
+
+def trace(self, msg, *args, **kwargs):
+    if self.isEnabledFor(TRACE_LEVEL):
+        self._log(TRACE_LEVEL, msg, args, **kwargs)
+
+logging.Logger.trace = trace
+
+
 def logger_function() -> logging.Logger:
     """
     Returns the rootLogger.
