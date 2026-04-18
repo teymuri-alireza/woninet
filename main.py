@@ -3,10 +3,11 @@ import time
 import ping3
 import re
 import subprocess
+import logging
 from datetime import datetime
 from typing import List, Dict, Optional
 from concurrent.futures import ThreadPoolExecutor
-from utilities.logger import logger_function
+from utilities.logger import logger_function, TRACE_LEVEL
 from utilities.arguments import args
 
 # Global Variables
@@ -24,9 +25,12 @@ if argument.version:
     exit(0)
 
 # Set Verbosity
-if argument.verbose:
-    from logging import DEBUG
-    rootLogger.setLevel(DEBUG)
+if argument.verbose == 0:
+    pass
+elif argument.verbose == 1:
+    rootLogger.setLevel(logging.DEBUG)
+else:
+    rootLogger.setLevel(TRACE_LEVEL)
 
 # Fetch The Local IP Address
 try:

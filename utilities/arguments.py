@@ -26,8 +26,9 @@ A local network monitoring system. It enumerates all candidate IP addresses in y
 
     parser.add_argument(
         "-v", "--verbose",
-        action="store_true",
-        help="Talks more."
+        action="count",
+        default=0,
+        help="Talks more. (Can be used multiple times)"
     )
 
     parser.add_argument(
