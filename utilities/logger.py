@@ -2,9 +2,7 @@ import logging
 
 def logger_function() -> logging.Logger:
     """
-    Returns the rootLogger, which uses a simple format for logging.
-
-    The default output is console (stdout) and the level is info.
+    Returns the rootLogger.
     """
     consoleLogFormat = "%(message)s"
     fileLogFormat = "%(asctime)s - %(levelname)s - %(message)s"
