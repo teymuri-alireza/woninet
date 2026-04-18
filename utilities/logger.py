@@ -16,11 +16,11 @@ def logger_function() -> logging.Logger:
 
         consoleHandler = logging.StreamHandler()
         consoleHandler.setFormatter(logging.Formatter(fmt=consoleLogFormat, datefmt=None))
-        consoleHandler.setLevel(logging.DEBUG)
+        consoleHandler.setLevel(logging.NOTSET)
 
         fileHandler = logging.FileHandler("logs.txt")
         fileHandler.setFormatter(logging.Formatter(fileLogFormat, datefmt=dateFormat))
-        fileHandler.setLevel(logging.DEBUG)
+        fileHandler.setLevel(logging.NOTSET)
 
         rootLogger.addHandler(consoleHandler)
         rootLogger.addHandler(fileHandler)
