@@ -35,9 +35,9 @@ class NetworkMonitorCore:
 
     def start(self):
         """
-        Start the collectors and continuously evaluate alerts.
+        Start the collectors evaluate alerts.
         """
-        while True:
+        try:
             for collector in self.collectors:
                 collector.run(self.devices, self.ip_addr, self.storage.store)
                 self.alert_engine.evaluate()
