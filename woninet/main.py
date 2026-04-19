@@ -14,7 +14,7 @@ argument = args()
 
 # The --version Argument
 if argument.version:
-    from utilities.version import show_version
+    from .utilities.version import show_version
     print(show_version())
     exit(0)
 
