@@ -42,3 +42,12 @@ class NetworkMonitorCore:
                 collector.run(self.devices, self.ip_addr, self.storage.store)
                 self.alert_engine.evaluate()
             time.sleep(5)
+        except KeyboardInterrupt:
+            rootLogger.info("Waiting for shutdown...")
+            raise
+        except PermissionError:
+            rootLogger.error("woninet requires sudo to scan.")
+            exit(1)
+        except Exception as e:
+            rootLogger.error(f"Unexpected error in NetworkMonitorCore: {e}")
+            exit(1)
