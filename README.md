@@ -73,9 +73,9 @@ sudo venv/bin/python3 -m woninet --version
 - ping3 v4.0.4 (pyhton3 module)
 - Root privileges
 
-## Documentaion
+## Documentation
 
-if you have any question or need clarification, check the [documentation](./documentation.md) guide.
+if you have any question or need clarification, check the [documentation](./docs/documentation.md) guide.
 
 ## Contribution
 
