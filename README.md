@@ -63,13 +63,13 @@ source venv/bin/activate
 
 ```shell
 pip3 install -r requirements.txt
-sudo python3 -m woninet --version
+sudo venv/bin/python3 -m woninet --version
 ```
 
 ## Requirements
 
 - Unix-based operating systems
-- Python 3.8+
+- Python >= 3.12
 - ping3 v4.0.4 (pyhton3 module)
 - Root privileges
 
