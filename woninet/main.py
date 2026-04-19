@@ -40,6 +40,14 @@ except Exception as e:
     exit(1)
 
 
+def get_monitor() -> NetworkMonitorCore:
+    """
+    Returns an instance of NetworkMonitoreCore for easier access in both CLI mode
+    and server dashboard.
+    """
+    monitor = NetworkMonitorCore(ip_addr=local_ip)
+    return monitor
+
 def main():
     try:
         monitor = NetworkMonitorCore(ip_addr=local_ip)
