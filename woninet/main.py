@@ -1,11 +1,13 @@
 import socket
 import logging
+import uvicorn
 from .core.engine import NetworkMonitorCore
 from .utilities.arguments import args
 from .utilities.logger import logger_function, TRACE_LEVEL
 
 # Global Variables
 SOCKET = "8.8.8.8"
+PORT = 8080
 
 # Get Logger Configuration
 rootLogger = logger_function()
@@ -49,14 +51,18 @@ def get_monitor() -> NetworkMonitorCore:
     return monitor
 
 def main():
-    try:
-        monitor = NetworkMonitorCore(ip_addr=local_ip)
-        monitor.start()
-    except KeyboardInterrupt:
-        rootLogger.info("Keyboard Interrupted. Wait for shutting down.")
-    except PermissionError:
-        rootLogger.error("woninet requires sudo to scan.")
-        exit(1)
-    except Exception as e:
-        rootLogger.error(f"Error occured: {e}")
-        exit(1)
+    """
+    The main entry point of woninet; Which decides to either call server
+    dashboard or the CLI interface.
+    """
+    if argument.serve:
+        from woninet.server.app import app
+        uvicorn.run(app, host=local_ip, port=PORT)
+    else:
+        try:
+            monitor = get_monitor()
+            while True:
+                monitor.start()
+        except KeyboardInterrupt:
+            rootLogger.error("Program shutdown complete.")
+            exit(1)
