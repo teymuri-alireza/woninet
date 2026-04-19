@@ -63,7 +63,7 @@ source venv/bin/activate
 
 ```shell
 pip3 install -r requirements.txt
-sudo python3 -m woninet --version
+sudo venv/bin/python3 -m woninet --version
 ```
 
 ## Requirements
