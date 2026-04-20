@@ -31,7 +31,17 @@ class MetricRecord:
         self.device_ip = device_ip
         self.metric = metric
         self.value = value
-        self.timestamp = timestamp or datetime.now()
+
+        # Formatting datetime
+        datetime_now = datetime.now()
+        year = datetime_now.year
+        month = datetime_now.month
+        day = datetime_now.day
+        hour = datetime_now.hour
+        minute = datetime_now.minute
+        second = datetime_now.second
+
+        self.timestamp = timestamp or f"{year}/{month}/{day} {hour}:{minute}:{second}"
 
 # ARP and ICMP detection
 class HostStatus:
