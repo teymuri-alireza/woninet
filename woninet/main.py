@@ -16,8 +16,8 @@ argument = args()
 
 # The --version Argument
 if argument.version:
-    from .utilities.version import show_version
-    print(show_version())
+    from woninet.__init__ import __version__
+    print(__version__)
     exit(0)
 
 # Set Verbosity

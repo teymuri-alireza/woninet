@@ -4,14 +4,14 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from woninet.server.routes import devices, stats, system
 from woninet.main import get_monitor
-from woninet.utilities.version import show_version
+from woninet.__init__ import __version__
 
 monitor = get_monitor()
 
 app = FastAPI(
     title="woninet",
     description="Network Monitoring Dashboard",
-    version=show_version(),
+    version=__version__,
 )
 
 # Templates

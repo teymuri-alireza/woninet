@@ -1,2 +1,2 @@
 # woninet/core/__init__.py
-# (This file intentionally left blank)
+__version__ = "1.1.0"
