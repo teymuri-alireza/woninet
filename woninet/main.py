@@ -6,7 +6,7 @@ from .utilities.arguments import args
 from .utilities.logger import logger_function, TRACE_LEVEL
 
 # Global Variables
-SOCKET = "8.8.8.8"
+REMOTE_PROBE_IP = "8.8.8.8"
 PORT = 8080
 
 # Get Logger Configuration
@@ -35,8 +35,8 @@ if argument.serve:
 # Fetch The Local IP Address
 try:
     with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
-        rootLogger.trace(f"Sending a dummy UDP request to {SOCKET}:80")
-        s.connect((SOCKET, 80))
+        rootLogger.trace(f"Sending a dummy UDP request to {REMOTE_PROBE_IP}:80")
+        s.connect((REMOTE_PROBE_IP, 80))
         local_ip = s.getsockname()[0]
 except OSError:
     rootLogger.error("Network is unreachable. Quitting.")
