@@ -197,6 +197,7 @@ class PingCollector(BaseCollector):
                     rootLogger.error(f"Error in PingCollector for {ip}: {e}")
                     continue
                 else:
-                    results.append(metric)
+                    if metric.value is not None:
+                        results.append(metric)
 
         return results

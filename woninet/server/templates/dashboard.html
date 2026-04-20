@@ -1,16 +1,32 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>woninet Dashboard</title>
     <link rel="stylesheet" href="/static/css/style.css">
 </head>
 <body>
+    <div class="dashboard">
+        <header class="topbar">
+            <div>
+                <p class="eyebrow">Network Monitoring</p>
+                <h1>woninet Dashboard</h1>
+                <p class="subtitle">Live device visibility and latency overview</p>
+            </div>
+        </header>
 
-<h1>woninet Dashboard</h1>
+        <main class="content">
+            <section class="panel">
+                <div class="panel-header">
+                    <h2>Found Devices</h2>
+                    <span class="status-dot"></span>
+                </div>
+                <div id="devices" class="device-grid"></div>
+            </section>
+        </main>
+    </div>
 
-<div id="devices"></div>
-
-<script src="/static/js/app.js"></script>
-
+    <script src="/static/js/app.js"></script>
 </body>
 </html>
