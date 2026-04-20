@@ -1,4 +1,5 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from woninet.server.routes import devices, stats, system
@@ -23,3 +24,10 @@ app.mount("/static", StaticFiles(directory="woninet/server/static"), name="stati
 app.include_router(devices.router)
 app.include_router(stats.router)
 app.include_router(system.router)
+
+# The root path
+@app.get("/", response_class=HTMLResponse)
+def root(request: Request):
+    return templates.TemplateResponse(
+        request=request, name="dashboard.html"
+    )
