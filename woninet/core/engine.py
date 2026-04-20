@@ -59,3 +59,9 @@ class NetworkMonitorCore:
         Returns the full history using get_full_hisotry() in StorageEngine class.
         """
         return self.storage.get_full_history()
+
+    def clear_history(self):
+        """
+        Clears history to prevent unwanted alert notices using clear_history() in StorageEngine class.
+        """
+        self.storage.clear_history()
