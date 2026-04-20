@@ -1,4 +1,6 @@
 import time
+from typing import List
+from .models import MetricRecord
 from .collectors import PingCollector
 from .storage import StorageEngine
 from .alerts import AlertEngine, AlertRule
@@ -35,10 +37,25 @@ class NetworkMonitorCore:
 
     def start(self):
         """
-        Start the collectors and continuously evaluate alerts.
+        Start the collectors evaluate alerts.
         """
-        while True:
+        try:
             for collector in self.collectors:
                 collector.run(self.devices, self.ip_addr, self.storage.store)
                 self.alert_engine.evaluate()
             time.sleep(5)
+        except KeyboardInterrupt:
+            rootLogger.info("Keyboard interrupted. Shutting down...")
+            exit(0)
+        except PermissionError:
+            rootLogger.error("woninet requires sudo to scan.")
+            exit(1)
+        except Exception as e:
+            rootLogger.error(f"Unexpected error in NetworkMonitorCore: {e}")
+            exit(1)
+    
+    def get_devices(self) -> List[MetricRecord]:
+        """
+        Returns the full history using get_full_hisotry() in StorageEngine class.
+        """
+        return self.storage.get_full_history()

@@ -18,11 +18,11 @@ A local network monitoring system. It enumerates all candidate IP addresses in y
         epilog=epilog
     )
 
-    # parser.add_argument(
-    #     "--serve",
-    #     action="store_true",
-    #     help="Serve the server instead of CLI mode."
-    # )
+    parser.add_argument(
+        "--serve",
+        action="store_true",
+        help="Starts the server for web-based dashboard."
+    )
 
     parser.add_argument(
         "-v", "--verbose",

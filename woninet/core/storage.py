@@ -20,6 +20,12 @@ class StorageEngine:
         """
         return [m for m in self.history if m.device_ip == ip and m.metric == metric]
     
+    def get_full_history(self) -> List[MetricRecord]:
+        """
+        Returns history records for all devices.
+        """
+        return self.history
+
     def clear_history(self):
         """
         Clears history to prevent confusion in Alert section.
