@@ -28,6 +28,10 @@ elif argument.verbose == 1:
 else:
     rootLogger.setLevel(TRACE_LEVEL)
 
+# Set ERROR level for server mode to suppress CLI-related logs
+if argument.serve:
+        rootLogger.setLevel(logging.ERROR)
+
 # Fetch The Local IP Address
 try:
     with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
