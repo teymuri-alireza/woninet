@@ -67,6 +67,7 @@ def main():
             monitor = get_monitor()
             while True:
                 monitor.start()
+                monitor.clear_history()
         except Exception as e:
             rootLogger.error(f"Error in main.py: {e}")
             exit(1)
