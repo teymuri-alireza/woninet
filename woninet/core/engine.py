@@ -1,4 +1,6 @@
 import time
+from typing import List
+from .models import MetricRecord
 from .collectors import PingCollector
 from .storage import StorageEngine
 from .alerts import AlertEngine, AlertRule
@@ -51,3 +53,9 @@ class NetworkMonitorCore:
         except Exception as e:
             rootLogger.error(f"Unexpected error in NetworkMonitorCore: {e}")
             exit(1)
+    
+    def get_devices(self) -> List[MetricRecord]:
+        """
+        Returns the full history using get_full_hisotry() in StorageEngine class.
+        """
+        return self.storage.get_full_history()
