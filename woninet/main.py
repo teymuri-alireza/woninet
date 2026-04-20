@@ -63,6 +63,6 @@ def main():
             monitor = get_monitor()
             while True:
                 monitor.start()
-        except KeyboardInterrupt:
-            rootLogger.error("Program shutdown complete.")
+        except Exception as e:
+            rootLogger.error(f"Error in main.py: {e}")
             exit(1)

@@ -45,8 +45,8 @@ class NetworkMonitorCore:
                 self.alert_engine.evaluate()
             time.sleep(5)
         except KeyboardInterrupt:
-            rootLogger.info("Waiting for shutdown...")
-            raise
+            rootLogger.info("Keyboard interrupted. Shutting down...")
+            exit(0)
         except PermissionError:
             rootLogger.error("woninet requires sudo to scan.")
             exit(1)
