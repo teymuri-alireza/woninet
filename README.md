@@ -52,9 +52,12 @@ cd woninet
 
 ### 2. Create and activate a virtual environment:
 
+**Note:** Create the virtual environment outside the project directory to avoid
+`Multiple top-level packages discovered in a flat-layout` errors.
+
 ```shell
-python3 -m venv venv
-source venv/bin/activate
+python3 -m venv ../venv
+source ../venv/bin/activate
 ```
 
 ### 3. Install woninet locally:
