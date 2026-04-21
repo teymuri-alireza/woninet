@@ -1,0 +1,109 @@
+# Contributing to woninet
+
+Thank you for considering contributing to *woninet!*
+This project welcomes improvements, bug fixes, documentation updates, and new features.
+
+To help us maintain code quality, stability, and a predictable release process, please review and follow the guidelines below.
+
+## 1. How to Contribute
+
+You can contribute in several ways:
+
+- Report bugs or request features via GitHub issues
+- Improve documentation
+- Fix bugs
+- Add new monitoring features or collectors
+- Optimize performance, interval handling, or concurrency logic
+
+All contributions small or large are appreciated.
+
+## 2. Development Environment Setup
+
+### 1. Clone the repository:
+
+```shell
+git clone https://github.com/teymuri-alireza/woninet
+cd woninet
+```
+
+### 2. Create and activate a virtual environment:
+
+**Note:** Create the virtual environment outside the project directory to avoid
+`Multiple top-level packages discovered in a flat-layout` errors.
+
+```shell
+python3 -m venv ../venv
+source ../venv/bin/activate
+```
+
+### 3. Install *woninet* locally in editable mode:
+
+```shell
+pip install -e .
+```
+
+### 4. Run the package
+
+```shell
+sudo /venv/bin/python3 -m woninet
+```
+
+## 3. Project Structure Overview
+
+```text
+woninet/
+├── core/ # Monitoring engine, ARP + ICMP logic, Models
+├── server/ # FastAPI application and routes
+├── utilities/ # Argument handler, Logging
+└── main.py # The woninet entry point
+```
+
+## 4. Code Style
+
+- Write type‑annotated code:
+
+```python
+def start(self) -> None:
+```
+
+- Keep imports absolute, not relative:
+
+```python
+from woninet.core.monitor import NetworkMonitorCore # Correct
+
+from .core.monitor import NetworkMonitorCore # Incorrect
+```
+
+- Use **Ruff** for linting and formatting:
+
+```shell
+ruff check .
+ruff format .
+```
+
+## 5. Commit Message Guidelines
+
+Use Conventional Commits:
+
+- `feat:` – new feature
+- `fix:` – bug fix
+- `docs:` – documentation changes
+- `refactor:` – code improvements without behavior change
+- `perf:` – performance optimizations
+- `chore:` – maintenance, version bumps, CI tweaks
+
+## 6. Pull Request Guidelines
+
+When opening a PR:
+
+1. Describe what the PR does 
+2. Link related issues (e.g., `Closes #42`)
+3. Keep PRs small and focused
+4. Ensure it's based on the latest `main` branch
+
+---
+
+Thank you for making *woninet* better!
+Maintainers and contributors appreciate your work.
+
+**Update: 2026-04-21**
