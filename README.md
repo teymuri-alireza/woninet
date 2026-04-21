@@ -87,15 +87,5 @@ if you have any question or need clarification, check the [documentation](./docs
 
 ## Contribution
 
-Contributions are welcome. If you have a new feature in mind or have found a bug, please consider opening a pull request or an issue.
-
-### What You Can Contribute
-
-- Scan logic improvements
-- Arguments, flags and CLI enhancements
-- Code quality, structure or performance
-- Fixes for typoes, grammar or documentation errors
-
-### What not to contribute
-
-Don't modify the version number. Versioning is handled by the maintainer after significant merges or changes.
+Thanks for considering contributing to *woninet!*
+To help us maintain code quality, stability, and a predictable release process, please review and follow the guidelines in our [Contributing Guide.](./CONTRIBUTING.md)
