@@ -29,8 +29,9 @@ reachability, and latency. Metrics are collected continuously and processed thro
 - Pass latency limit and alert rules as command line argument.
 - Add ARP table caching to further reduce Wi‑Fi latency noise.
 - Optional SQLite storage for long‑term historical metrics.
-- Web‑based dashboard for real‑time monitoring.
 - Accept defined IP and MAC addresses as command‑line arguments.
+- Add looping for web dashboard.
+- Send `reachability` and `existence` paramters to web dashboard.
 
 ## Known Issues
 
@@ -39,7 +40,12 @@ reachability, and latency. Metrics are collected continuously and processed thro
 
 ## How To Run
 
-Clone the repo First.
+**Note:**
+
+- This project is under active development.
+- PyPI releases will be published once the API stabilizes.
+
+1. Clone the repo First.
 
 ```shell
 git clone https://github.com/teymuri-alireza/woninet
@@ -52,14 +58,14 @@ cd woninet
 
 ### Run in a virtual envirenment
 
-1. Create and activate a virtual environment:
+2. Create and activate a virtual environment:
 
 ```shell
 python3 -m venv venv
 source venv/bin/activate
 ```
 
-2. Install dependencies and run woninet:
+3. Install dependencies and run woninet:
 
 ```shell
 pip3 install -r requirements.txt
