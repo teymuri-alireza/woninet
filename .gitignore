@@ -13,8 +13,5 @@ build/
 *.egg-info/
 *.dist-info/
 
-# ip scan file
-scan-files/
-
 # vs code directory
 .vscode/

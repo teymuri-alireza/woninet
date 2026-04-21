@@ -22,8 +22,6 @@ reachability, and latency. Metrics are collected continuously and processed thro
 
 - **Detailed Logging**
 
-- **Simple `build.sh` Setup**
-
 ## Future Plans
 
 - Pass latency limit and alert rules as command line argument.
