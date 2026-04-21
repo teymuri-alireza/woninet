@@ -8,6 +8,11 @@ __pycache__/
 # logs
 logs.txt
 
+# build
+build/
+*.egg-info/
+*.dist-info/
+
 # ip scan file
 scan-files/
 

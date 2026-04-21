@@ -1,0 +1,23 @@
+[project]
+name = "woninet"
+version = "1.1.0"
+description = "A Python-based ARP+ICMP network monitoring tool"
+readme = "README.md"
+requires-python = ">=3.12"
+authors = [
+    { name = "Alireza Teymuri", email = "teymuri.alireza98@gmail.com" }
+]
+
+dependencies = [
+    "ping3==4.0.4",
+    "fastapi==0.136.0",
+    "Jinja2==3.1.6",
+    "uvicorn==0.44.0"
+]
+
+[project.urls]
+Homepage = "https://github.com/teymuri-alireza/woninet"
+Documentation = "https://github.com/teymuri-alireza/woninet/project/tree/main/docs"
+
+[project.scripts]
+woninet = "woninet.main:main"
