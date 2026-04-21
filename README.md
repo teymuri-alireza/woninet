@@ -42,33 +42,34 @@ reachability, and latency. Metrics are collected continuously and processed thro
 
 **Note:**
 
-- This project is under active development.
+- *woninet* is under active development.
 - PyPI releases will be published once the API stabilizes.
 
-1. Clone the repo First.
+### 1. Clone the repository
 
 ```shell
 git clone https://github.com/teymuri-alireza/woninet
 cd woninet
 ```
 
-### Installing from pip
-
-(work in progress — the package will be available on PyPI soon)
-
-### Run in a virtual envirenment
-
-2. Create and activate a virtual environment:
+### 2. Create and activate a virtual environment:
 
 ```shell
 python3 -m venv venv
 source venv/bin/activate
 ```
 
-3. Install dependencies and run woninet:
+### 3. Install woninet locally:
+
+Until the PyPI release is available, install the package from the repository:
 
 ```shell
-pip3 install -r requirements.txt
+pip3 install .
+```
+
+### 4. Run woninet
+
+```shell
 sudo venv/bin/python3 -m woninet --version
 ```
 
