@@ -1,6 +1,6 @@
 from typing import List
-from .storage import StorageEngine
-from ..utilities.logger import logger_function
+from woninet.core.storage import StorageEngine
+from woninet.utilities.logger import logger_function
 
 rootLogger = logger_function()
 

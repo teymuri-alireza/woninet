@@ -1,9 +1,9 @@
 import socket
 import logging
 import uvicorn
-from .core.engine import NetworkMonitorCore
-from .utilities.arguments import args
-from .utilities.logger import logger_function, TRACE_LEVEL
+from woninet.core.engine import NetworkMonitorCore
+from woninet.utilities.arguments import args
+from woninet.utilities.logger import logger_function, TRACE_LEVEL
 
 # Global Variables
 REMOTE_PROBE_IP = "8.8.8.8"

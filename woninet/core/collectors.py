@@ -3,8 +3,8 @@ import ping3
 import subprocess
 from typing import List, Dict, Optional
 from concurrent.futures import ThreadPoolExecutor
-from .models import Device, MetricRecord,HostStatus
-from ..utilities.logger import logger_function
+from woninet.core.models import Device, MetricRecord,HostStatus
+from woninet.utilities.logger import logger_function
 
 rootLogger = logger_function()
 

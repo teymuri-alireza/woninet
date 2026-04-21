@@ -1,6 +1,6 @@
 from typing import Dict
-from .models import Device
-from ..utilities.logger import logger_function
+from woninet.core.models import Device
+from woninet.utilities.logger import logger_function
 
 rootLogger = logger_function()
 

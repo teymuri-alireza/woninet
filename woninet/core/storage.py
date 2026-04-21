@@ -1,5 +1,5 @@
 from typing import List
-from .models import MetricRecord
+from woninet.core.models import MetricRecord
 
 class StorageEngine:
     """
