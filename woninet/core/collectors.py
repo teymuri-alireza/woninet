@@ -135,7 +135,7 @@ class PingCollector(BaseCollector):
 
         def worker(ip: str, dev: Device) -> MetricRecord:
             try:
-                status = detect_host(ip=ip, src_addr=ip_addr, timeout=1)
+                status = detect_host(ip=ip, src_addr=ip_addr, timeout=1.0)
             except PermissionError:
                 raise
 
