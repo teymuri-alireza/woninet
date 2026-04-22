@@ -2,7 +2,7 @@ import re
 from icmplib import ping
 import subprocess
 from typing import List, Dict, Optional
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from woninet.core.models import Device, MetricRecord,HostStatus
 from woninet.utilities.logger import logger_function
 
@@ -183,7 +183,7 @@ class PingCollector(BaseCollector):
                 for ip, dev in devices.items()
             }
 
-            for future in future_to_ip:
+            for future in as_completed(future_to_ip):
                 try:
                     metric = future.result()
                 except PermissionError:
