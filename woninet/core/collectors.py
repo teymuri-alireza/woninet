@@ -31,7 +31,7 @@ def get_arp_mac(ip: str) -> Optional[str]:
     return None
 
 
-def detect_host(ip: str, src_addr: str, timeout: float = 1.0) -> HostStatus:
+def detect_host(ip: str, src_addr: str, timeout: float = 1.0, stop_event=None) -> HostStatus:
     """
     Combined ARP + ICMP detection for accurate device status.
 
@@ -51,15 +51,20 @@ def detect_host(ip: str, src_addr: str, timeout: float = 1.0) -> HostStatus:
         status.latency = None
         return status
 
+    if stop_event and stop_event.is_set():
+        return None
+
     # ARP check
     mac = get_arp_mac(ip=ip)
     if mac:
         status.exists = True
         status.mac = mac
-    
+
     # ICMP check
     try:
         response = ping(source=src_addr, address=ip.strip(), timeout=timeout, count=2, privileged=True, interval=1)
+        if stop_event and stop_event.is_set():
+            return None
     except PermissionError:
         raise
     except Exception as e:
@@ -101,19 +106,21 @@ class BaseCollector:
     """
     interval = 10
 
-    def collect(self, devices: Dict[str, Device], ip_addr: str) -> List[MetricRecord]:
+    def collect(self, devices: Dict[str, Device], ip_addr: str, store_callback, stop_event=None) -> List[MetricRecord]:
         """
         Collect metrics from devices.
         Must be implemented by subclasses.
         """
         raise NotImplementedError
 
-    def run(self, devices: Dict[str, Device], ip_addr, store_callback):
+    def run(self, devices: Dict[str, Device], ip_addr, store_callback, stop_event=None):
         """
         Main execution loop for the collector.
         Runs forever and periodically sends collected metrics to storage.
         """
-        result = self.collect(devices, ip_addr=ip_addr)
+        if stop_event and stop_event.is_set():
+            return
+        result = self.collect(devices, ip_addr=ip_addr, store_callback=store_callback, stop_event=stop_event)
         store_callback(result)
 
 
@@ -124,18 +131,21 @@ class PingCollector(BaseCollector):
     """
     interval = 5
 
-    def collect(self, devices: Dict[str, Device], ip_addr: str) -> List[MetricRecord]:
+    def collect(self, devices: Dict[str, Device], ip_addr: str, store_callback, stop_event=None) -> List[MetricRecord]:
         """
         For each device:
             - Use ARP + ICMP to determine existence and reachability.
             - Update Device fields.
             - Record latency metric only when reachable and latency is sane.
         """
+        if stop_event and stop_event.is_set():
+            return []
+
         results: List[MetricRecord] = []
 
         def worker(ip: str, dev: Device) -> MetricRecord:
             try:
-                status = detect_host(ip=ip, src_addr=ip_addr, timeout=1.0)
+                status = detect_host(ip=ip, src_addr=ip_addr, timeout=1.0, stop_event=stop_event)
             except PermissionError:
                 raise
 
@@ -178,6 +188,10 @@ class PingCollector(BaseCollector):
             }
 
             for future in as_completed(future_to_ip):
+                if stop_event and stop_event.is_set():
+                    break
+                if stop_event.is_set():
+                    return results
                 try:
                     metric = future.result()
                 except PermissionError:
