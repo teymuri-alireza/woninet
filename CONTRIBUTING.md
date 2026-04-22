@@ -92,18 +92,35 @@ Use Conventional Commits:
 - `perf:` – performance optimizations
 - `chore:` – maintenance, version bumps, CI tweaks
 
-## 6. Pull Request Guidelines
+## 6. Branching Model
+
+Use a lightwaight workflow:
+
+- **main** – Stable releases. This branch should always contain production‑ready code
+- **dev** – Active development and integration branch
+
+Contributors should create branches from dev using the following naming conventions:
+
+- **feature/*** – New features (e.g., `feature/add-search`)
+- **fix/*** – Bug fixes (e.g., `fix/login-error`)
+- **perf/*** – Performance improvements (e.g., `perf/cache-optimization`)
+
+When your work is complete, open a Pull Request targeting the dev branch.
+
+Changes are reviewed and tested before being merged.
+
+## 7. Pull Request Guidelines
 
 When opening a PR:
 
-1. Describe what the PR does 
+1. Describe what the PR does and why the change is needed
 2. Link related issues (e.g., `Closes #42`)
 3. Keep PRs small and focused
-4. Ensure it's based on the latest `main` branch
+4. Ensure your branch is up‑to‑date with the latest dev branch before submitting
 
 ---
 
 Thank you for making *woninet* better!
 Maintainers and contributors appreciate your work.
 
-**Update: 2026-04-21**
+**Update: 2026-04-22**
