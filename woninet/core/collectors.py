@@ -1,5 +1,5 @@
 import re
-import ping3
+from icmplib import ping
 import subprocess
 from typing import List, Dict, Optional
 from concurrent.futures import ThreadPoolExecutor
@@ -59,16 +59,15 @@ def detect_host(ip: str, src_addr: str, timeout: float = 1.0) -> HostStatus:
     
     # ICMP check
     try:
-        response = ping3.ping(src_addr=src_addr, dest_addr=ip.strip(), timeout=timeout, ttl=64)
+        response = ping(source=src_addr, address=ip.strip(), timeout=timeout, count=2, privileged=True, interval=1)
     except PermissionError:
         raise
     except Exception as e:
         rootLogger.error(f"Error during ICMP ping at detect_host function, to {ip}: {e}")
         response = None
     
-    latency: Optional[float] = None
-    if response is not None and response is not False:
-        latency = response * 1000 # Convert to milliseconds
+    status.latency = response.avg_rtt
+    latency: float = status.latency
 
     status.latency = latency
 
