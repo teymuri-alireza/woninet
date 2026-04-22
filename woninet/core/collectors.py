@@ -171,7 +171,7 @@ class PingCollector(BaseCollector):
 
             return MetricRecord(ip, "latency_ms", value)
 
-        with ThreadPoolExecutor(max_workers=20) as executor:
+        with ThreadPoolExecutor(max_workers=10) as executor:
             future_to_ip = {
                 executor.submit(worker, ip, dev): ip
                 for ip, dev in devices.items()
