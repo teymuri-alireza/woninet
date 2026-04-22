@@ -169,12 +169,6 @@ class PingCollector(BaseCollector):
                     )
                 pass
 
-            # Format the latency value to 2 decimals
-            if value is not None:
-                value_split = str(value).split(".")
-                merge_value = value_split[0] + "." + value_split[1][:2]
-                value = float(merge_value)
-            
             return MetricRecord(ip, "latency_ms", value)
 
         with ThreadPoolExecutor(max_workers=20) as executor:
