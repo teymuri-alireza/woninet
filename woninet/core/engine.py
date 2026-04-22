@@ -43,7 +43,7 @@ class NetworkMonitorCore:
             for collector in self.collectors:
                 collector.run(self.devices, self.ip_addr, self.storage.store)
                 self.alert_engine.evaluate()
-            time.sleep(5)
+            time.sleep(1)
         except KeyboardInterrupt:
             rootLogger.info("Keyboard interrupted. Shutting down...")
             exit(0)
