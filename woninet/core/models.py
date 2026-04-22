@@ -50,7 +50,6 @@ class MetricRecord:
         self.timestamp = timestamp or f"{year}/{month}/{day} {hour}:{minute}:{second}"
 
 
-# ARP and ICMP detection
 class HostStatus:
     """
     Combined ARP + ICMP status for a given IP
