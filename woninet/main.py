@@ -17,6 +17,7 @@ argument = args()
 # The --version Argument
 if argument.version:
     from woninet.__init__ import __version__
+
     print(__version__)
     exit(0)
 
@@ -30,7 +31,7 @@ else:
 
 # Set ERROR level for server mode to suppress CLI-related logs
 if argument.serve:
-        rootLogger.setLevel(logging.ERROR)
+    rootLogger.setLevel(logging.ERROR)
 
 # Fetch The Local IP Address
 try:
@@ -47,23 +48,26 @@ except Exception as e:
 
 monitor = None
 
+
 def get_monitor() -> NetworkMonitorCore:
     """
-    Returns an instance of NetworkMonitoreCore for easier access in both CLI mode
-    and server dashboard.
+    Return an instance of NetworkMonitoreCore for easier access in both CLI mode
+    and web dashboard.
     """
     global monitor
     if monitor is None:
         monitor = NetworkMonitorCore(ip_addr=local_ip)
     return monitor
 
+
 def main():
     """
-    The main entry point of woninet; Which decides to either call server
-    dashboard or the CLI interface.
+    Entry point for woninet. Launch either the web dashboard or the CLI
+    monitor based on command-line arguments.
     """
     if argument.serve:
         from woninet.server.app import app
+
         uvicorn.run(app, host=local_ip, port=PORT)
     else:
         try:

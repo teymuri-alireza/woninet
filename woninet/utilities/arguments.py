@@ -1,5 +1,6 @@
 import argparse
 
+
 def args():
     """
     The argument handler.
@@ -15,26 +16,25 @@ A local network monitoring system. It enumerates all candidate IP addresses in y
         description=description,
         formatter_class=argparse.RawDescriptionHelpFormatter,
         prog="woninet",
-        epilog=epilog
+        epilog=epilog,
     )
 
     parser.add_argument(
         "--serve",
         action="store_true",
-        help="Starts the server for web-based dashboard."
+        help="Starts the server for web-based dashboard.",
     )
 
     parser.add_argument(
-        "-v", "--verbose",
+        "-v",
+        "--verbose",
         action="count",
         default=0,
-        help="Talks more. (Can be used multiple times)"
+        help="Talks more. (Can be used multiple times)",
     )
 
     parser.add_argument(
-        "-V", "--version",
-        action="store_true",
-        help="Prints the version and quit."
+        "-V", "--version", action="store_true", help="Prints the version and quit."
     )
 
     return parser.parse_args()

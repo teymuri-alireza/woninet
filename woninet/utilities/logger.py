@@ -9,6 +9,7 @@ def trace(self, msg, *args, **kwargs):
     if self.isEnabledFor(TRACE_LEVEL):
         self._log(TRACE_LEVEL, msg, args, **kwargs)
 
+
 logging.Logger.trace = trace
 
 
@@ -23,9 +24,10 @@ def logger_function() -> logging.Logger:
     rootLogger = logging.getLogger()
 
     if not rootLogger.handlers:
-
         consoleHandler = logging.StreamHandler()
-        consoleHandler.setFormatter(logging.Formatter(fmt=consoleLogFormat, datefmt=None))
+        consoleHandler.setFormatter(
+            logging.Formatter(fmt=consoleLogFormat, datefmt=None)
+        )
         consoleHandler.setLevel(logging.NOTSET)
 
         fileHandler = logging.FileHandler("logs.txt")
