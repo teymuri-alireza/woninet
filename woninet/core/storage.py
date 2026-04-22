@@ -30,6 +30,6 @@ class StorageEngine:
 
     def clear_history(self):
         """
-        Clears history to prevent confusion in Alert section.
+        Clear stored history.
         """
         self.history = []

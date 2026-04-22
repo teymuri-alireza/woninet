@@ -108,12 +108,12 @@ class NetworkMonitorCore:
 
     def get_devices(self) -> List[MetricRecord]:
         """
-        Returns the full history using get_full_hisotry() in StorageEngine class.
+        Return the full stored history.
         """
         return self.storage.get_full_history()
 
     def clear_history(self):
         """
-        Clears history to prevent unwanted alert notices using clear_history() in StorageEngine class.
+        Clear all stored history.
         """
         self.storage.clear_history()

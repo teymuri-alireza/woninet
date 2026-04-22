@@ -131,8 +131,8 @@ class BaseCollector:
 
     def run(self, devices: Dict[str, Device], ip_addr, store_callback, stop_event=None):
         """
-        Main execution loop for the collector.
-        Runs forever and periodically sends collected metrics to storage.
+        Main execution function for the collector.
+        Send collected metrics to storage.
         """
         if stop_event and stop_event.is_set():
             return

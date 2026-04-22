@@ -8,10 +8,6 @@ rootLogger = logger_function()
 class SubnetEnumerator:
     """
     Build a dictionary of candidate devices within the local /24 subnet.
-
-    Note:
-        This does NOT confirm reachability; it only enumerates IPs.
-        Logic in PingCollector will determine existence and reachability.
     """
 
     def scan_subnet(self, ip_addr: str) -> Dict[str, Device]:
