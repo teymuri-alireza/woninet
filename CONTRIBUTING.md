@@ -31,8 +31,12 @@ cd woninet
 **Note:** Create the virtual environment outside the project directory to avoid
 `Multiple top-level packages discovered in a flat-layout` errors.
 
+**Note 2:** The `--copies` flag forces Python to copy the interpreter instead of using a symbolic link.
+
+This is required because you will apply Linux capabilities directly to the Python binary in the virtual environment.
+
 ```shell
-python3 -m venv ../venv
+python3 -m venv --copies ../venv
 source ../venv/bin/activate
 ```
 
@@ -42,10 +46,24 @@ source ../venv/bin/activate
 pip install -e .
 ```
 
-### 4. Run the package
+### 4. Configure permissions for ICMP (one-time)
+
+Grant the cap_net_raw capability to the Python interpreter inside the virtual environment so you can run woninet without sudo:
 
 ```shell
-sudo /venv/bin/python3 -m woninet
+sudo setcap cap_net_raw=eip ../venv/bin/python3
+```
+
+### 5. Run the package
+
+```shell
+python3 -m woninet
+```
+
+**Alternative (not recommended):** You can run woninet with sudo instead of using setcap, but this is discouraged for security reasons:
+
+```shell
+sudo ../venv/bin/python3 -m woninet
 ```
 
 ## 3. Project Structure Overview
