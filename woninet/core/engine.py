@@ -10,11 +10,13 @@ from woninet.utilities.logger import logger_function
 
 rootLogger = logger_function()
 
+
 class NetworkMonitorCore:
     """
     Central controller coordinating discovery, collectors,
     storage, and alert processing.
     """
+
     def __init__(self, ip_addr: str):
         self._running = False
         self._thread = None
@@ -23,7 +25,7 @@ class NetworkMonitorCore:
         self.ip_addr = ip_addr
 
         rootLogger.info(f"Initializing network monitor for {self.ip_addr}")
-        
+
         self.subnet_enumerator = SubnetEnumerator()
         self.storage = StorageEngine()
 
@@ -37,7 +39,7 @@ class NetworkMonitorCore:
             storage=self.storage,
             rules=[
                 AlertRule("latency_ms", 100, 10),
-            ]
+            ],
         )
 
     def start(self):
@@ -46,13 +48,11 @@ class NetworkMonitorCore:
         """
         if self._running:
             return
-        
+
         self._running = True
         self._stop_event.clear()
         self._thread = threading.Thread(
-            target=self.worker_loop,
-            name="woninet-worker",
-            daemon=False
+            target=self.worker_loop, name="woninet-worker", daemon=False
         )
         self._thread.start()
 
@@ -86,7 +86,12 @@ class NetworkMonitorCore:
                     if not self._running or self._stop_event.is_set():
                         break
 
-                    collector.run(self.devices, self.ip_addr, self.storage.store, stop_event=self._stop_event)
+                    collector.run(
+                        self.devices,
+                        self.ip_addr,
+                        self.storage.store,
+                        stop_event=self._stop_event,
+                    )
                     # self.alert_engine.evaluate()
                 time.sleep(1)
         except PermissionError:

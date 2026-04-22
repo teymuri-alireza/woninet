@@ -1,10 +1,12 @@
 from typing import List
 from woninet.core.models import MetricRecord
 
+
 class StorageEngine:
     """
     Stores collected metric data.
     """
+
     def __init__(self):
         self.history: List[MetricRecord] = []
 
@@ -19,7 +21,7 @@ class StorageEngine:
         Retrieve historical metric records for a device.
         """
         return [m for m in self.history if m.device_ip == ip and m.metric == metric]
-    
+
     def get_full_history(self) -> List[MetricRecord]:
         """
         Returns history records for all devices.

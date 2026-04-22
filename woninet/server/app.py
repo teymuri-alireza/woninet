@@ -9,6 +9,7 @@ from woninet.__init__ import __version__
 
 monitor = None
 
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     global monitor
@@ -21,6 +22,7 @@ async def lifespan(app: FastAPI):
 
     # Shutdown
     monitor.stop()
+
 
 app = FastAPI(
     title="woninet",
@@ -40,9 +42,8 @@ app.include_router(devices.router)
 app.include_router(stats.router)
 app.include_router(system.router)
 
+
 # The root path
 @app.get("/", response_class=HTMLResponse)
 def root(request: Request):
-    return templates.TemplateResponse(
-        request=request, name="dashboard.html"
-    )
+    return templates.TemplateResponse(request=request, name="dashboard.html")
