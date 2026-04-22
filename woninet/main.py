@@ -45,13 +45,16 @@ except Exception as e:
     rootLogger.error(f"Error at socket connection in main.py: {e}")
     exit(1)
 
+monitor = None
 
 def get_monitor() -> NetworkMonitorCore:
     """
     Returns an instance of NetworkMonitoreCore for easier access in both CLI mode
     and server dashboard.
     """
-    monitor = NetworkMonitorCore(ip_addr=local_ip)
+    global monitor
+    if monitor is None:
+        monitor = NetworkMonitorCore(ip_addr=local_ip)
     return monitor
 
 def main():
@@ -65,9 +68,9 @@ def main():
     else:
         try:
             monitor = get_monitor()
-            while True:
-                monitor.start()
-                monitor.clear_history()
-        except Exception as e:
-            rootLogger.error(f"Error in main.py: {e}")
-            exit(1)
+            monitor.start()
+            monitor.wait()
+        except KeyboardInterrupt:
+            rootLogger.info("Keyboard interrupted. Wait for shut down...")
+        finally:
+            monitor.stop()

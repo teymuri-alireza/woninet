@@ -60,4 +60,4 @@ async function loadDevices() {
     }
 }
 
-loadDevices();
+setInterval(loadDevices, 2000);

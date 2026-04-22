@@ -1,4 +1,5 @@
 import time
+import threading
 from typing import List
 from woninet.core.models import MetricRecord
 from woninet.core.collectors import PingCollector
@@ -15,6 +16,10 @@ class NetworkMonitorCore:
     storage, and alert processing.
     """
     def __init__(self, ip_addr: str):
+        self._running = False
+        self._thread = None
+        self._stop_event = threading.Event()
+
         self.ip_addr = ip_addr
 
         rootLogger.info(f"Initializing network monitor for {self.ip_addr}")
@@ -37,23 +42,65 @@ class NetworkMonitorCore:
 
     def start(self):
         """
-        Start the collectors evaluate alerts.
+        Starts the monitoring worker thread.
+        """
+        if self._running:
+            return
+        
+        self._running = True
+        self._stop_event.clear()
+        self._thread = threading.Thread(
+            target=self.worker_loop,
+            name="woninet-worker",
+            daemon=False
+        )
+        self._thread.start()
+
+    def stop(self):
+        """
+        Stops the monitoring worker thread.
+        """
+        if not self._running:
+            return
+
+        self._running = False
+        self._stop_event.set()
+        if self._thread and self._thread.is_alive():
+            self._thread.join(timeout=3)
+
+    def wait(self) -> None:
+        """
+        Blocks until the worker thread finishes.
+        """
+        if self._thread:
+            self._thread.join()
+
+    def worker_loop(self) -> None:
+        """
+        Main monitoring loop.
+        Starts the collectors and evaluate alerts.
         """
         try:
-            for collector in self.collectors:
-                collector.run(self.devices, self.ip_addr, self.storage.store)
-                self.alert_engine.evaluate()
-            time.sleep(1)
-        except KeyboardInterrupt:
-            rootLogger.info("Keyboard interrupted. Shutting down...")
-            exit(0)
+            while self._running and not self._stop_event.is_set():
+                for collector in self.collectors:
+                    if not self._running or self._stop_event.is_set():
+                        break
+
+                    collector.run(self.devices, self.ip_addr, self.storage.store, stop_event=self._stop_event)
+                    # self.alert_engine.evaluate()
+                time.sleep(1)
         except PermissionError:
             rootLogger.error("woninet requires sudo to scan.")
-            exit(1)
+            self._running = False
+            self._stop_event.set()
         except Exception as e:
             rootLogger.error(f"Unexpected error in NetworkMonitorCore: {e}")
-            exit(1)
-    
+            self._running = False
+            self._stop_event.set()
+        finally:
+            self._running = False
+            self._stop_event.set()
+
     def get_devices(self) -> List[MetricRecord]:
         """
         Returns the full history using get_full_hisotry() in StorageEngine class.
