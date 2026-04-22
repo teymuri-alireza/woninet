@@ -69,8 +69,6 @@ def detect_host(ip: str, src_addr: str, timeout: float = 1.0) -> HostStatus:
     status.latency = response.avg_rtt
     latency: float = status.latency
 
-    status.latency = latency
-
     # Classification logic
     if not mac and latency is None:
         # Host is not in ARP table and doesn't respond to ICMP
