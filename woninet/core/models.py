@@ -14,7 +14,7 @@ class Device:
         self.exists: bool = False # True if ARP has seen this IP
         self.reachable: bool = False # True if ICMP is sane and within latency threshold
         self.mac: Optional[str] = None # MAC address from ARP table
-        self.latency: Optional[float] = None
+        self.latency: Optional[float] = 0
     def update_seen(self):
         """
         Update timestamp indicating the device responded recently.

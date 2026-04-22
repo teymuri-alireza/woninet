@@ -64,25 +64,25 @@ def detect_host(ip: str, src_addr: str, timeout: float = 1.0) -> HostStatus:
         raise
     except Exception as e:
         rootLogger.error(f"Error during ICMP ping at detect_host function, to {ip}: {e}")
-        response = None
+        response = 0
     
     status.latency = response.avg_rtt
     latency: float = status.latency
 
     # Classification logic
-    if not mac and latency is None:
+    if not mac and latency == 0:
         # Host is not in ARP table and doesn't respond to ICMP
         status.exists = False
         status.reachable = False
         return status
     
-    if mac and latency is None:
+    if mac and latency == 0:
         # Device exists but doesn't respond to ICMP
         status.exists = True
         status.reachable = False
         return status
 
-    if latency is not None:
+    if latency != 0:
         if latency < 300.0:
             # Acceptable latency (reachable)
             status.exists = bool(mac)
@@ -149,9 +149,9 @@ class PingCollector(BaseCollector):
                 # Only consider reachable hosts as recently seen
                 dev.update_seen()
             
-            value = status.latency if status.reachable else None
+            value = status.latency if status.reachable else 0
 
-            if value is not None:
+            if value != 0:
                 rootLogger.debug(
                     f"Device {ip}: exists={dev.exists}, reachable={dev.reachable}, "
                     f"MAC={dev.mac}, latency={value:.2f} ms"
@@ -160,12 +160,12 @@ class PingCollector(BaseCollector):
                 if dev.exists:
                     rootLogger.debug(
                         f"Device {ip}: exists={dev.exists}, reachable={dev.reachable}, "
-                        f"MAC={dev.mac}, latency=None"
+                        f"MAC={dev.mac}, latency=0.0"
                     )
                 else:
                     rootLogger.trace(
                         f"Device {ip}: exists={dev.exists}, reachable={dev.reachable}, "
-                        f"MAC={dev.mac}, latency=None"
+                        f"MAC={dev.mac}, latency=0.0"
                     )
                 pass
 
@@ -194,7 +194,7 @@ class PingCollector(BaseCollector):
                     rootLogger.error(f"Error in PingCollector for {ip}: {e}")
                     continue
                 else:
-                    if metric.value is not None:
+                    if metric.value != 0:
                         results.append(metric)
 
         return results

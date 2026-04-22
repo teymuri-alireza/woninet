@@ -31,6 +31,6 @@ class AlertEngine:
         """
         for rule in self.rules:
             for record in self.storage.history:
-                if record.value is not None and record.value is not False:
+                if record.value != 0:
                     if record.metric == rule.metric and record.value > rule.threshold:
                         rootLogger.warning(f"[ALERT] {record.device_ip} exceeded {rule.metric}: {record.value:.2f}")
