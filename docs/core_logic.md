@@ -88,7 +88,7 @@ No ICMP probing is attempted for non-existing hosts.
 
 ### Stage B — ICMP Ping (if ARP succeeded)
 
-If ARP confirms existence, *woninet* sends an ICMP ping using `ping3`.
+If ARP confirms existence, *woninet* sends an ICMP ping using `icmplib`.
 
 Latency is interpreted carefully:
 
