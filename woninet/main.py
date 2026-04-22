@@ -68,9 +68,9 @@ def main():
     else:
         try:
             monitor = get_monitor()
-            while True:
-                monitor.start()
-                monitor.clear_history()
-        except Exception as e:
-            rootLogger.error(f"Error in main.py: {e}")
-            exit(1)
+            monitor.start()
+            monitor.wait()
+        except KeyboardInterrupt:
+            rootLogger.info("Keyboard interrupted. Wait for shut down...")
+        finally:
+            monitor.stop()
