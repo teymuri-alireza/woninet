@@ -9,7 +9,6 @@ def get_monitor_gracefully():
 
 def get_devices():
     monitor = get_monitor_gracefully()
-    monitor.start()
     return {
         "devices": monitor.get_devices()
     }
