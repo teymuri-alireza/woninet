@@ -78,7 +78,6 @@ sudo venv/bin/python3 -m woninet --version
 
 - Unix-based operating systems
 - Python >= 3.12
-- ping3 v4.0.4 (pyhton3 module)
 - Root privileges
 
 ## Documentation

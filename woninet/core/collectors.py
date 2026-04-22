@@ -1,8 +1,8 @@
 import re
-import ping3
+from icmplib import ping
 import subprocess
 from typing import List, Dict, Optional
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from woninet.core.models import Device, MetricRecord,HostStatus
 from woninet.utilities.logger import logger_function
 
@@ -59,33 +59,30 @@ def detect_host(ip: str, src_addr: str, timeout: float = 1.0) -> HostStatus:
     
     # ICMP check
     try:
-        response = ping3.ping(src_addr=src_addr, dest_addr=ip.strip(), timeout=timeout, ttl=64)
+        response = ping(source=src_addr, address=ip.strip(), timeout=timeout, count=2, privileged=True, interval=1)
     except PermissionError:
         raise
     except Exception as e:
         rootLogger.error(f"Error during ICMP ping at detect_host function, to {ip}: {e}")
-        response = None
+        response = 0
     
-    latency: Optional[float] = None
-    if response is not None and response is not False:
-        latency = response * 1000 # Convert to milliseconds
-
-    status.latency = latency
+    status.latency = response.avg_rtt
+    latency: float = status.latency
 
     # Classification logic
-    if not mac and latency is None:
+    if not mac and latency == 0:
         # Host is not in ARP table and doesn't respond to ICMP
         status.exists = False
         status.reachable = False
         return status
     
-    if mac and latency is None:
+    if mac and latency == 0:
         # Device exists but doesn't respond to ICMP
         status.exists = True
         status.reachable = False
         return status
 
-    if latency is not None:
+    if latency != 0:
         if latency < 300.0:
             # Acceptable latency (reachable)
             status.exists = bool(mac)
@@ -138,7 +135,7 @@ class PingCollector(BaseCollector):
 
         def worker(ip: str, dev: Device) -> MetricRecord:
             try:
-                status = detect_host(ip=ip, src_addr=ip_addr, timeout=1)
+                status = detect_host(ip=ip, src_addr=ip_addr, timeout=1.0)
             except PermissionError:
                 raise
 
@@ -152,9 +149,9 @@ class PingCollector(BaseCollector):
                 # Only consider reachable hosts as recently seen
                 dev.update_seen()
             
-            value = status.latency if status.reachable else None
+            value = status.latency if status.reachable else 0
 
-            if value is not None:
+            if value != 0:
                 rootLogger.debug(
                     f"Device {ip}: exists={dev.exists}, reachable={dev.reachable}, "
                     f"MAC={dev.mac}, latency={value:.2f} ms"
@@ -163,30 +160,24 @@ class PingCollector(BaseCollector):
                 if dev.exists:
                     rootLogger.debug(
                         f"Device {ip}: exists={dev.exists}, reachable={dev.reachable}, "
-                        f"MAC={dev.mac}, latency=None"
+                        f"MAC={dev.mac}, latency=0.0"
                     )
                 else:
                     rootLogger.trace(
                         f"Device {ip}: exists={dev.exists}, reachable={dev.reachable}, "
-                        f"MAC={dev.mac}, latency=None"
+                        f"MAC={dev.mac}, latency=0.0"
                     )
                 pass
 
-            # Format the latency value to 2 decimals
-            if value is not None:
-                value_split = str(value).split(".")
-                merge_value = value_split[0] + "." + value_split[1][:2]
-                value = float(merge_value)
-            
             return MetricRecord(ip, "latency_ms", value)
 
-        with ThreadPoolExecutor(max_workers=20) as executor:
+        with ThreadPoolExecutor(max_workers=10) as executor:
             future_to_ip = {
                 executor.submit(worker, ip, dev): ip
                 for ip, dev in devices.items()
             }
 
-            for future in future_to_ip:
+            for future in as_completed(future_to_ip):
                 try:
                     metric = future.result()
                 except PermissionError:
@@ -197,7 +188,7 @@ class PingCollector(BaseCollector):
                     rootLogger.error(f"Error in PingCollector for {ip}: {e}")
                     continue
                 else:
-                    if metric.value is not None:
+                    if metric.value != 0:
                         results.append(metric)
 
         return results
