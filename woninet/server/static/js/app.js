@@ -112,14 +112,21 @@ function renderDevices(devicesResponse) {
 
 async function loadDevices() {
     const container = document.getElementById("devices");
+    const statusDot = document.getElementById("status_dot");
 
     try {
         const response = await fetch("/devices/");
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
+        statusDot.style.background = "#22c55e";
+        statusDot.style.boxShadow = "0 0 16px rgba(34, 197, 94, 0.75)";
+
         const devices = await response.json();
         renderDevices(devices);
     } catch (error) {
+        statusDot.style.background = "#ef4444";
+        statusDot.style.boxShadow = "0 0 16px rgba(239, 68, 68, 0.75)";
+
         // Only show error if we have nothing rendered yet
         if (found_devices.size === 0 && !container.hasChildNodes()) {
             container.innerHTML = `<div class="empty-state">Failed to load devices.</div>`;
