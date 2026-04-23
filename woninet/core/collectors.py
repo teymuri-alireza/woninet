@@ -201,6 +201,10 @@ class PingCollector(BaseCollector):
                 # Only consider reachable hosts as recently seen
                 dev.update_seen()
 
+            # Store device to history
+            if dev.latency:
+                store_callback.store(device=dev)
+
             value = status.latency if status.reachable else 0
 
             if value != 0:
