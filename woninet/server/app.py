@@ -1,3 +1,4 @@
+from pathlib import Path
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
@@ -6,6 +7,10 @@ from contextlib import asynccontextmanager
 from woninet.server.routes import devices, stats, system
 from woninet.main import get_monitor
 from woninet.__init__ import __version__
+
+# Global variables
+STATIC_DIR = Path(__file__).parent / "static"
+TEMPLATES_DIR = Path(__file__).parent / "templates"
 
 monitor = None
 
@@ -32,10 +37,10 @@ app = FastAPI(
 )
 
 # Templates
-templates = Jinja2Templates(directory="woninet/server/templates")
+templates = Jinja2Templates(directory=TEMPLATES_DIR)
 
 # Static files
-app.mount("/static", StaticFiles(directory="woninet/server/static"), name="static")
+app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
 # Routes
 app.include_router(devices.router)
