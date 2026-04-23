@@ -27,6 +27,7 @@ All notable changes to this project will be documented in this file.
 - **BREAKING:** Rename the project from `pymonitor` to `woninet`. Update all imports and references accordingly.
 - Improve the internal directory/package structure for clearer module boundaries and maintainability.
 - Move the contribution guide into `CONTRIBUTING.md` for better discoverability.
+- Change hardcoded static and templates path in `app.py` with pathlib.Path class to prevent **File not found** error when installed from wheel.
 
 ### Removed
 - Delete the old `build.sh` installer in favor of modern packaging.
