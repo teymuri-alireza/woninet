@@ -9,6 +9,7 @@ __pycache__/
 logs.txt
 
 # build
+dist/
 build/
 *.egg-info/
 *.dist-info/
