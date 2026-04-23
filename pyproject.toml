@@ -15,6 +15,12 @@ dependencies = [
     "uvicorn==0.44.0"
 ]
 
+[tool.setuptools.package-data]
+woninet = [
+    "server/static/**/*",
+    "server/templates/**/*"
+]
+
 [project.urls]
 Homepage = "https://github.com/teymuri-alireza/woninet"
 Documentation = "https://github.com/teymuri-alireza/woninet/project/tree/main/docs"
