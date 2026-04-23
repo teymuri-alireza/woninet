@@ -28,7 +28,6 @@ reachability, and latency. Metrics are collected continuously and processed thro
 - Add ARP table caching to further reduce Wi‑Fi latency noise.
 - Optional SQLite storage for long‑term historical metrics.
 - Accept defined IP and MAC addresses as command‑line arguments.
-- Add looping for web dashboard.
 - Send `reachability` and `existence` paramters to web dashboard.
 
 ## Known Issues
