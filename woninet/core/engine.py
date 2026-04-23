@@ -108,7 +108,7 @@ class NetworkMonitorCore:
 
     def get_devices(self) -> List[MetricRecord]:
         """
-        Return the full stored history.
+        Return the stored history.
         """
         return self.storage.get_full_history()
 
