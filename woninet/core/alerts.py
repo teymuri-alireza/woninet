@@ -39,3 +39,5 @@ class AlertEngine:
                         rootLogger.warning(
                             f"[ALERT] {record.device_ip} exceeded {rule.metric}: {record.value:.2f}"
                         )
+        # Clear metric history to avoid repeated alerts
+        self.storage.clear_metric_history()
