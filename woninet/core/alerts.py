@@ -33,7 +33,7 @@ class AlertEngine:
         when thresholds are exceeded.
         """
         for rule in self.rules:
-            for record in self.storage.history:
+            for record in self.storage.get_metric_history():
                 if record.value != 0:
                     if record.metric == rule.metric and record.value > rule.threshold:
                         rootLogger.warning(
