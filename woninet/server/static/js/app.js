@@ -104,7 +104,7 @@ async function loadDevices() {
     const container = document.getElementById("devices");
 
     try {
-        const response = await fetch("/devices");
+        const response = await fetch("/devices/");
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
         const devices = await response.json();
