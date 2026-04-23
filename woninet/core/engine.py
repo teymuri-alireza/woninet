@@ -1,7 +1,7 @@
 import time
 import threading
 from typing import List
-from woninet.core.models import MetricRecord
+from woninet.core.models import Device
 from woninet.core.collectors import PingCollector
 from woninet.core.storage import StorageEngine
 from woninet.core.alerts import AlertEngine, AlertRule
@@ -106,7 +106,7 @@ class NetworkMonitorCore:
             self._running = False
             self._stop_event.set()
 
-    def get_devices(self) -> List[MetricRecord]:
+    def get_devices(self) -> List[Device]:
         """
         Return the stored history.
         """
