@@ -153,7 +153,8 @@ class BaseCollector:
             store_callback=store_callback,
             stop_event=stop_event,
         )
-        store_callback(result)
+        # Store metric data
+        store_callback.store_metric(result)
 
 
 class PingCollector(BaseCollector):
