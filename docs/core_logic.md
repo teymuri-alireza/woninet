@@ -149,8 +149,9 @@ If a rule is triggered, an alert event is logged.
 
 ## 7. Looping and Scheduling
 
-Looping behavior depends on the execution mode.
+Looping behavior depends on the execution mode:
 
-For the **CLI interface**, the loop is implemented in `main.py`.
+In **CLI interface**, the main loop is implemented in `engine.py`, where the monitoring cycle runs continuously.
 
-For the web-based dashboard, the looping logic is handled within the web service layer. (future update)
+In the **web-based dashboard**, the looping logic is coordinated through FastAPI in `app.py` (backend)
+and periodic updates handled by `app.js` on the frontend.
