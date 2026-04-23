@@ -33,9 +33,11 @@ class AlertEngine:
         when thresholds are exceeded.
         """
         for rule in self.rules:
-            for record in self.storage.history:
+            for record in self.storage.get_metric_history():
                 if record.value != 0:
                     if record.metric == rule.metric and record.value > rule.threshold:
                         rootLogger.warning(
                             f"[ALERT] {record.device_ip} exceeded {rule.metric}: {record.value:.2f}"
                         )
+        # Clear metric history to avoid repeated alerts
+        self.storage.clear_metric_history()

@@ -4,6 +4,7 @@ import subprocess
 from typing import List, Dict, Optional
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from woninet.core.models import Device, MetricRecord, HostStatus
+from woninet.core.storage import StorageEngine
 from woninet.utilities.logger import logger_function
 
 rootLogger = logger_function()
@@ -121,7 +122,11 @@ class BaseCollector:
     interval = 10
 
     def collect(
-        self, devices: Dict[str, Device], ip_addr: str, store_callback, stop_event=None
+        self,
+        devices: Dict[str, Device],
+        ip_addr: str,
+        store_callback: StorageEngine,
+        stop_event=None,
     ) -> List[MetricRecord]:
         """
         Collect metrics from devices.
@@ -129,7 +134,13 @@ class BaseCollector:
         """
         raise NotImplementedError
 
-    def run(self, devices: Dict[str, Device], ip_addr, store_callback, stop_event=None):
+    def run(
+        self,
+        devices: Dict[str, Device],
+        ip_addr,
+        store_callback: StorageEngine,
+        stop_event=None,
+    ):
         """
         Main execution function for the collector.
         Send collected metrics to storage.
@@ -142,7 +153,8 @@ class BaseCollector:
             store_callback=store_callback,
             stop_event=stop_event,
         )
-        store_callback(result)
+        # Store metric data
+        store_callback.store_metric(result)
 
 
 class PingCollector(BaseCollector):
@@ -154,7 +166,11 @@ class PingCollector(BaseCollector):
     interval = 5
 
     def collect(
-        self, devices: Dict[str, Device], ip_addr: str, store_callback, stop_event=None
+        self,
+        devices: Dict[str, Device],
+        ip_addr: str,
+        store_callback: StorageEngine,
+        stop_event=None,
     ) -> List[MetricRecord]:
         """
         For each device:
@@ -184,6 +200,10 @@ class PingCollector(BaseCollector):
             if status.reachable:
                 # Only consider reachable hosts as recently seen
                 dev.update_seen()
+
+            # Store device to history
+            if dev.latency:
+                store_callback.store(device=dev)
 
             value = status.latency if status.reachable else 0
 

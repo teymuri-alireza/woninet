@@ -1,7 +1,7 @@
 import time
 import threading
 from typing import List
-from woninet.core.models import MetricRecord
+from woninet.core.models import Device
 from woninet.core.collectors import PingCollector
 from woninet.core.storage import StorageEngine
 from woninet.core.alerts import AlertEngine, AlertRule
@@ -89,10 +89,10 @@ class NetworkMonitorCore:
                     collector.run(
                         self.devices,
                         self.ip_addr,
-                        self.storage.store,
+                        self.storage,
                         stop_event=self._stop_event,
                     )
-                    # self.alert_engine.evaluate()
+                    self.alert_engine.evaluate()
                 time.sleep(1)
         except PermissionError:
             rootLogger.error("woninet requires sudo to scan.")
@@ -106,14 +106,8 @@ class NetworkMonitorCore:
             self._running = False
             self._stop_event.set()
 
-    def get_devices(self) -> List[MetricRecord]:
+    def get_devices(self) -> List[Device]:
         """
-        Return the full stored history.
+        Return the stored history.
         """
-        return self.storage.get_full_history()
-
-    def clear_history(self):
-        """
-        Clear all stored history.
-        """
-        self.storage.clear_history()
+        return self.storage.get_history()
