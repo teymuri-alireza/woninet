@@ -92,7 +92,7 @@ class NetworkMonitorCore:
                         self.storage.store,
                         stop_event=self._stop_event,
                     )
-                    # self.alert_engine.evaluate()
+                    self.alert_engine.evaluate()
                 time.sleep(1)
         except PermissionError:
             rootLogger.error("woninet requires sudo to scan.")
