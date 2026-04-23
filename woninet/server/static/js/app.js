@@ -17,6 +17,7 @@ function escapeHtml(value) {
 
 function createDeviceCard(device) {
     const ip = escapeHtml(device.ip ?? "Unknown");
+    const mac = escapeHtml(device.mac ?? "Unknown");
     const latency = device.latency ?? "N/A";
     const lastSeen = escapeHtml(device.last_seen ?? "Unknown");
     const latencyClass = typeof latency === "number" ? getLatencyClass(latency) : "latency-warn";
@@ -33,6 +34,10 @@ function createDeviceCard(device) {
                 <span class="latency-pill ${latencyClass}">${latency} ms</span>
             </div>
             <div class="meta-row">
+                <span class="meta-label">MAC address</span>
+                <span class="mac">${mac}</span>
+            </div>
+            <div class="meta-row">
                 <span class="meta-label">Last seen</span>
                 <span class="last-seen">${lastSeen}</span>
             </div>
@@ -44,11 +49,13 @@ function createDeviceCard(device) {
 
 function updateDeviceCard(card, device) {
     const latency = device.latency ?? "N/A";
+    const mac = device.mac ?? "Unknown";
     const lastSeen = escapeHtml(device.last_seen ?? "Unknown");
     const latencyClass = typeof latency === "number" ? getLatencyClass(latency) : "latency-warn";
 
     const latencySpan = card.querySelector(".latency-pill");
     const lastSeenSpan = card.querySelector(".last-seen");
+    const macSpan = card.querySelector(".mac");
 
     if (latencySpan) {
         latencySpan.textContent = `${latency} ms`;
@@ -56,6 +63,9 @@ function updateDeviceCard(card, device) {
     }
     if (lastSeenSpan) {
         lastSeenSpan.textContent = lastSeen;
+    }
+    if (macSpan) {
+        macSpan.textContent = mac;
     }
 }
 
