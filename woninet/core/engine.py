@@ -110,10 +110,4 @@ class NetworkMonitorCore:
         """
         Return the stored history.
         """
-        return self.storage.get_full_history()
-
-    def clear_history(self):
-        """
-        Clear all stored history.
-        """
-        self.storage.clear_history()
+        return self.storage.get_history()
