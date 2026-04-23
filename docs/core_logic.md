@@ -105,18 +105,35 @@ Device fields updated:
 
 This filters out false positives common on Wi‑Fi networks, where ARP proxying or delayed ARP replies cause misleading high ping times.
 
-## 5. Metric Storage
+## 5. History Storage
 
-Each valid measurement (ARP-confirmed + reachability) is recorded in the `StorageEngine`.
+The StorageEngine now maintains two separate in‑memory histories:
 
-A `MetricRecord` contains:
+- Device history (device discoveries and status updates)
+- Metric history (latency and reachability measurements)
+
+### Metric History
+
+Each valid measurement (ARP-confirmed + reachability) is stored as a MetricRecord, containing:
 
 - timestamp
 - IP address
+- Metric
 - latency
-- reachability state
 
-The storage engine currently keeps records in-memory, meaning history resets at program exit.
+### Device History
+
+Each device-related update is stored as a Device class, containing:
+
+- last_seen
+- IP address
+- Metrics
+- Existence
+- Reachability
+- MAC address
+- Latency
+
+Both histories are currently stored in-memory, meaning they are cleared when the program exits.
 
 ## 6. Alert Engine Evaluation
 
