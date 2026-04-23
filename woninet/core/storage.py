@@ -1,35 +1,52 @@
 from typing import List
+from woninet.core.models import Device
 from woninet.core.models import MetricRecord
 
 
 class StorageEngine:
     """
-    Stores collected metric data.
+    Stores collected device and metric data.
     """
 
-    def __init__(self):
-        self.history: List[MetricRecord] = []
+    def __init__(self) -> None:
+        self.history: List[Device] = []
+        self.metric_history: List[MetricRecord] = []
 
-    def store(self, metrics: List[MetricRecord]):
+    def store(self, device: Device) -> None:
         """
-        Persist newly collected metrics.
+        Store newly collected devices.
         """
-        self.history.extend(metrics)
+        # Update data if device is in history
+        if device in self.history:
+            for i in range(len(self.history)):
+                if self.history[i].ip == device.ip:
+                    self.history[i].latency = device.latency
+                    self.history[i].last_seen = device.last_seen
+                    break
+        else:
+            self.history.append(device)
 
-    def get_history(self, ip: str, metric: str) -> List[MetricRecord]:
-        """
-        Retrieve historical metric records for a device.
-        """
-        return [m for m in self.history if m.device_ip == ip and m.metric == metric]
-
-    def get_full_history(self) -> List[MetricRecord]:
+    def get_history(self) -> List[Device]:
         """
         Returns history records for all devices.
         """
         return self.history
 
-    def clear_history(self):
+    def store_metric(self, metrics: List[MetricRecord]) -> None:
         """
-        Clear stored history.
+        Persist newly collected metrics
         """
-        self.history = []
+
+        self.metric_history.extend(metrics)
+
+    def get_metric_history(self) -> List[MetricRecord]:
+        """
+        Returns history records for metric data.
+        """
+        return self.metric_history
+
+    def clear_metric_history(self) -> None:
+        """
+        Clear stored metric history.
+        """
+        self.metric_history = []
