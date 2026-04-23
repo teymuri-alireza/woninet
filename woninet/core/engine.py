@@ -89,7 +89,7 @@ class NetworkMonitorCore:
                     collector.run(
                         self.devices,
                         self.ip_addr,
-                        self.storage.store,
+                        self.storage,
                         stop_event=self._stop_event,
                     )
                     self.alert_engine.evaluate()
