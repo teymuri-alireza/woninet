@@ -70,15 +70,20 @@ function updateDeviceCard(card, device) {
 }
 
 function renderDevices(devicesResponse) {
+    const loader = document.getElementById("loader");
+    const emptyMsg = document.getElementById("empty_state_msg");
     const container = document.getElementById("devices");
 
     const devices = devicesResponse?.devices;
     if (!devices || devices.length === 0) {
-        container.innerHTML = `<div class="empty-state">No devices found.</div>`;
         found_devices.clear();
+        emptyMsg.textContent = "No devices found.";
+        emptyMsg.style.display = "block";
         return;
     }
     
+    loader.style.display = "none";
+    emptyMsg.style.display = "none";
 
     // Update existing cards or add new ones
     devices.forEach(device => {
@@ -114,7 +119,9 @@ async function loadDevices() {
 
         // Only show error if we have nothing rendered yet
         if (found_devices.size === 0 && !container.hasChildNodes()) {
-            container.innerHTML = `<div class="empty-state">Failed to load devices.</div>`;
+            const emptyMsg = document.getElementById("empty_state_msg");
+            emptyMsg.style.display = "block";
+            emptyMsg.textContent = "Failed to load devices.";
         }
         console.error("Failed to load devices:", error);
     }
