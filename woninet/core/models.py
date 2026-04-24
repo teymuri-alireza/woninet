@@ -25,15 +25,7 @@ class Device:
         Update timestamp indicating the device responded recently.
         """
         # Formatting datetime
-        datetime_now = datetime.now()
-        year = datetime_now.year
-        month = datetime_now.month
-        day = datetime_now.day
-        hour = datetime_now.hour
-        minute = datetime_now.minute
-        second = datetime_now.second
-
-        self.last_seen = f"{year}/{month}/{day} {hour}:{minute}:{second}"
+        self.last_seen = datetime.now().strftime("%Y/%m/%d %H:%M:%S")
 
 
 class MetricRecord:
