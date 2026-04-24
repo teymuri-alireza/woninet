@@ -6,6 +6,9 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Fixed
+- Introduce `SocketPermissionError` and raise it alongside `PermissionError` to ensure socket privilege failures are handled in `engine.py`.
+
 ---
 
 ## [1.2.0] - 2026-04-23
