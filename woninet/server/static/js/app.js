@@ -65,7 +65,11 @@ function updateDeviceCard(card, device) {
         lastSeenSpan.textContent = lastSeen;
     }
     if (macSpan) {
-        macSpan.textContent = mac;
+        // Only update if backend returned an actual MAC address
+        const validMac = mac && mac != "Unknown";
+        if (validMac && macSpan.textContent != mac) {
+            macSpan.textContent = mac;
+        }
     }
 }
 
