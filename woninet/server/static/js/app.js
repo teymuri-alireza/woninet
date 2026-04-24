@@ -83,17 +83,6 @@ function renderDevices(devicesResponse) {
         return;
     }
     
-    // Render everything and populate found_devices
-    if (found_devices.size === 0 && container.children.length === 0) {
-        container.innerHTML = "";
-        devices.forEach(device => {
-            if (!device.ip) return;
-            const card = createDeviceCard(device);
-            container.appendChild(card);
-            found_devices.set(device.ip, { device, element: card });
-        });
-        return;
-    }
 
     // Update existing cards or add new ones
     devices.forEach(device => {
