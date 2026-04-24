@@ -72,10 +72,6 @@ function updateDeviceCard(card, device) {
 function renderDevices(devicesResponse) {
     const container = document.getElementById("devices");
 
-    // Remove loader once data is fetched
-    const loader = document.getElementById("loader");
-    if (loader) loader.remove();
-
     const devices = devicesResponse?.devices;
     if (!devices || devices.length === 0) {
         container.innerHTML = `<div class="empty-state">No devices found.</div>`;
