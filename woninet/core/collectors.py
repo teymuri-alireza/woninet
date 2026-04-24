@@ -1,5 +1,5 @@
 import re
-from icmplib import ping
+from icmplib import ping, SocketPermissionError
 import subprocess
 from typing import List, Dict, Optional
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -76,7 +76,7 @@ def detect_host(
         )
         if stop_event and stop_event.is_set():
             return None
-    except PermissionError:
+    except (PermissionError, SocketPermissionError):
         raise
     except Exception as e:
         rootLogger.error(
@@ -188,7 +188,7 @@ class PingCollector(BaseCollector):
                 status = detect_host(
                     ip=ip, src_addr=ip_addr, timeout=1.0, stop_event=stop_event
                 )
-            except PermissionError:
+            except (PermissionError, SocketPermissionError):
                 raise
 
             # Update device state from status
@@ -239,9 +239,8 @@ class PingCollector(BaseCollector):
                     return results
                 try:
                     metric = future.result()
-                except PermissionError:
-                    rootLogger.error("woninet requires sudo to scan.")
-                    exit(1)
+                except (PermissionError, SocketPermissionError):
+                    raise
                 except Exception as e:
                     ip = future_to_ip[future]
                     rootLogger.error(f"Error in PingCollector for {ip}: {e}")
