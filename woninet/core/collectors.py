@@ -1,5 +1,5 @@
 import re
-from icmplib import ping, SocketPermissionError
+from icmplib import ping, SocketPermissionError, SocketAddressError
 import subprocess
 from typing import List, Dict, Optional
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -77,6 +77,8 @@ def detect_host(
         if stop_event and stop_event.is_set():
             return None
     except (PermissionError, SocketPermissionError):
+        raise
+    except SocketAddressError:
         raise
     except Exception as e:
         rootLogger.error(
@@ -190,6 +192,8 @@ class PingCollector(BaseCollector):
                 )
             except (PermissionError, SocketPermissionError):
                 raise
+            except SocketAddressError:
+                raise
 
             # Update device state from status
             dev.exists = status.exists
@@ -240,6 +244,8 @@ class PingCollector(BaseCollector):
                 try:
                     metric = future.result()
                 except (PermissionError, SocketPermissionError):
+                    raise
+                except SocketAddressError:
                     raise
                 except Exception as e:
                     ip = future_to_ip[future]
