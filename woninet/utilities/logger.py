@@ -21,7 +21,7 @@ def logger_function() -> logging.Logger:
     fileLogFormat = "%(asctime)s - %(levelname)s - %(message)s"
     dateFormat = "%Y-%m-%d %H:%M:%S"
 
-    rootLogger = logging.getLogger()
+    rootLogger = logging.getLogger("core")
 
     if not rootLogger.handlers:
         consoleHandler = logging.StreamHandler()
