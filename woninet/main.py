@@ -1,13 +1,20 @@
 import socket
 import logging
 import uvicorn
+from pathlib import Path
+from yaml import safe_load
 from woninet.core.engine import NetworkMonitorCore
 from woninet.utilities.arguments import args
 from woninet.utilities.logger import logger_function, TRACE_LEVEL
 
 # Global Variables
+LOGGING_YAML_PATH = Path(__file__).parent / "logging.yaml"
 REMOTE_PROBE_IP = "8.8.8.8"
 PORT = 8080
+
+# Load YAML
+with open(LOGGING_YAML_PATH) as file:
+    LOGGING_YAML = safe_load(file)
 
 # Get Logger Configuration
 rootLogger = logger_function()
@@ -68,7 +75,7 @@ def main():
     if argument.serve:
         from woninet.server.app import app
 
-        uvicorn.run(app, host=local_ip, port=PORT)
+        uvicorn.run(app, host=local_ip, port=PORT, log_config=LOGGING_YAML)
     else:
         try:
             monitor = get_monitor()
