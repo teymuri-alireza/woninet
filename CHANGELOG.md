@@ -5,6 +5,8 @@ All notable changes to this project will be documented in this file.
 ---
 
 ## [Unreleased]
+### Added
+- Implemented `logging.yaml` file to parse and apply log file output for web dashboard.
 
 ### Fixed
 - Introduce `SocketPermissionError` and raise it alongside `PermissionError` to ensure socket privilege failures are handled in `engine.py`.
