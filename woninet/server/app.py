@@ -24,6 +24,8 @@ async def lifespan(app: FastAPI):
     monitor.start()
 
     yield
+    # Assign the instance of Server
+    server = app.state.uvicorn_server
 
     # Shutdown
     monitor.stop()
