@@ -1,3 +1,4 @@
+import asyncio
 from pathlib import Path
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse
@@ -23,10 +24,28 @@ async def lifespan(app: FastAPI):
     monitor = get_monitor()
     monitor.start()
 
-    yield
+    # Assign the instance of Server
+    server = app.state.uvicorn_server
 
-    # Shutdown
-    monitor.stop()
+    async def watch():
+        """
+        Periodic monitor watchdog. Triggers server shutdown when the monitor
+        is no longer alive.
+        """
+        while True:
+            await asyncio.sleep(1)
+            if not monitor.is_alive():
+                server.should_exit = True
+                return
+
+    task = asyncio.create_task(watch())
+
+    try:
+        yield
+    finally:
+        # Shutdown
+        task.cancel()
+        monitor.stop()
 
 
 app = FastAPI(

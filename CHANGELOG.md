@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 - Introduce `SocketPermissionError` and raise it alongside `PermissionError` to ensure socket privilege failures are handled in `engine.py`.
+- Prevent `SocketAddressError` from repeating in a loop.
 
 ---
 

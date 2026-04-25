@@ -1,6 +1,6 @@
 import time
 import threading
-from icmplib import SocketPermissionError
+from icmplib import SocketPermissionError, SocketAddressError
 from typing import List
 from woninet.core.models import Device
 from woninet.core.collectors import PingCollector
@@ -99,6 +99,10 @@ class NetworkMonitorCore:
             rootLogger.error("woninet requires root privileges to scan.")
             self._running = False
             self._stop_event.set()
+        except SocketAddressError:
+            rootLogger.error("Network connection failed. Quitting.")
+            self._running = False
+            self._stop_event.set()
         except Exception as e:
             rootLogger.error(f"Unexpected error in NetworkMonitorCore: {e}")
             self._running = False
@@ -106,6 +110,12 @@ class NetworkMonitorCore:
         finally:
             self._running = False
             self._stop_event.set()
+
+    def is_alive(self) -> bool:
+        """
+        Return the running state of monitor.
+        """
+        return self._running
 
     def get_devices(self) -> List[Device]:
         """

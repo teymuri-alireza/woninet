@@ -73,9 +73,27 @@ def main():
     monitor based on command-line arguments.
     """
     if argument.serve:
-        from woninet.server.app import app
+        try:
+            from woninet.server.app import app
 
-        uvicorn.run(app, host=local_ip, port=PORT, log_config=LOGGING_YAML)
+            def uvicorn_serve():
+                """
+                Initialize and run the uvicorn ASGI server.
+                """
+                config = uvicorn.Config(
+                    app, host=local_ip, port=PORT, log_config=LOGGING_YAML
+                )
+                server = uvicorn.Server(config)
+                app.state.uvicorn_server = server
+                server.run()
+
+            uvicorn_serve()
+        except KeyboardInterrupt:
+            pass
+        finally:
+            global monitor
+            if monitor:
+                monitor.stop()
     else:
         try:
             monitor = get_monitor()
