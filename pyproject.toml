@@ -19,7 +19,8 @@ dependencies = [
 [tool.setuptools.package-data]
 woninet = [
     "server/static/**/*",
-    "server/templates/**/*"
+    "server/templates/**/*",
+    "logging.yaml",
 ]
 
 [project.urls]
