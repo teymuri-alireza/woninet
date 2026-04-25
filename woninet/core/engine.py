@@ -111,6 +111,12 @@ class NetworkMonitorCore:
             self._running = False
             self._stop_event.set()
 
+    def is_alive(self) -> bool:
+        """
+        Return the running state of monitor.
+        """
+        return self._running
+
     def get_devices(self) -> List[Device]:
         """
         Return the stored history.
