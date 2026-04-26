@@ -28,6 +28,11 @@ if argument.version:
     print(__version__)
     exit(0)
 
+# The --output argument
+log_output = None
+if argument.output:
+    log_output = argument.output
+
 # Set Verbosity
 if argument.verbose == 0:
     pass
