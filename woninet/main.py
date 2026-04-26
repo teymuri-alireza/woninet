@@ -16,9 +16,6 @@ PORT = 8080
 with open(LOGGING_YAML_PATH) as file:
     LOGGING_YAML = safe_load(file)
 
-# Get Logger Configuration
-core_logger = get_core_logger()
-
 argument = args()
 
 # The --version Argument
@@ -32,6 +29,9 @@ if argument.version:
 log_output = None
 if argument.output:
     log_output = argument.output
+
+# Get Logger Configuration
+core_logger = get_core_logger(log_output)
 
 # Set Verbosity
 if argument.verbose == 0:
