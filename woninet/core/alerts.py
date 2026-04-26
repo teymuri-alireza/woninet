@@ -2,7 +2,7 @@ from typing import List
 from woninet.core.storage import StorageEngine
 from woninet.utilities.logger import logger_function
 
-root_logger = logger_function()
+core_logger = logger_function()
 
 
 class AlertRule:
@@ -36,7 +36,7 @@ class AlertEngine:
             for record in self.storage.get_metric_history():
                 if record.value != 0:
                     if record.metric == rule.metric and record.value > rule.threshold:
-                        root_logger.warning(
+                        core_logger.warning(
                             f"[ALERT] {record.device_ip} exceeded {rule.metric}: {record.value:.2f}"
                         )
         # Clear metric history to avoid repeated alerts

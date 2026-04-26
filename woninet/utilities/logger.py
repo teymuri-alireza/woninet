@@ -15,15 +15,15 @@ logging.Logger.trace = trace
 
 def logger_function() -> logging.Logger:
     """
-    Returns the root logger.
+    Returns the core logger.
     """
     console_format = "%(asctime)s [%(levelname)s] %(message)s"
     file_format = "%(asctime)s [%(levelname)s] %(message)s"
     date_format = "%Y-%m-%d %H:%M:%S"
 
-    root_logger = logging.getLogger("core")
+    core_logger = logging.getLogger("core")
 
-    if not root_logger.handlers:
+    if not core_logger.handlers:
         console_handler = logging.StreamHandler()
         console_handler.setFormatter(
             logging.Formatter(fmt=console_format, datefmt=date_format)
@@ -34,9 +34,9 @@ def logger_function() -> logging.Logger:
         file_handler.setFormatter(logging.Formatter(file_format, datefmt=date_format))
         file_handler.setLevel(logging.NOTSET)
 
-        root_logger.addHandler(console_handler)
-        root_logger.addHandler(file_handler)
+        core_logger.addHandler(console_handler)
+        core_logger.addHandler(file_handler)
 
-        root_logger.setLevel(logging.INFO)
+        core_logger.setLevel(logging.INFO)
 
-    return root_logger
+    return core_logger
