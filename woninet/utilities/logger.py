@@ -17,7 +17,7 @@ def logger_function() -> logging.Logger:
     """
     Returns the rootLogger.
     """
-    consoleLogFormat = "%(message)s"
+    consoleLogFormat = "%(asctime)s [%(levelname)s] %(message)s"
     fileLogFormat = "%(asctime)s [%(levelname)s] %(message)s"
     dateFormat = "%Y-%m-%d %H:%M:%S"
 
@@ -26,7 +26,7 @@ def logger_function() -> logging.Logger:
     if not rootLogger.handlers:
         consoleHandler = logging.StreamHandler()
         consoleHandler.setFormatter(
-            logging.Formatter(fmt=consoleLogFormat, datefmt=None)
+            logging.Formatter(fmt=consoleLogFormat, datefmt=dateFormat)
         )
         consoleHandler.setLevel(logging.NOTSET)
 
