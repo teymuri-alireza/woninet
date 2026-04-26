@@ -5,7 +5,7 @@ from pathlib import Path
 from yaml import safe_load
 from woninet.core.engine import NetworkMonitorCore
 from woninet.utilities.arguments import args
-from woninet.utilities.logger import logger_function, TRACE_LEVEL
+from woninet.utilities.logger import get_core_logger, TRACE_LEVEL
 
 # Global Variables
 LOGGING_YAML_PATH = Path(__file__).parent / "logging.yaml"
@@ -17,7 +17,7 @@ with open(LOGGING_YAML_PATH) as file:
     LOGGING_YAML = safe_load(file)
 
 # Get Logger Configuration
-core_logger = logger_function()
+core_logger = get_core_logger()
 
 argument = args()
 

@@ -1,8 +1,8 @@
 from typing import List
 from woninet.core.storage import StorageEngine
-from woninet.utilities.logger import logger_function
+from woninet.utilities.logger import get_core_logger
 
-core_logger = logger_function()
+core_logger = get_core_logger()
 
 
 class AlertRule:

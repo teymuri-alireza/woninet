@@ -1,8 +1,8 @@
 from typing import Dict
 from woninet.core.models import Device
-from woninet.utilities.logger import logger_function
+from woninet.utilities.logger import get_core_logger
 
-core_logger = logger_function()
+core_logger = get_core_logger()
 
 
 class SubnetEnumerator:

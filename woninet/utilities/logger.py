@@ -13,7 +13,7 @@ def trace(self, msg, *args, **kwargs):
 logging.Logger.trace = trace
 
 
-def logger_function() -> logging.Logger:
+def get_core_logger() -> logging.Logger:
     """
     Returns the core logger.
     """

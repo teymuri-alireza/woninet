@@ -5,9 +5,9 @@ from typing import List, Dict, Optional
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from woninet.core.models import Device, MetricRecord, HostStatus
 from woninet.core.storage import StorageEngine
-from woninet.utilities.logger import logger_function
+from woninet.utilities.logger import get_core_logger
 
-core_logger = logger_function()
+core_logger = get_core_logger()
 
 
 def get_arp_mac(ip: str) -> Optional[str]:
