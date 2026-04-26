@@ -7,6 +7,10 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 ### Added
 - Implemented `logging.yaml` file to parse and apply log file output for web dashboard.
+- Implement `ColorFormatter` class in `logging.py` to apply ANSI color codes to console output.
+
+### Changed
+- Rename logging variables to snake_case.
 
 ### Fixed
 - Introduce `SocketPermissionError` and raise it alongside `PermissionError` to ensure socket privilege failures are handled in `engine.py`.

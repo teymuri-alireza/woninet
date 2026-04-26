@@ -3,7 +3,13 @@ disable_existing_loggers: False
 
 formatters:
   default:
-    format: "%(asctime)s - %(levelname)s - %(message)s"
+    format: "%(asctime)s [%(levelname)s] %(message)s"
+    datefmt: "%Y-%m-%d %H:%M:%S"
+
+  colored:
+    (): woninet.utilities.logger.ColorFormatter
+    format: "%(asctime)s [%(levelname)s] %(message)s"
+    datefmt: "%Y-%m-%d %H:%M:%S"
 
 handlers:
   file:
@@ -14,7 +20,7 @@ handlers:
 
   console:
     class: logging.StreamHandler
-    formatter: default
+    formatter: colored
     level: INFO
 
 loggers:

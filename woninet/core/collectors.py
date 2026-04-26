@@ -5,9 +5,9 @@ from typing import List, Dict, Optional
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from woninet.core.models import Device, MetricRecord, HostStatus
 from woninet.core.storage import StorageEngine
-from woninet.utilities.logger import logger_function
+from woninet.utilities.logger import get_core_logger
 
-rootLogger = logger_function()
+core_logger = get_core_logger()
 
 
 def get_arp_mac(ip: str) -> Optional[str]:
@@ -23,7 +23,7 @@ def get_arp_mac(ip: str) -> Optional[str]:
         output = subprocess.check_output(["arp", "-an"], stderr=subprocess.DEVNULL)
         output = output.decode()
     except Exception as e:
-        rootLogger.debug(f"Failed to read ARP table: {e}")
+        core_logger.debug(f"Failed to read ARP table: {e}")
         return None
 
     regex = rf"\({re.escape(ip)}\)\s+at\s+([0-9a-fA-F:]+)\s"
@@ -81,7 +81,7 @@ def detect_host(
     except SocketAddressError:
         raise
     except Exception as e:
-        rootLogger.error(
+        core_logger.error(
             f"Error during ICMP ping at detect_host function, to {ip}: {e}"
         )
         response = 0
@@ -212,18 +212,18 @@ class PingCollector(BaseCollector):
             value = status.latency if status.reachable else 0
 
             if value != 0:
-                rootLogger.debug(
+                core_logger.debug(
                     f"Device {ip}: exists={dev.exists}, reachable={dev.reachable}, "
                     f"MAC={dev.mac}, latency={value:.2f} ms"
                 )
             else:
                 if dev.exists:
-                    rootLogger.debug(
+                    core_logger.debug(
                         f"Device {ip}: exists={dev.exists}, reachable={dev.reachable}, "
                         f"MAC={dev.mac}, latency=0.0"
                     )
                 else:
-                    rootLogger.trace(
+                    core_logger.trace(
                         f"Device {ip}: exists={dev.exists}, reachable={dev.reachable}, "
                         f"MAC={dev.mac}, latency=0.0"
                     )
@@ -249,7 +249,7 @@ class PingCollector(BaseCollector):
                     raise
                 except Exception as e:
                     ip = future_to_ip[future]
-                    rootLogger.error(f"Error in PingCollector for {ip}: {e}")
+                    core_logger.error(f"Error in PingCollector for {ip}: {e}")
                     continue
                 else:
                     if metric.value != 0:

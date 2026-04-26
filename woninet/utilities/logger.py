@@ -1,4 +1,5 @@
 import logging
+from sys import stdout
 
 # Trace level definition
 TRACE_LEVEL = 5
@@ -13,30 +14,65 @@ def trace(self, msg, *args, **kwargs):
 logging.Logger.trace = trace
 
 
-def logger_function() -> logging.Logger:
+class ColorFormatter(logging.Formatter):
     """
-    Returns the rootLogger.
+    Applies ANSI color codes to log level names.
+    Colors are applied only when the output stream is an
+    interactive terminal.
     """
-    consoleLogFormat = "%(message)s"
-    fileLogFormat = "%(asctime)s - %(levelname)s - %(message)s"
-    dateFormat = "%Y-%m-%d %H:%M:%S"
 
-    rootLogger = logging.getLogger("core")
+    COLORS = {
+        logging.DEBUG: "\033[36m",
+        logging.INFO: "\033[32m",
+        logging.WARNING: "\033[33m",
+        logging.ERROR: "\033[31m",
+        logging.CRITICAL: "\033[1;31m",
+    }
+    RESET = "\033[0m"
 
-    if not rootLogger.handlers:
-        consoleHandler = logging.StreamHandler()
-        consoleHandler.setFormatter(
-            logging.Formatter(fmt=consoleLogFormat, datefmt=None)
+    def formatMessage(self, record):
+        # Only colorize output if writing to an interactive terminal
+        if stdout.isatty():
+            color = self.COLORS.get(record.levelno, "")
+
+            # Apply ANSI color escape codes to the level name
+            level_name = record.levelname
+            colored = f"{color}{level_name}{self.RESET}"
+
+            # Clone the LogRecord to avoid mutating the original record object
+            new_record = logging.makeLogRecord(record.__dict__.copy())
+            new_record.levelname = colored
+
+            return super().formatMessage(new_record)
+
+        # Fallback - No colors for redirected outputs
+        return super().formatMessage(record)
+
+
+def get_core_logger() -> logging.Logger:
+    """
+    Returns the core logger.
+    """
+    console_format = "%(asctime)s [%(levelname)s] %(message)s"
+    file_format = "%(asctime)s [%(levelname)s] %(message)s"
+    date_format = "%Y-%m-%d %H:%M:%S"
+
+    core_logger = logging.getLogger("core")
+
+    if not core_logger.handlers:
+        console_handler = logging.StreamHandler()
+        console_handler.setFormatter(
+            ColorFormatter(fmt=console_format, datefmt=date_format)
         )
-        consoleHandler.setLevel(logging.NOTSET)
+        console_handler.setLevel(logging.NOTSET)
 
-        fileHandler = logging.FileHandler("logs.txt")
-        fileHandler.setFormatter(logging.Formatter(fileLogFormat, datefmt=dateFormat))
-        fileHandler.setLevel(logging.NOTSET)
+        file_handler = logging.FileHandler("logs.txt")
+        file_handler.setFormatter(logging.Formatter(file_format, datefmt=date_format))
+        file_handler.setLevel(logging.NOTSET)
 
-        rootLogger.addHandler(consoleHandler)
-        rootLogger.addHandler(fileHandler)
+        core_logger.addHandler(console_handler)
+        core_logger.addHandler(file_handler)
 
-        rootLogger.setLevel(logging.INFO)
+        core_logger.setLevel(logging.INFO)
 
-    return rootLogger
+    return core_logger
