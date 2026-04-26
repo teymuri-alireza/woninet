@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 - Rename logging variables to snake_case.
+- Replaced static log filename with a CLI argument for specifying the log file path.
 
 ### Fixed
 - Introduce `SocketPermissionError` and raise it alongside `PermissionError` to ensure socket privilege failures are handled in `engine.py`.

@@ -26,6 +26,13 @@ A local network monitoring system. It enumerates all candidate IP addresses in y
     )
 
     parser.add_argument(
+        "-o",
+        "--output",
+        type=str,
+        help="Output path for storing logs.",
+    )
+
+    parser.add_argument(
         "-v",
         "--verbose",
         action="count",

@@ -12,13 +12,6 @@ LOGGING_YAML_PATH = Path(__file__).parent / "logging.yaml"
 REMOTE_PROBE_IP = "8.8.8.8"
 PORT = 8080
 
-# Load YAML
-with open(LOGGING_YAML_PATH) as file:
-    LOGGING_YAML = safe_load(file)
-
-# Get Logger Configuration
-core_logger = get_core_logger()
-
 argument = args()
 
 # The --version Argument
@@ -27,6 +20,28 @@ if argument.version:
 
     print(__version__)
     exit(0)
+
+# The --output argument
+log_output = None
+if argument.output:
+    log_output = argument.output
+
+# Get Logger Configuration
+core_logger = get_core_logger(log_output)
+
+# Load YAML
+with open(LOGGING_YAML_PATH) as file:
+    LOGGING_YAML = safe_load(file)
+
+if log_output:
+    LOGGING_YAML["handlers"]["file"]["filename"] = log_output
+else:
+    LOGGING_YAML["handlers"].pop("file", None)
+
+    for logger in LOGGING_YAML.get("loggers", {}).values():
+        handlers = logger.get("handlers", [])
+        if "file" in handlers:
+            handlers.remove("file")
 
 # Set Verbosity
 if argument.verbose == 0:

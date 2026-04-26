@@ -1,5 +1,6 @@
 import logging
 from sys import stdout
+from typing import Optional
 
 # Trace level definition
 TRACE_LEVEL = 5
@@ -49,7 +50,7 @@ class ColorFormatter(logging.Formatter):
         return super().formatMessage(record)
 
 
-def get_core_logger() -> logging.Logger:
+def get_core_logger(log_output: Optional[str] = None) -> logging.Logger:
     """
     Returns the core logger.
     """
@@ -66,12 +67,15 @@ def get_core_logger() -> logging.Logger:
         )
         console_handler.setLevel(logging.NOTSET)
 
-        file_handler = logging.FileHandler("logs.txt")
-        file_handler.setFormatter(logging.Formatter(file_format, datefmt=date_format))
-        file_handler.setLevel(logging.NOTSET)
+        if log_output:
+            file_handler = logging.FileHandler(log_output)
+            file_handler.setFormatter(
+                logging.Formatter(file_format, datefmt=date_format)
+            )
+            file_handler.setLevel(logging.NOTSET)
+            core_logger.addHandler(file_handler)
 
         core_logger.addHandler(console_handler)
-        core_logger.addHandler(file_handler)
 
         core_logger.setLevel(logging.INFO)
 
