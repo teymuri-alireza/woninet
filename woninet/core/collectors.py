@@ -1,13 +1,13 @@
 import re
+import logging
 from icmplib import ping, SocketPermissionError, SocketAddressError
 import subprocess
 from typing import List, Dict, Optional
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from woninet.core.models import Device, MetricRecord, HostStatus
 from woninet.core.storage import StorageEngine
-from woninet.utilities.logger import get_core_logger
 
-core_logger = get_core_logger()
+core_logger = logging.getLogger("core")
 
 
 def get_arp_mac(ip: str) -> Optional[str]:

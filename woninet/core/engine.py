@@ -1,4 +1,5 @@
 import time
+import logging
 import threading
 from icmplib import SocketPermissionError, SocketAddressError
 from typing import List
@@ -7,9 +8,8 @@ from woninet.core.collectors import PingCollector
 from woninet.core.storage import StorageEngine
 from woninet.core.alerts import AlertEngine, AlertRule
 from woninet.core.subnet_enumerator import SubnetEnumerator
-from woninet.utilities.logger import get_core_logger
 
-core_logger = get_core_logger()
+core_logger = logging.getLogger("core")
 
 
 class NetworkMonitorCore:
