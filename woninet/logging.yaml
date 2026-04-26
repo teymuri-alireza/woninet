@@ -5,6 +5,12 @@ formatters:
   default:
     format: "%(asctime)s [%(levelname)s] %(message)s"
     datefmt: "%Y-%m-%d %H:%M:%S"
+
+  colored:
+    (): woninet.utilities.logger.ColorFormatter
+    format: "%(asctime)s [%(levelname)s] %(message)s"
+    datefmt: "%Y-%m-%d %H:%M:%S"
+
 handlers:
   file:
     class: logging.FileHandler
@@ -14,7 +20,7 @@ handlers:
 
   console:
     class: logging.StreamHandler
-    formatter: default
+    formatter: colored
     level: INFO
 
 loggers:
