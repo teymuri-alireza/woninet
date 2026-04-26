@@ -17,7 +17,7 @@ with open(LOGGING_YAML_PATH) as file:
     LOGGING_YAML = safe_load(file)
 
 # Get Logger Configuration
-rootLogger = logger_function()
+root_logger = logger_function()
 
 argument = args()
 
@@ -32,25 +32,25 @@ if argument.version:
 if argument.verbose == 0:
     pass
 elif argument.verbose == 1:
-    rootLogger.setLevel(logging.DEBUG)
+    root_logger.setLevel(logging.DEBUG)
 else:
-    rootLogger.setLevel(TRACE_LEVEL)
+    root_logger.setLevel(TRACE_LEVEL)
 
 # Set ERROR level for server mode to suppress CLI-related logs
 if argument.serve:
-    rootLogger.setLevel(logging.ERROR)
+    root_logger.setLevel(logging.ERROR)
 
 # Fetch The Local IP Address
 try:
     with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
-        rootLogger.trace(f"Sending a dummy UDP request to {REMOTE_PROBE_IP}:80")
+        root_logger.trace(f"Sending a dummy UDP request to {REMOTE_PROBE_IP}:80")
         s.connect((REMOTE_PROBE_IP, 80))
         local_ip = s.getsockname()[0]
 except OSError:
-    rootLogger.error("Network is unreachable. Quitting.")
+    root_logger.error("Network is unreachable. Quitting.")
     exit(1)
 except Exception as e:
-    rootLogger.error(f"Error at socket connection in main.py: {e}")
+    root_logger.error(f"Error at socket connection in main.py: {e}")
     exit(1)
 
 monitor = None
@@ -100,6 +100,6 @@ def main():
             monitor.start()
             monitor.wait()
         except KeyboardInterrupt:
-            rootLogger.info("Keyboard interrupted. Wait for shut down...")
+            root_logger.info("Keyboard interrupted. Wait for shut down...")
         finally:
             monitor.stop()

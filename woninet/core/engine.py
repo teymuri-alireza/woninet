@@ -9,7 +9,7 @@ from woninet.core.alerts import AlertEngine, AlertRule
 from woninet.core.subnet_enumerator import SubnetEnumerator
 from woninet.utilities.logger import logger_function
 
-rootLogger = logger_function()
+root_logger = logger_function()
 
 
 class NetworkMonitorCore:
@@ -25,7 +25,7 @@ class NetworkMonitorCore:
 
         self.ip_addr = ip_addr
 
-        rootLogger.info(f"Initializing network monitor for {self.ip_addr}")
+        root_logger.info(f"Initializing network monitor for {self.ip_addr}")
 
         self.subnet_enumerator = SubnetEnumerator()
         self.storage = StorageEngine()
@@ -96,15 +96,15 @@ class NetworkMonitorCore:
                     self.alert_engine.evaluate()
                 time.sleep(1)
         except (PermissionError, SocketPermissionError):
-            rootLogger.error("woninet requires root privileges to scan.")
+            root_logger.error("woninet requires root privileges to scan.")
             self._running = False
             self._stop_event.set()
         except SocketAddressError:
-            rootLogger.error("Network connection failed. Quitting.")
+            root_logger.error("Network connection failed. Quitting.")
             self._running = False
             self._stop_event.set()
         except Exception as e:
-            rootLogger.error(f"Unexpected error in NetworkMonitorCore: {e}")
+            root_logger.error(f"Unexpected error in NetworkMonitorCore: {e}")
             self._running = False
             self._stop_event.set()
         finally:

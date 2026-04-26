@@ -15,28 +15,28 @@ logging.Logger.trace = trace
 
 def logger_function() -> logging.Logger:
     """
-    Returns the rootLogger.
+    Returns the root logger.
     """
-    consoleLogFormat = "%(asctime)s [%(levelname)s] %(message)s"
-    fileLogFormat = "%(asctime)s [%(levelname)s] %(message)s"
-    dateFormat = "%Y-%m-%d %H:%M:%S"
+    console_format = "%(asctime)s [%(levelname)s] %(message)s"
+    file_format = "%(asctime)s [%(levelname)s] %(message)s"
+    date_format = "%Y-%m-%d %H:%M:%S"
 
-    rootLogger = logging.getLogger("core")
+    root_logger = logging.getLogger("core")
 
-    if not rootLogger.handlers:
-        consoleHandler = logging.StreamHandler()
-        consoleHandler.setFormatter(
-            logging.Formatter(fmt=consoleLogFormat, datefmt=dateFormat)
+    if not root_logger.handlers:
+        console_handler = logging.StreamHandler()
+        console_handler.setFormatter(
+            logging.Formatter(fmt=console_format, datefmt=date_format)
         )
-        consoleHandler.setLevel(logging.NOTSET)
+        console_handler.setLevel(logging.NOTSET)
 
-        fileHandler = logging.FileHandler("logs.txt")
-        fileHandler.setFormatter(logging.Formatter(fileLogFormat, datefmt=dateFormat))
-        fileHandler.setLevel(logging.NOTSET)
+        file_handler = logging.FileHandler("logs.txt")
+        file_handler.setFormatter(logging.Formatter(file_format, datefmt=date_format))
+        file_handler.setLevel(logging.NOTSET)
 
-        rootLogger.addHandler(consoleHandler)
-        rootLogger.addHandler(fileHandler)
+        root_logger.addHandler(console_handler)
+        root_logger.addHandler(file_handler)
 
-        rootLogger.setLevel(logging.INFO)
+        root_logger.setLevel(logging.INFO)
 
-    return rootLogger
+    return root_logger
