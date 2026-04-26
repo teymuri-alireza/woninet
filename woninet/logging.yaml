@@ -14,7 +14,7 @@ formatters:
 handlers:
   file:
     class: logging.FileHandler
-    filename: logs.txt
+    filename: PLACEHOLDER.txt
     formatter: default
     level: INFO
 
