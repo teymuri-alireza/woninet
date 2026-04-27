@@ -49,8 +49,8 @@ def detect_host(
 
     # Skip source ip to prevent confusion.
     if ip == src_addr:
-        status.exists = None
-        status.reachable = None
+        status.exists = False
+        status.reachable = False
         status.mac = None
         status.latency = None
         return status
