@@ -67,5 +67,5 @@ class HostStatus:
         self.ip = ip
         self.exists = exists
         self.reachable = reachable
-        self.latency = latency  # in milliseconds
+        self.latency = latency
         self.mac = mac
