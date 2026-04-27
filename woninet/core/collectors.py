@@ -198,7 +198,8 @@ class PingCollector(BaseCollector):
             # Update device state from status
             dev.exists = status.exists
             dev.reachable = status.reachable
-            dev.mac = status.mac
+            if status.mac is not None:
+                dev.mac = status.mac
             dev.latency = status.latency
 
             if status.reachable:
