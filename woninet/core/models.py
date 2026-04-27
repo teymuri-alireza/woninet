@@ -40,15 +40,7 @@ class MetricRecord:
         self.value = value
 
         # Formatting datetime
-        datetime_now = datetime.now()
-        year = datetime_now.year
-        month = datetime_now.month
-        day = datetime_now.day
-        hour = datetime_now.hour
-        minute = datetime_now.minute
-        second = datetime_now.second
-
-        self.timestamp = timestamp or f"{year}/{month}/{day} {hour}:{minute}:{second}"
+        self.timestamp = timestamp or datetime.now().strftime("%Y/%m/%d %H:%M:%S")
 
 
 class HostStatus:
