@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 - Introduced `SocketPermissionError` and raised it alongside `PermissionError` to ensure socket privilege failures are handled in `engine.py`.
 - Prevented `SocketAddressError` from repeating in a loop.
+- Prevented overwriting `device.mac` with `None` by adding an explicit `status.mac` check.
 
 ---
 
