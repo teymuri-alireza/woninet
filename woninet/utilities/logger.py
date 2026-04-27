@@ -23,6 +23,7 @@ class ColorFormatter(logging.Formatter):
     """
 
     COLORS = {
+        TRACE_LEVEL: "\033[34m",
         logging.DEBUG: "\033[36m",
         logging.INFO: "\033[32m",
         logging.WARNING: "\033[33m",
