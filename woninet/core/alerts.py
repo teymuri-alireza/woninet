@@ -37,7 +37,7 @@ class AlertEngine:
                 if record.value != 0:
                     if record.metric == rule.metric and record.value > rule.threshold:
                         core_logger.warning(
-                            f"[ALERT] {record.device_ip} exceeded {rule.metric}: {record.value:.2f}"
+                            f"{record.device_ip} exceeded {rule.metric}: {record.value:.2f}"
                         )
         # Clear metric history to avoid repeated alerts
         self.storage.clear_metric_history()
