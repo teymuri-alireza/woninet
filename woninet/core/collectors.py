@@ -23,7 +23,7 @@ def get_arp_mac(ip: str) -> Optional[str]:
         output = subprocess.check_output(["arp", "-an"], stderr=subprocess.DEVNULL)
         output = output.decode()
     except Exception as e:
-        core_logger.debug(f"Failed to read ARP table: {e}")
+        core_logger.error(f"Failed to read ARP table: {e}")
         return None
 
     regex = rf"\({re.escape(ip)}\)\s+at\s+([0-9a-fA-F:]+)\s"
