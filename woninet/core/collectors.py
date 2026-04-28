@@ -212,23 +212,18 @@ class PingCollector(BaseCollector):
 
             value = status.latency if status.reachable else 0
 
-            if value != 0:
+            if dev.reachable:
                 core_logger.debug(
-                    f"Device {ip}: exists={dev.exists}, reachable={dev.reachable}, "
-                    f"MAC={dev.mac}, latency={value:.2f} ms"
+                    f"Device {ip}: \tUP,\t MAC={dev.mac}, latency={value:.2f} ms"
+                )
+            elif dev.exists:
+                core_logger.debug(
+                    f"Device {ip}: \tDOWN,\t MAC={dev.mac}, latency=OFFLINE"
                 )
             else:
-                if dev.exists:
-                    core_logger.debug(
-                        f"Device {ip}: exists={dev.exists}, reachable={dev.reachable}, "
-                        f"MAC={dev.mac}, latency=0.0"
-                    )
-                else:
-                    core_logger.trace(
-                        f"Device {ip}: exists={dev.exists}, reachable={dev.reachable}, "
-                        f"MAC={dev.mac}, latency=0.0"
-                    )
-                pass
+                core_logger.trace(
+                    f"Device {ip}: \tABSENT,\t MAC={dev.mac}, latency=OFFLINE"
+                )
 
             return MetricRecord(ip, "latency_ms", value)
 
