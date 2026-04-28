@@ -8,6 +8,8 @@ All notable changes to this project will be documented in this file.
 ### Added
 - Implemented `logging.yaml` file to parse and apply log file output for web dashboard.
 - Implemented `ColorFormatter` class in `logging.py` to apply ANSI color codes to console output.
+- Added additional ARP scan when device is reachable but no MAC address is found in the ARP cache.
+- Introduced the new `--arp-noise-limit` parameter to increase control over ARP noise limit.
 
 ### Changed
 - Renamed logging variables to snake_case.
