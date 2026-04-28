@@ -28,6 +28,14 @@ are collected continuously and processed through an alert engine."""
     )
 
     parser.add_argument(
+        "--arp-noise-limit",
+        type=float,
+        default=300.0,
+        help="Latency threshold in milliseconds used to filter ARP resolution noise "
+        "(default: 300). Set to 0 to disable.",
+    )
+
+    parser.add_argument(
         "-o",
         "--output",
         type=str,

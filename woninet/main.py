@@ -21,6 +21,9 @@ if argument.version:
     print(__version__)
     exit(0)
 
+# The --arp-noise-limit argument
+arp_noise_limit = argument.arp_noise_limit
+
 # The --output argument
 log_output = None
 if argument.output:
@@ -78,7 +81,8 @@ def get_monitor() -> NetworkMonitorCore:
     """
     global monitor
     if monitor is None:
-        monitor = NetworkMonitorCore(ip_addr=local_ip)
+        core_logger.debug(f"ARP noise limit set to {arp_noise_limit}")
+        monitor = NetworkMonitorCore(ip_addr=local_ip, arp_noise_limit=arp_noise_limit)
     return monitor
 
 

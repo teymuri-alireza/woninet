@@ -18,12 +18,13 @@ class NetworkMonitorCore:
     storage, and alert processing.
     """
 
-    def __init__(self, ip_addr: str):
+    def __init__(self, ip_addr: str, arp_noise_limit: float):
         self._running = False
         self._thread = None
         self._stop_event = threading.Event()
 
         self.ip_addr = ip_addr
+        self.arp_noise_limit = arp_noise_limit
 
         core_logger.info(f"Initializing network monitor for {self.ip_addr}")
 
@@ -92,6 +93,7 @@ class NetworkMonitorCore:
                         self.ip_addr,
                         self.storage,
                         stop_event=self._stop_event,
+                        arp_noise_limit=self.arp_noise_limit,
                     )
                     self.alert_engine.evaluate()
                 time.sleep(1)

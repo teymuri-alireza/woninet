@@ -34,7 +34,11 @@ def get_arp_mac(ip: str) -> Optional[str]:
 
 
 def detect_host(
-    ip: str, src_addr: str, timeout: float = 1.0, stop_event=None
+    ip: str,
+    src_addr: str,
+    timeout: float = 1.0,
+    stop_event=None,
+    arp_noise_limit: float = 300.0,
 ) -> HostStatus:
     """
     Combined ARP + ICMP detection for accurate device status.
@@ -103,7 +107,7 @@ def detect_host(
         return status
 
     if latency != 0:
-        if latency < 300.0:
+        if arp_noise_limit == 0 or latency < arp_noise_limit:
             # Acceptable latency (reachable)
             status.exists = bool(mac)
             status.reachable = True
@@ -136,6 +140,7 @@ class BaseCollector:
         ip_addr: str,
         store_callback: StorageEngine,
         stop_event=None,
+        arp_noise_limit: float = 300.0,
     ) -> List[MetricRecord]:
         """
         Collect metrics from devices.
@@ -149,6 +154,7 @@ class BaseCollector:
         ip_addr,
         store_callback: StorageEngine,
         stop_event=None,
+        arp_noise_limit: float = 300.0,
     ):
         """
         Main execution function for the collector.
@@ -161,6 +167,7 @@ class BaseCollector:
             ip_addr=ip_addr,
             store_callback=store_callback,
             stop_event=stop_event,
+            arp_noise_limit=arp_noise_limit,
         )
         # Store metric data
         store_callback.store_metric(result)
@@ -180,6 +187,7 @@ class PingCollector(BaseCollector):
         ip_addr: str,
         store_callback: StorageEngine,
         stop_event=None,
+        arp_noise_limit: float = 300.0,
     ) -> List[MetricRecord]:
         """
         For each device:
@@ -195,7 +203,11 @@ class PingCollector(BaseCollector):
         def worker(ip: str, dev: Device) -> MetricRecord:
             try:
                 status = detect_host(
-                    ip=ip, src_addr=ip_addr, timeout=1.0, stop_event=stop_event
+                    ip=ip,
+                    src_addr=ip_addr,
+                    timeout=1.0,
+                    stop_event=stop_event,
+                    arp_noise_limit=arp_noise_limit,
                 )
             except (PermissionError, SocketPermissionError):
                 raise
