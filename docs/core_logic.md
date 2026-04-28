@@ -23,8 +23,9 @@ An instance of NetworkMonitorCore is created.
 The core receives:
 
 - The source IP address
-- Initial settings (intervals, alert rules, logging config)
+- Initial settings (intervals, alert rules)
 - The full state containers (devices, history, alerts)
+- The arp-noise-limit parameter, which will be passed to PingCollector instance.
 
 The core is responsible for orchestrating:
 
@@ -81,20 +82,20 @@ If ARP fails, the device is marked as:
 
 ```text
 exists = False
-reachable = False
 ```
 
-No ICMP probing is attempted for non-existing hosts.
+If ICMP scan returns a valid result for the following IP address, another ARP scan is performed to prevent stale ARP cache.
 
-### Stage B — ICMP Ping (if ARP succeeded)
+### Stage B — ICMP Ping
 
-If ARP confirms existence, *woninet* sends an ICMP ping using `icmplib`.
+*woninet* sends an ICMP ping using `icmplib`.
 
 Latency is interpreted carefully:
 
-- latency < 300 ms → valid response
-- latency ≥ 300 ms → considered "ARP delay noise," treated as unreachable
-- `None` → no ICMP reply
+- latency < arp-noise-limit → valid response
+- latency ≥ arp-noise-limit → considered "ARP delay noise," treated as unreachable
+
+**Note:** The `--arp-noise-limit` parameter is passed via CLI argument and has the default value of 300.0.
 
 Device fields updated:
 
@@ -103,14 +104,12 @@ Device fields updated:
 - latency
 -last_seen (only updated when reachable)
 
-This filters out false positives common on Wi‑Fi networks, where ARP proxying or delayed ARP replies cause misleading high ping times.
-
 ## 5. History Storage
 
 The StorageEngine now maintains two separate in‑memory histories:
 
 - Device history (device discoveries and status updates)
-- Metric history (latency and reachability measurements)
+- Metric history (device IP, metric name (e.g, latency), and value)
 
 ### Metric History
 
@@ -119,7 +118,7 @@ Each valid measurement (ARP-confirmed + reachability) is stored as a MetricRecor
 - timestamp
 - IP address
 - Metric
-- latency
+- value
 
 ### Device History
 
@@ -141,8 +140,8 @@ After every monitoring cycle, all stored metrics are passed to the `AlertEngine`
 
 Each rule evaluates conditions such as:
 
-- latency higher than a threshold
-- device unreachable
+- matric value higher than a threshold
+- device unreachable (future update)
 - high jitter (future update)
 
 If a rule is triggered, an alert event is logged.
