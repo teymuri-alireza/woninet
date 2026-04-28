@@ -112,6 +112,13 @@ def detect_host(
             status.exists = bool(mac)
             status.reachable = False
 
+    # Refresh MAC if host responded to ICMP but ARP cache was stale
+    if status.reachable and mac is None:
+        new_mac = get_arp_mac(ip=ip)
+        if new_mac:
+            status.exists = True
+            status.mac = new_mac
+
     return status
 
 
