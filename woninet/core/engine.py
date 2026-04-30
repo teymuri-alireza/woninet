@@ -125,6 +125,6 @@ class NetworkMonitorCore:
 
     def get_devices(self) -> List[Device]:
         """
-        Return the stored history.
+        Return all devices in the history.
         """
         return self.storage.get_history()
