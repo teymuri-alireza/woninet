@@ -10,5 +10,5 @@ def init_db() -> None:
     """
     Initialize the database and create missing tables.
     """
-    import woninet.database.tables
+    import woninet.database.tables # noqa: F401
     Base.metadata.create_all(bind=engine)
