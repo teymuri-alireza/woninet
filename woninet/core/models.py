@@ -24,8 +24,7 @@ class Device:
         """
         Update timestamp indicating the device responded recently.
         """
-        # Formatting datetime
-        self.last_seen = datetime.now().strftime("%Y/%m/%d %H:%M:%S")
+        self.last_seen = datetime.now()
 
 
 class MetricRecord:
@@ -38,9 +37,7 @@ class MetricRecord:
         self.device_ip = device_ip
         self.metric = metric
         self.value = value
-
-        # Formatting datetime
-        self.timestamp = timestamp or datetime.now().strftime("%Y/%m/%d %H:%M:%S")
+        self.timestamp = timestamp or datetime.now()
 
 
 class HostStatus:

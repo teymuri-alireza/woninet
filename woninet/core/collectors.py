@@ -199,6 +199,7 @@ class PingCollector(BaseCollector):
             return []
 
         results: List[MetricRecord] = []
+        db_devices = store_callback.get_history()
 
         def worker(ip: str, dev: Device) -> MetricRecord:
             try:
@@ -226,7 +227,8 @@ class PingCollector(BaseCollector):
                 dev.update_seen()
 
             # Store device to history
-            if dev.latency:
+            is_known = any(db_device.ip == dev.ip for db_device in db_devices)
+            if dev.reachable or is_known:
                 store_callback.store(device=dev)
 
             value = status.latency if status.reachable else 0

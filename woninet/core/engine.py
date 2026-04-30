@@ -8,6 +8,7 @@ from woninet.core.collectors import PingCollector
 from woninet.core.storage import StorageEngine
 from woninet.core.alerts import AlertEngine, AlertRule
 from woninet.core.subnet_enumerator import SubnetEnumerator
+from woninet.database.engine import SessionLocal, init_db
 
 core_logger = logging.getLogger("core")
 
@@ -26,10 +27,13 @@ class NetworkMonitorCore:
         self.ip_addr = ip_addr
         self.arp_noise_limit = arp_noise_limit
 
+        # Initialize database
+        init_db()
+
         core_logger.info(f"Initializing network monitor for {self.ip_addr}")
 
         self.subnet_enumerator = SubnetEnumerator()
-        self.storage = StorageEngine()
+        self.storage = StorageEngine(session_factory=SessionLocal)
 
         self.devices = self.subnet_enumerator.scan_subnet(self.ip_addr)
 
@@ -121,6 +125,6 @@ class NetworkMonitorCore:
 
     def get_devices(self) -> List[Device]:
         """
-        Return the stored history.
+        Return all devices in the history.
         """
         return self.storage.get_history()

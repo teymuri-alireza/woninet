@@ -2,6 +2,9 @@
 __pycache__/
 *.py[cod]
 
+# database
+woninet.db
+
 # python venv
 *venv*/
 

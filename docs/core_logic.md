@@ -97,42 +97,41 @@ Latency is interpreted carefully:
 
 **Note:** The `--arp-noise-limit` parameter is passed via CLI argument and has the default value of 300.0.
 
-Device fields updated:
-
-- exists
-- reachable
-- latency
--last_seen (only updated when reachable)
-
 ## 5. History Storage
 
-The StorageEngine now maintains two separate in‑memory histories:
+The StorageEngine manages the database session and handles the database API:
 
-- Device history (device discoveries and status updates)
-- Metric history (device IP, metric name (e.g, latency), and value)
+### Current database tables:
 
-### Metric History
+- Device Table (device discoveries and status updates)
+- Metric Table (device IP, metric name (e.g, latency), and value)
 
-Each valid measurement (ARP-confirmed + reachability) is stored as a MetricRecord, containing:
-
-- timestamp
-- IP address
-- Metric
-- value
-
-### Device History
+### 1. Device Table
 
 Each device-related update is stored as a Device class, containing:
 
-- last_seen
+- Unique ID
 - IP address
-- Metrics
-- Existence
-- Reachability
 - MAC address
 - Latency
+- last_seen
 
-Both histories are currently stored in-memory, meaning they are cleared when the program exits.
+The `Device` class has 2 more additional fields which are used in the scanning logic only:
+
+- exists
+- reachable
+
+### 2. Metric Table
+
+Each valid measurement (ARP-confirmed + reachability) is stored as a MetricRecord, containing:
+
+- Unique IP
+- IP address
+- Metric
+- value
+- timestamp
+
+**Note:** Rows in the metrics table are currently removed when the `AlertEngine` runs. This issue will be fixed in a future update.
 
 ## 6. Alert Engine Evaluation
 

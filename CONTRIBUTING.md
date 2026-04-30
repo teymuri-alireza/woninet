@@ -71,6 +71,7 @@ sudo ../venv/bin/python3 -m woninet
 ```text
 woninet/
 ├── core/ # Monitoring engine, ARP + ICMP logic, Models
+├── database/ # Database engine, ORM operation handlers, Tables + Repositories
 ├── server/ # FastAPI application and routes
 ├── utilities/ # Argument handler, Logging
 └── main.py # The woninet entry point
@@ -141,4 +142,4 @@ When opening a PR:
 Thank you for making *woninet* better!
 Maintainers and contributors appreciate your work.
 
-**Update: 2026-04-22**
+**Update: 2026-04-30**
