@@ -18,21 +18,20 @@ reachability, and latency. Metrics are collected continuously and processed thro
 
 - **Structured Device Model** (Tracks metadata such as last‑seen timestamp, MAC address (when available), reachability, and latency.)
 
-- **In‑Memory Storage Engine**
+- **SQLite database for devices and recorded metrics**
 
 - **Detailed Logging**
 
 ## Future Plans
 
-- Pass latency limit and alert rules as command line argument.
+- Prevent metric records from being removed.
+- Define `state` for metric records to be used in `AlertEngine`.
+- Pass alert rules as command line argument.
 - Add ARP table caching to further reduce Wi‑Fi latency noise.
-- Optional SQLite storage for long‑term historical metrics.
 - Accept defined IP and MAC addresses as command‑line arguments.
-- Send `reachability` and `existence` paramters to web dashboard.
 
 ## Known Issues
 
-- No Persistent Storage Yet
 - Monitoring Scope Limited to /24 Subnet
 
 ## How To Run
