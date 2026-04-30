@@ -1,52 +1,79 @@
 from typing import List
 from woninet.core.models import Device
 from woninet.core.models import MetricRecord
+from woninet.database.repositories.device_repository import DeviceRepository
+from woninet.database.repositories.metric_repository import MetricRepository
 
 
 class StorageEngine:
     """
-    Stores collected device and metric data.
+    Provide a high-level API for storing, updating, and
+    retrieving data from the database.
+    
+    Also manage database sessions and delegate persistence
+    operations to repository classes.
     """
 
-    def __init__(self) -> None:
-        self.history: List[Device] = []
-        self.metric_history: List[MetricRecord] = []
+    def __init__(self, session_factory) -> None:
+        """
+        Initialize the storage engine.
+
+        Args:
+            session_factory (SessionLocal): Factory responsible for creating SQLAlchemy sessions.
+        """
+        self.session_factory = session_factory
 
     def store(self, device: Device) -> None:
         """
-        Store newly collected devices.
+        Insert or update a collected device.
+
+        Args:
+            device (Device): Device instance to be persisted.
         """
-        # Update data if device is in history
-        if device in self.history:
-            for i in range(len(self.history)):
-                if self.history[i].ip == device.ip:
-                    self.history[i].latency = device.latency
-                    self.history[i].last_seen = device.last_seen
-                    break
-        else:
-            self.history.append(device)
+        with self.session_factory() as session:
+            repo = DeviceRepository(session)
+            repo.upsert(device)
+            session.commit()
 
     def get_history(self) -> List[Device]:
         """
-        Returns history records for all devices.
+        Return all stored devices in the database.
+
+        Returns:
+            List[Device]: List devices retrieved from the database.
         """
-        return self.history
+        with self.session_factory() as session:
+            repo = DeviceRepository(session)
+            return repo.get_db_devices()
 
     def store_metric(self, metrics: List[MetricRecord]) -> None:
         """
-        Persist newly collected metrics
-        """
+        Persist newly collected metric records.
 
-        self.metric_history.extend(metrics)
+        Args:
+            metrics (List[MetricRecord]): List of metric records captured during a scan cycle.
+        """
+        with self.session_factory() as session:
+            repo = MetricRepository(session)
+            repo.insert(metrics)
+            session.commit()
 
     def get_metric_history(self) -> List[MetricRecord]:
         """
-        Returns history records for metric data.
+        Return stored metric history.
+
+        Returns:
+            List[MetricRecord]: Metric records retrieved from the database.
         """
-        return self.metric_history
+        with self.session_factory() as session:
+            repo = MetricRepository(session)
+            return repo.get_db_metrics()
 
     def clear_metric_history(self) -> None:
         """
-        Clear stored metric history.
+        Remove all stored metric history from the database.
         """
-        self.metric_history = []
+        with self.session_factory() as session:
+            repo = MetricRepository(session)
+            repo.remove_db_metrics()
+            session.commit()
