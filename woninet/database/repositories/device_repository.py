@@ -12,6 +12,7 @@ class DeviceRepository:
     This class encapsulates ORM operations on `DeviceTable` and expose a
     simple API in terms of the domain model `Device`.
     """
+
     def __init__(self, session: Session):
         """
         Initialize the repository.

@@ -5,4 +5,5 @@ class Base(DeclarativeBase):
     """
     Used as the base for new declarative mappings.
     """
+
     pass

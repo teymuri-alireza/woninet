@@ -12,6 +12,7 @@ class DeviceTable(Base):
     including IP address, MAC address, latency, and timestamp
     of the last time device was reachable.
     """
+
     __tablename__ = "devices"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
@@ -19,9 +20,7 @@ class DeviceTable(Base):
     mac: Mapped[str | None] = mapped_column(String, index=True, nullable=True)
     latency: Mapped[float] = mapped_column(Float)
     last_seen: Mapped[datetime] = mapped_column(
-        DateTime(timezone=False),
-        default=lambda: datetime.now(),
-        index=True
+        DateTime(timezone=False), default=lambda: datetime.now(), index=True
     )
 
 
@@ -32,6 +31,7 @@ class MetricTable(Base):
     Each row stores the metric record of device, including IP address,
     metric name, value and timestamp of the time the metric was recorded.
     """
+
     __tablename__ = "metrics"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
@@ -39,7 +39,5 @@ class MetricTable(Base):
     metric: Mapped[str] = mapped_column(String, index=True)
     value: Mapped[float] = mapped_column(Float)
     timestamp: Mapped[datetime] = mapped_column(
-        DateTime(timezone=False),
-        default=lambda: datetime.now(),
-        index=True
+        DateTime(timezone=False), default=lambda: datetime.now(), index=True
     )

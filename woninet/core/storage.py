@@ -9,7 +9,7 @@ class StorageEngine:
     """
     Provide a high-level API for storing, updating, and
     retrieving data from the database.
-    
+
     Also manage database sessions and delegate persistence
     operations to repository classes.
     """

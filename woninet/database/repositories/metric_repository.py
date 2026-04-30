@@ -12,6 +12,7 @@ class MetricRepository:
     This class encapsulates OEM operations on `MetricTable` and expose a
     simple API in terms of the domain model `MetricRecord`.
     """
+
     def __init__(self, session: Session):
         """
         Initialize the repository.
@@ -50,13 +51,11 @@ class MetricRepository:
         result = []
         for row in rows:
             metric = MetricTable(
-                device_ip=row.device_ip,
-                metric=row.metric,
-                value=row.value
+                device_ip=row.device_ip, metric=row.metric, value=row.value
             )
             result.append(metric)
         return result
-    
+
     def remove_db_metrics(self) -> None:
         """
         Remove all rows from the `MetricTable`.
