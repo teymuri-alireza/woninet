@@ -1,18 +1,16 @@
 from datetime import datetime
-from typing import Dict, Optional
+from typing import Optional
 
 
 class Device:
     """
     Represents a discovered network device.
-    Stores identity information and the latest known metrics and state.
+    Stores identity information and device state.
     """
 
     def __init__(self, ip: str):
         self.ip: str = ip
         self.last_seen: Optional[datetime] = None
-        self.metrics: Dict[str, float] = {}  # Bandwidth, CPU, etc
-
         self.exists: bool = False  # True if ARP has seen this IP
         self.reachable: bool = (
             False  # True if ICMP is sane and within latency threshold
