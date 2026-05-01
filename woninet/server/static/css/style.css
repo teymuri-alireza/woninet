@@ -190,6 +190,12 @@ h1 {
     border: 1px solid rgba(239, 68, 68, 0.28);
 }
 
+.latency-offline {
+    color: #cfd8ea;
+    background: rgba(148, 163, 184, 0.12);
+    border: 1px solid rgba(148, 163, 184, 0.24);
+}
+
 .empty-state {
     display: none;
     color: var(--muted);

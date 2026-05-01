@@ -1,6 +1,7 @@
 let found_devices = new Map()
 
 function getLatencyClass(latency) {
+    if (latency == 0) return "latency-offline";
     if (latency <= 50) return "latency-good";
     if (latency <= 150) return "latency-warn";
     return "latency-bad";
@@ -15,13 +16,17 @@ function escapeHtml(value) {
         .replaceAll("'", "&#039;");
 }
 
+function checkLatency(latency) {
+    if (latency == 0) return "OFFLINE"
+    return latency
+}
+
 function createDeviceCard(device) {
     const ip = escapeHtml(device.ip ?? "Unknown");
     const mac = escapeHtml(device.mac ?? "Unknown");
-    const latency = device.latency ?? "N/A";
+    const latency = checkLatency(device.latency ?? "N/A");
     const lastSeen = escapeHtml(device.last_seen ?? "Unknown");
-    const latencyClass = typeof latency === "number" ? getLatencyClass(latency) : "latency-warn";
-
+    const latencyClass = latency == "OFFLINE" ? getLatencyClass(0) : getLatencyClass(latency);
     const article = document.createElement("article");
     article.className = "device-card";
     article.dataset.ip = device.ip || ""; // store raw IP for lookup
@@ -31,7 +36,9 @@ function createDeviceCard(device) {
         <div class="device-meta">
             <div class="meta-row">
                 <span class="meta-label">Latency</span>
-                <span class="latency-pill ${latencyClass}">${latency} ms</span>
+                <span class="latency-pill ${latencyClass}">
+                    ${typeof (latency) === "number" ? `${latency} ms` : latency}
+                </span>
             </div>
             <div class="meta-row">
                 <span class="meta-label">MAC address</span>
@@ -48,17 +55,17 @@ function createDeviceCard(device) {
 }
 
 function updateDeviceCard(card, device) {
-    const latency = device.latency ?? "N/A";
+    const latency = checkLatency(device.latency ?? "N/A");
     const mac = device.mac ?? "Unknown";
     const lastSeen = escapeHtml(device.last_seen ?? "Unknown");
-    const latencyClass = typeof latency === "number" ? getLatencyClass(latency) : "latency-warn";
+    const latencyClass = latency == "OFFLINE" ? getLatencyClass(0) : getLatencyClass(latency);
 
     const latencySpan = card.querySelector(".latency-pill");
     const lastSeenSpan = card.querySelector(".last-seen");
     const macSpan = card.querySelector(".mac");
 
     if (latencySpan) {
-        latencySpan.textContent = `${latency} ms`;
+        latencySpan.textContent = typeof (latency) === "number" ? `${latency} ms` : latency;
         latencySpan.className = `latency-pill ${latencyClass}`;
     }
     if (lastSeenSpan) {
