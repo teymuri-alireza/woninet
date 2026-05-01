@@ -86,7 +86,7 @@ def get_monitor() -> NetworkMonitorCore:
     return monitor
 
 
-def main():
+def main() -> None:
     """
     Entry point for woninet. Launch either the web dashboard or the CLI
     monitor based on command-line arguments.

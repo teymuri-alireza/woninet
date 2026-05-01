@@ -1,7 +1,7 @@
 import argparse
 
 
-def args():
+def args() -> argparse.Namespace:
     """
     The argument handler.
 

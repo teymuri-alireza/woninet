@@ -39,7 +39,7 @@ def detect_host(
     timeout: float = 1.0,
     stop_event=None,
     arp_noise_limit: float = 300.0,
-) -> HostStatus:
+) -> HostStatus | None:
     """
     Combined ARP + ICMP detection for accurate device status.
 
@@ -141,7 +141,7 @@ class BaseCollector:
         store_callback: StorageEngine,
         stop_event=None,
         arp_noise_limit: float = 300.0,
-    ) -> List[MetricRecord]:
+    ) -> List | List[MetricRecord]:
         """
         Collect metrics from devices.
         Must be implemented by subclasses.
@@ -155,7 +155,7 @@ class BaseCollector:
         store_callback: StorageEngine,
         stop_event=None,
         arp_noise_limit: float = 300.0,
-    ):
+    ) -> None:
         """
         Main execution function for the collector.
         Send collected metrics to storage.
@@ -188,7 +188,7 @@ class PingCollector(BaseCollector):
         store_callback: StorageEngine,
         stop_event=None,
         arp_noise_limit: float = 300.0,
-    ) -> List[MetricRecord]:
+    ) -> List | List[MetricRecord]:
         """
         For each device:
             - Use ARP + ICMP to determine existence and reachability.

@@ -19,13 +19,13 @@ class NetworkMonitorCore:
     storage, and alert processing.
     """
 
-    def __init__(self, ip_addr: str, arp_noise_limit: float):
-        self._running = False
-        self._thread = None
-        self._stop_event = threading.Event()
+    def __init__(self, ip_addr: str, arp_noise_limit: float) -> None:
+        self._running: bool = False
+        self._thread: threading.Thread | None = None
+        self._stop_event: threading.Event = threading.Event()
 
-        self.ip_addr = ip_addr
-        self.arp_noise_limit = arp_noise_limit
+        self.ip_addr: str = ip_addr
+        self.arp_noise_limit: float = arp_noise_limit
 
         # Initialize database
         init_db()
@@ -48,7 +48,7 @@ class NetworkMonitorCore:
             ],
         )
 
-    def start(self):
+    def start(self) -> None:
         """
         Starts the monitoring worker thread.
         """
@@ -62,7 +62,7 @@ class NetworkMonitorCore:
         )
         self._thread.start()
 
-    def stop(self):
+    def stop(self) -> None:
         """
         Stops the monitoring worker thread.
         """

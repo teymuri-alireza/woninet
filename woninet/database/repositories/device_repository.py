@@ -13,14 +13,14 @@ class DeviceRepository:
     simple API in terms of the domain model `Device`.
     """
 
-    def __init__(self, session: Session):
+    def __init__(self, session: Session) -> None:
         """
         Initialize the repository.
 
         Args:
             session (Session): SQLAlchemy session used for all database operations.
         """
-        self.session = session
+        self.session: Session = session
 
     def upsert(self, dev: Device) -> None:
         """

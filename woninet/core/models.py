@@ -8,7 +8,7 @@ class Device:
     Stores identity information and device state.
     """
 
-    def __init__(self, ip: str):
+    def __init__(self, ip: str) -> None:
         self.ip: str = ip
         self.last_seen: Optional[datetime] = None
         self.exists: bool = False  # True if ARP has seen this IP
@@ -18,7 +18,7 @@ class Device:
         self.mac: Optional[str] = None  # MAC address from ARP table
         self.latency: float = 0
 
-    def update_seen(self):
+    def update_seen(self) -> None:
         """
         Update timestamp indicating the device responded recently.
         """
@@ -31,7 +31,9 @@ class MetricRecord:
     for a specific device at a specific time.
     """
 
-    def __init__(self, device_ip: str, metric: str, value: float, timestamp=None):
+    def __init__(
+        self, device_ip: str, metric: str, value: float, timestamp=None
+    ) -> None:
         self.device_ip = device_ip
         self.metric = metric
         self.value = value
@@ -50,9 +52,9 @@ class HostStatus:
         reachable: bool = False,
         latency: Optional[float] = None,
         mac: Optional[str] = None,
-    ):
-        self.ip = ip
-        self.exists = exists
-        self.reachable = reachable
-        self.latency = latency
-        self.mac = mac
+    ) -> None:
+        self.ip: str = ip
+        self.exists: bool = exists
+        self.reachable: bool = reachable
+        self.latency: Optional[float] = latency
+        self.mac: Optional[str] = mac

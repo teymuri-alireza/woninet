@@ -11,10 +11,10 @@ class AlertRule:
     when a metric exceeds a defined threshold.
     """
 
-    def __init__(self, metric: str, threshold: float, duration: int):
-        self.metric = metric
-        self.threshold = threshold
-        self.duration = duration
+    def __init__(self, metric: str, threshold: float, duration: int) -> None:
+        self.metric: str = metric
+        self.threshold: float = threshold
+        self.duration: int = duration
 
 
 class AlertEngine:
@@ -23,11 +23,11 @@ class AlertEngine:
     and generates alerts when conditions are violated.
     """
 
-    def __init__(self, storage: StorageEngine, rules: List[AlertRule]):
-        self.storage = storage
-        self.rules = rules
+    def __init__(self, storage: StorageEngine, rules: List[AlertRule]) -> None:
+        self.storage: StorageEngine = storage
+        self.rules: List[AlertRule] = rules
 
-    def evaluate(self):
+    def evaluate(self) -> None:
         """
         Scan stored metrics and trigger alerts
         when thresholds are exceeded.

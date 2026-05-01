@@ -13,14 +13,14 @@ class MetricRepository:
     simple API in terms of the domain model `MetricRecord`.
     """
 
-    def __init__(self, session: Session):
+    def __init__(self, session: Session) -> None:
         """
         Initialize the repository.
 
         Args:
             session (Session): SQLAlchemy session used for all database operations.
         """
-        self.session = session
+        self.session: Session = session
 
     def insert(self, metrics: List[MetricRecord]) -> None:
         """

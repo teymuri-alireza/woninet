@@ -7,7 +7,7 @@ TRACE_LEVEL = 5
 logging.addLevelName(TRACE_LEVEL, "TRACE")
 
 
-def trace(self, msg, *args, **kwargs):
+def trace(self, msg, *args, **kwargs) -> None:
     if self.isEnabledFor(TRACE_LEVEL):
         self._log(TRACE_LEVEL, msg, args, **kwargs)
 
@@ -32,7 +32,7 @@ class ColorFormatter(logging.Formatter):
     }
     RESET = "\033[0m"
 
-    def formatMessage(self, record):
+    def formatMessage(self, record) -> str:
         # Only colorize output if writing to an interactive terminal
         if stdout.isatty():
             color = self.COLORS.get(record.levelno, "")
