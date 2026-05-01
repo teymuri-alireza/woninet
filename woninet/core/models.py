@@ -16,7 +16,7 @@ class Device:
             False  # True if ICMP is sane and within latency threshold
         )
         self.mac: Optional[str] = None  # MAC address from ARP table
-        self.latency: Optional[float] = 0
+        self.latency: float = 0
 
     def update_seen(self):
         """
