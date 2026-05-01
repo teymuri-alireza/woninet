@@ -9,6 +9,12 @@ class Device:
     """
 
     def __init__(self, ip: str) -> None:
+        """
+        Initialze the device model.
+
+        Args:
+            ip: IP address of the host
+        """
         self.ip: str = ip
         self.last_seen: Optional[datetime] = None
         self.exists: bool = False  # True if ARP has seen this IP
@@ -34,6 +40,9 @@ class MetricRecord:
     def __init__(
         self, device_ip: str, metric: str, value: float, timestamp=None
     ) -> None:
+        """
+        Initialize the metric record model.
+        """
         self.device_ip = device_ip
         self.metric = metric
         self.value = value
@@ -53,6 +62,9 @@ class HostStatus:
         latency: Optional[float] = None,
         mac: Optional[str] = None,
     ) -> None:
+        """
+        Initialize the host status model.
+        """
         self.ip: str = ip
         self.exists: bool = exists
         self.reachable: bool = reachable

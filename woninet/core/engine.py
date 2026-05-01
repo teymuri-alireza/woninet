@@ -20,6 +20,13 @@ class NetworkMonitorCore:
     """
 
     def __init__(self, ip_addr: str, arp_noise_limit: float) -> None:
+        """
+        Initialize the monitor core.
+
+        Args:
+            ip_addr: Source IP address used to send packets.
+            arp_noise_limit: Event used to control the monitoring life cycle.
+        """
         self._running: bool = False
         self._thread: threading.Thread | None = None
         self._stop_event: threading.Event = threading.Event()

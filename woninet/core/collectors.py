@@ -13,10 +13,6 @@ core_logger = logging.getLogger("core")
 def get_arp_mac(ip: str) -> Optional[str]:
     """
     Return MAC address from ARP table for the given IP, or None if not present.
-
-    Notes:
-        - Uses `arp -an` output and parses it.
-        - Works on most Unix-like systems. If fails, it simply returns None and rely on ICMP only.
     """
     try:
         # Suppress strerr to avoid clutter when ARP table is empty or limited
@@ -43,11 +39,18 @@ def detect_host(
     """
     Combined ARP + ICMP detection for accurate device status.
 
-    Rules:
-        - If ARP_FAIL and ICMP_FAIL -> Host does NOT exist (exists=False, reachable=False)
-        - If ARP_OK and ICMP_FAIL -> Host exists but unreachable / ICMP blocked
-        - If ARP_OK and ICMP_OK < 300 ms -> Host is reachable
-        - If ARP_OK and ICMP_OK >= 300 ms -> Treat as ARP-timeout noise (unreachable)
+    Detection_Rules:
+        - ARP_FAIL and ICMP_FAIL → Host doesn't exist
+        - ARP_OK and ICMP_FAIL → Host exists but is unreachable or blocks ICMP
+        - ARP_OK and ICMP_OK < arp_noise_limit → Host is reachable
+        - ARP_OK and ICMP_OK >= arp_noise_limit → Treat as ARP-timeout noise (unreachable)
+
+    Args:
+        ip: IP address of the host to scan.
+        src_addr: Source IP address used to send packets.
+        timeout: Timeout for ICMP scan.
+        stop_event: Event used to control the monitoring life cycle.
+        arp_noise_limit: Threshold above which ARP fluctuations are considered noise.
 
     Returns:
         HostStatus|None: A `HostStatus` instance if the stop event is not triggered; otherwise, None.

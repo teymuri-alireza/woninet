@@ -12,6 +12,14 @@ class AlertRule:
     """
 
     def __init__(self, metric: str, threshold: float, duration: int) -> None:
+        """
+        Initialize the alert rule.
+
+        Args:
+            metric: Name of the metric the rule evaluates.
+            threshold: The Limit the metric must exceed to trigger the alert.
+            duration: Number of consecutive checks the metric must exceed the threshold before triggering
+        """
         self.metric: str = metric
         self.threshold: float = threshold
         self.duration: int = duration
@@ -24,6 +32,13 @@ class AlertEngine:
     """
 
     def __init__(self, storage: StorageEngine, rules: List[AlertRule]) -> None:
+        """
+        Initialize the alert engine.
+
+        Args:
+            storage: Storage backend used to manage database sessions.
+            rules: Alert rules evaluated against stored metrics.
+        """
         self.storage: StorageEngine = storage
         self.rules: List[AlertRule] = rules
 
