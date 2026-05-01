@@ -1,5 +1,4 @@
 from datetime import datetime
-from typing import Optional
 
 
 class Device:
@@ -16,12 +15,12 @@ class Device:
             ip: IP address of the host
         """
         self.ip: str = ip
-        self.last_seen: Optional[datetime] = None
+        self.last_seen: datetime | None = None
         self.exists: bool = False  # True if ARP has seen this IP
         self.reachable: bool = (
             False  # True if ICMP is sane and within latency threshold
         )
-        self.mac: Optional[str] = None  # MAC address from ARP table
+        self.mac: str | None = None  # MAC address from ARP table
         self.latency: float = 0
 
     def update_seen(self) -> None:
@@ -59,8 +58,8 @@ class HostStatus:
         ip: str,
         exists: bool = False,
         reachable: bool = False,
-        latency: Optional[float] = None,
-        mac: Optional[str] = None,
+        latency: float | None = None,
+        mac: str | None = None,
     ) -> None:
         """
         Initialize the host status model.
@@ -68,5 +67,5 @@ class HostStatus:
         self.ip: str = ip
         self.exists: bool = exists
         self.reachable: bool = reachable
-        self.latency: Optional[float] = latency
-        self.mac: Optional[str] = mac
+        self.latency: float | None = latency
+        self.mac: str | None = mac

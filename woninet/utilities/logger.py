@@ -1,6 +1,5 @@
 import logging
 from sys import stdout
-from typing import Optional
 
 # Trace level definition
 TRACE_LEVEL = 5
@@ -51,7 +50,7 @@ class ColorFormatter(logging.Formatter):
         return super().formatMessage(record)
 
 
-def get_core_logger(log_output: Optional[str] = None) -> logging.Logger:
+def get_core_logger(log_output: str | None = None) -> logging.Logger:
     """
     Returns the core logger.
     """

@@ -1,4 +1,3 @@
-from typing import List
 from datetime import datetime
 from sqlalchemy.orm import Session
 from woninet.database.tables import MetricTable
@@ -22,12 +21,12 @@ class MetricRepository:
         """
         self.session: Session = session
 
-    def insert(self, metrics: List[MetricRecord]) -> None:
+    def insert(self, metrics: list[MetricRecord]) -> None:
         """
         Insert new metrics in the database.
 
         Args:
-            metrics (List[MetricRecord]): A list of domain `MetricRecord` instances.
+            metrics (list[MetricRecord]): A list of domain `MetricRecord` instances.
         """
         for metric in metrics:
             self.session.add(
@@ -40,12 +39,12 @@ class MetricRepository:
             )
         self.session.commit()
 
-    def get_db_metrics(self) -> List[MetricRecord]:
+    def get_db_metrics(self) -> list[MetricRecord]:
         """
         Return all metric records from database.
 
         Returns:
-            List[MetricRecord]: A list of `MetricRecord` instances from `MetricTable` in the database.
+            list[MetricRecord]: A list of `MetricRecord` instances from `MetricTable` in the database.
         """
         rows = self.session.query(MetricTable).all()
         result = []

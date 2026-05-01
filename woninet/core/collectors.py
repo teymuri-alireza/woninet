@@ -2,7 +2,6 @@ import re
 import logging
 from icmplib import ping, SocketPermissionError, SocketAddressError
 import subprocess
-from typing import List, Dict, Optional
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from woninet.core.models import Device, MetricRecord, HostStatus
 from woninet.core.storage import StorageEngine
@@ -10,7 +9,7 @@ from woninet.core.storage import StorageEngine
 core_logger = logging.getLogger("core")
 
 
-def get_arp_mac(ip: str) -> Optional[str]:
+def get_arp_mac(ip: str) -> str | None:
     """
     Return MAC address from ARP table for the given IP, or None if not present.
     """
@@ -142,12 +141,12 @@ class BaseCollector:
 
     def collect(
         self,
-        devices: Dict[str, Device],
+        devices: dict[str, Device],
         ip_addr: str,
         store_callback: StorageEngine,
         stop_event=None,
         arp_noise_limit: float = 300.0,
-    ) -> List | List[MetricRecord]:
+    ) -> list | list[MetricRecord]:
         """
         Collect metrics from devices.
         Must be implemented by subclasses.
@@ -156,7 +155,7 @@ class BaseCollector:
 
     def run(
         self,
-        devices: Dict[str, Device],
+        devices: dict[str, Device],
         ip_addr,
         store_callback: StorageEngine,
         stop_event=None,
@@ -189,12 +188,12 @@ class PingCollector(BaseCollector):
 
     def collect(
         self,
-        devices: Dict[str, Device],
+        devices: dict[str, Device],
         ip_addr: str,
         store_callback: StorageEngine,
         stop_event=None,
         arp_noise_limit: float = 300.0,
-    ) -> List | List[MetricRecord]:
+    ) -> list | list[MetricRecord]:
         """
         For each device:
             - Use ARP + ICMP to determine existence and reachability.
@@ -204,7 +203,7 @@ class PingCollector(BaseCollector):
         if stop_event and stop_event.is_set():
             return []
 
-        results: List[MetricRecord] = []
+        results: list[MetricRecord] = []
         db_devices = store_callback.get_history()
 
         def worker(ip: str, dev: Device) -> MetricRecord:

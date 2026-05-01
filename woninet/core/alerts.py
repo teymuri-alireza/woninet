@@ -1,5 +1,4 @@
 import logging
-from typing import List
 from woninet.core.storage import StorageEngine
 
 core_logger = logging.getLogger("core")
@@ -31,7 +30,7 @@ class AlertEngine:
     and generates alerts when conditions are violated.
     """
 
-    def __init__(self, storage: StorageEngine, rules: List[AlertRule]) -> None:
+    def __init__(self, storage: StorageEngine, rules: list[AlertRule]) -> None:
         """
         Initialize the alert engine.
 
@@ -40,7 +39,7 @@ class AlertEngine:
             rules: Alert rules evaluated against stored metrics.
         """
         self.storage: StorageEngine = storage
-        self.rules: List[AlertRule] = rules
+        self.rules: list[AlertRule] = rules
 
     def evaluate(self) -> None:
         """

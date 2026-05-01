@@ -1,4 +1,3 @@
-from typing import List
 from datetime import datetime
 from sqlalchemy.orm import Session
 from woninet.database.tables import DeviceTable
@@ -61,12 +60,12 @@ class DeviceRepository:
 
         self.session.commit()
 
-    def get_db_devices(self) -> List[Device]:
+    def get_db_devices(self) -> list[Device]:
         """
         Return all existing devices from the database.
 
         Returns:
-            List[Device]: A list of `Device` instances from `DeviceTable` in the database.
+            list[Device]: A list of `Device` instances from `DeviceTable` in the database.
         """
         rows = self.session.query(DeviceTable).all()
         result = []

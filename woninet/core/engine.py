@@ -2,7 +2,6 @@ import time
 import logging
 import threading
 from icmplib import SocketPermissionError, SocketAddressError
-from typing import List
 from woninet.core.models import Device
 from woninet.core.collectors import PingCollector
 from woninet.core.storage import StorageEngine
@@ -130,7 +129,7 @@ class NetworkMonitorCore:
         """
         return self._running
 
-    def get_devices(self) -> List[Device]:
+    def get_devices(self) -> list[Device]:
         """
         Return all devices in the history.
         """
