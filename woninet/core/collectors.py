@@ -48,6 +48,9 @@ def detect_host(
         - If ARP_OK and ICMP_FAIL -> Host exists but unreachable / ICMP blocked
         - If ARP_OK and ICMP_OK < 300 ms -> Host is reachable
         - If ARP_OK and ICMP_OK >= 300 ms -> Treat as ARP-timeout noise (unreachable)
+
+    Returns:
+        HostStatus|None: A `HostStatus` instance if the stop event is not triggered; otherwise, None.
     """
     status = HostStatus(ip=ip)
 
