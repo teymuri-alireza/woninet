@@ -138,4 +138,5 @@ async function loadDevices() {
     }
 }
 
+loadDevices()
 setInterval(loadDevices, 5000);
