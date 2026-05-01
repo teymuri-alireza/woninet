@@ -16,6 +16,9 @@ All notable changes to this project will be documented in this file.
 - Renamed logging variables to snake_case.
 - Replaced static log filename with a CLI argument for specifying the log file path.
 
+### Removed
+- Remove redundant metrics field from the `Device` class.
+
 ### Fixed
 - Introduced `SocketPermissionError` and raised it alongside `PermissionError` to ensure socket privilege failures are handled in `engine.py`.
 - Prevented `SocketAddressError` from repeating in a loop.
