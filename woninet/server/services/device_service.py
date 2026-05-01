@@ -1,6 +1,6 @@
 def get_monitor_gracefully():
     """
-    Calls get_monitor() and returns the intance of NetworkMonitorCore class
+    Call get_monitor() and return the intance of NetworkMonitorCore class
     to prevent circular import error.
     """
     from woninet.main import get_monitor

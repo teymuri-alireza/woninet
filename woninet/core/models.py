@@ -4,8 +4,8 @@ from typing import Optional
 
 class Device:
     """
-    Represents a discovered network device.
-    Stores identity information and device state.
+    Represent a discovered network device.
+    Store identity information and device state.
     """
 
     def __init__(self, ip: str) -> None:
@@ -27,7 +27,7 @@ class Device:
 
 class MetricRecord:
     """
-    Represents a single collected metric measurement
+    Represent a single collected metric measurement
     for a specific device at a specific time.
     """
 

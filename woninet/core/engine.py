@@ -50,7 +50,7 @@ class NetworkMonitorCore:
 
     def start(self) -> None:
         """
-        Starts the monitoring worker thread.
+        Start the monitoring worker thread.
         """
         if self._running:
             return
@@ -64,7 +64,7 @@ class NetworkMonitorCore:
 
     def stop(self) -> None:
         """
-        Stops the monitoring worker thread.
+        Stop the monitoring worker thread.
         """
         if not self._running:
             return
@@ -76,7 +76,7 @@ class NetworkMonitorCore:
 
     def wait(self) -> None:
         """
-        Blocks until the worker thread finishes.
+        Block until the worker thread finishes.
         """
         if self._thread:
             self._thread.join()
@@ -84,7 +84,7 @@ class NetworkMonitorCore:
     def worker_loop(self) -> None:
         """
         Main monitoring loop.
-        Starts the collectors and evaluate alerts.
+        Start the collectors and evaluate alerts.
         """
         try:
             while self._running and not self._stop_event.is_set():

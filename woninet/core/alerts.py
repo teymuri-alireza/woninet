@@ -7,7 +7,7 @@ core_logger = logging.getLogger("core")
 
 class AlertRule:
     """
-    Defines a monitoring rule that triggers an alert
+    Define a monitoring rule that triggers an alert
     when a metric exceeds a defined threshold.
     """
 
@@ -19,7 +19,7 @@ class AlertRule:
 
 class AlertEngine:
     """
-    Evaluates stored metrics against alert rules
+    Evaluate stored metrics against alert rules
     and generates alerts when conditions are violated.
     """
 

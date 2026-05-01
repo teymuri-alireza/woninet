@@ -9,7 +9,7 @@ class MetricRepository:
     """
     Repository for persisting and retrieving MetricRevord entities.
 
-    This class encapsulates OEM operations on `MetricTable` and expose a
+    Encapsulate OEM operations on `MetricTable` and expose a
     simple API in terms of the domain model `MetricRecord`.
     """
 

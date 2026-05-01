@@ -9,7 +9,7 @@ class DeviceRepository:
     """
     Repository for persisting and retrieving Device entities.
 
-    This class encapsulates ORM operations on `DeviceTable` and expose a
+    Eencapsulate ORM operations on `DeviceTable` and expose a
     simple API in terms of the domain model `Device`.
     """
 
