@@ -1,7 +1,7 @@
 import re
 import logging
-from icmplib import ping, SocketPermissionError, SocketAddressError
 import subprocess
+from icmplib import ping, SocketPermissionError, SocketAddressError
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from woninet.core.models import Device, MetricRecord, HostStatus
 from woninet.core.storage import StorageEngine
