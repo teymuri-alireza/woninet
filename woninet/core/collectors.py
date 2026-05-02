@@ -227,7 +227,7 @@ class PingCollector(BaseCollector):
                 dev.mac = status.mac
             dev.latency = status.latency
 
-            if status.reachable:
+            if dev.reachable:
                 # Only consider reachable hosts as recently seen
                 dev.update_seen()
 
