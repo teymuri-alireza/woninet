@@ -1,7 +1,7 @@
 import re
 import logging
-from icmplib import ping, SocketPermissionError, SocketAddressError
 import subprocess
+from icmplib import ping, SocketPermissionError, SocketAddressError
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from woninet.core.models import Device, MetricRecord, HostStatus
 from woninet.core.storage import StorageEngine
@@ -61,7 +61,7 @@ def detect_host(
         status.exists = False
         status.reachable = False
         status.mac = None
-        status.latency = None
+        status.latency = 0.0
         return status
 
     if stop_event and stop_event.is_set():
@@ -120,6 +120,7 @@ def detect_host(
             # High-latency ICMP, often ARP resolution noise (unreachable)
             status.exists = bool(mac)
             status.reachable = False
+            status.latency = 0
 
     # Refresh MAC if host responded to ICMP but ARP cache was stale
     if status.reachable and mac is None:
@@ -227,7 +228,7 @@ class PingCollector(BaseCollector):
                 dev.mac = status.mac
             dev.latency = status.latency
 
-            if status.reachable:
+            if dev.reachable:
                 # Only consider reachable hosts as recently seen
                 dev.update_seen()
 
@@ -236,13 +237,11 @@ class PingCollector(BaseCollector):
             if dev.reachable or is_known:
                 store_callback.store(device=dev)
 
-            value = status.latency if status.reachable else 0
-
             if dev.reachable:
                 core_logger.debug(
-                    f"Device {ip}: \tUP,\t MAC={dev.mac}, latency={value:.2f} ms"
+                    f"Device {ip}: \tUP,\t MAC={dev.mac}, latency={dev.latency:.2f} ms"
                 )
-            elif dev.exists:
+            elif is_known:
                 core_logger.debug(
                     f"Device {ip}: \tDOWN,\t MAC={dev.mac}, latency=OFFLINE"
                 )
@@ -251,7 +250,7 @@ class PingCollector(BaseCollector):
                     f"Device {ip}: \tABSENT,\t MAC={dev.mac}, latency=OFFLINE"
                 )
 
-            return MetricRecord(ip, "latency_ms", value)
+            return MetricRecord(ip, "latency_ms", dev.latency)
 
         with ThreadPoolExecutor(max_workers=10) as executor:
             future_to_ip = {
