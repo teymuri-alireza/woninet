@@ -120,6 +120,7 @@ def detect_host(
             # High-latency ICMP, often ARP resolution noise (unreachable)
             status.exists = bool(mac)
             status.reachable = False
+            status.latency = 0
 
     # Refresh MAC if host responded to ICMP but ARP cache was stale
     if status.reachable and mac is None:
