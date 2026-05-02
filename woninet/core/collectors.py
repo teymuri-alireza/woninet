@@ -236,11 +236,9 @@ class PingCollector(BaseCollector):
             if dev.reachable or is_known:
                 store_callback.store(device=dev)
 
-            value = status.latency if status.reachable else 0
-
             if dev.reachable:
                 core_logger.debug(
-                    f"Device {ip}: \tUP,\t MAC={dev.mac}, latency={value:.2f} ms"
+                    f"Device {ip}: \tUP,\t MAC={dev.mac}, latency={dev.latency:.2f} ms"
                 )
             elif dev.exists:
                 core_logger.debug(
@@ -251,7 +249,7 @@ class PingCollector(BaseCollector):
                     f"Device {ip}: \tABSENT,\t MAC={dev.mac}, latency=OFFLINE"
                 )
 
-            return MetricRecord(ip, "latency_ms", value)
+            return MetricRecord(ip, "latency_ms", dev.latency)
 
         with ThreadPoolExecutor(max_workers=10) as executor:
             future_to_ip = {
