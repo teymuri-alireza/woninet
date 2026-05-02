@@ -58,7 +58,7 @@ class HostStatus:
         ip: str,
         exists: bool = False,
         reachable: bool = False,
-        latency: float | None = None,
+        latency: float = 0.0,
         mac: str | None = None,
     ) -> None:
         """
@@ -67,5 +67,5 @@ class HostStatus:
         self.ip: str = ip
         self.exists: bool = exists
         self.reachable: bool = reachable
-        self.latency: float | None = latency
+        self.latency: float = latency
         self.mac: str | None = mac

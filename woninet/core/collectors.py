@@ -61,7 +61,7 @@ def detect_host(
         status.exists = False
         status.reachable = False
         status.mac = None
-        status.latency = None
+        status.latency = 0.0
         return status
 
     if stop_event and stop_event.is_set():
