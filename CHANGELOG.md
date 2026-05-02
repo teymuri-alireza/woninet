@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 ---
 
 ## [Unreleased]
+
+---
+
+## [1.3.0] - 2026-05-02
 ### Added
 - Implemented `logging.yaml` file to parse and apply log file output for web dashboard.
 - Implemented `ColorFormatter` class in `logging.py` to apply ANSI color codes to console output.
