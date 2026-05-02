@@ -29,6 +29,7 @@ reachability, and latency. Metrics are collected continuously and processed thro
 - Pass alert rules as command line argument.
 - Add ARP table caching to further reduce Wi‑Fi latency noise.
 - Accept defined IP and MAC addresses as command‑line arguments.
+- Prevent direct storage access in PingCollector by introducing an API in engine.py.
 
 ## Known Issues
 
