@@ -54,8 +54,50 @@ This endpoint dynamically reflects real-time network topology.
 
 ### /stats — Network Statistics
 
-The `/stats` route accesses `get_network_stats()` from the `stats_service` module to retrieve basic network performance and status metrics.
+The `/stats` route accesses `get_network_stats()` from the `stats_service` module to
+retrieve basic network performance and status metrics.
+This endpoint responds with a JSON object that includes the following sections:
 
-**To be updated:**
+1. **identity:** Basic service identification information.
 
-Integrate live traffic counters, throughput analysis, and uptime information from the `NetworkMonitorCore` instance once the statistics logic is finalized.
+- service: Name of the service.
+- version: Current version of the service.
+- server_ip: IP address of the server hosting the service.
+
+2. **health:** Current status regarding system health and connectivity.
+
+- engine_alive: Boolean indicating whether the database engine is running.
+- database_connectivity: Status of the database connection (e.g., "ok" or "error").
+- database_schema: Status of the database schema (e.g., "ok", "error", "unknown").
+
+**Note:** The `databse_schema` returns "unknown" if `database_connectivity` fails.
+
+3. **stats:** Metrics of the network monitoring system.
+
+- devices_total: Total number of devices currently monitored.
+- metrics_total: Total number of metrics collected.
+- uptime_seconds: Total uptime of the service in seconds..
+
+**Example Response:**
+
+```json
+{
+  "identity": {
+    "service": "woninet",
+    "version": "1.3.0",
+    "server_ip": "192.168.120.56",
+  },
+  "health": {
+    "engine_alive": true,
+    "database": {
+        "connection": "ok",
+        "schema": "ok",
+    },
+  },
+  "stats": {
+    "devices_total": 15,
+    "metrics_total": 125,
+    "uptime_seconds": 45685,
+  },
+}
+```
