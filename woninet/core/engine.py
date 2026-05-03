@@ -2,13 +2,15 @@ import time
 import logging
 import threading
 from datetime import datetime
+from sqlalchemy import text, inspect
+from sqlalchemy.exc import SQLAlchemyError
 from icmplib import SocketPermissionError, SocketAddressError
 from woninet.core.models import Device
 from woninet.core.collectors import PingCollector
 from woninet.core.storage import StorageEngine
 from woninet.core.alerts import AlertEngine, AlertRule
 from woninet.core.subnet_enumerator import SubnetEnumerator
-from woninet.database.engine import SessionLocal, init_db
+from woninet.database.engine import SessionLocal, init_db, engine
 
 core_logger = logging.getLogger("core")
 
@@ -31,6 +33,7 @@ class NetworkMonitorCore:
         self._thread: threading.Thread | None = None
         self._stop_event: threading.Event = threading.Event()
         self._start_uptime = datetime.now()
+        self._engine = engine
 
         self.ip_addr: str = ip_addr
         self.arp_noise_limit: float = arp_noise_limit
@@ -153,3 +156,41 @@ class NetworkMonitorCore:
         """
         uptime_seconds = datetime.now() - self._start_uptime
         return uptime_seconds.seconds
+
+    def database_health(self) -> dict[str, str]:
+        """
+        Check the health status of the database.
+
+        Returns a dictionary with two keys:
+
+        - 'connection': 'ok' if executing `SELECT 1` succeeds, otherwise 'error'.
+        - 'schema': 'ok' if database table inspection succeeds, otherwise 'error'.
+        If the database connection fails, this value is 'unknown'.
+
+        Returns:
+            dict[str,str]: A dictionary containing the connection and schema
+            health status.
+        """
+        result = {
+            "connection": "error",
+            "schema": "unknown",
+        }
+        try:
+            # Check connection
+            with self._engine.connect() as conn:
+                conn.execute(text("SELECT 1"))
+            result["connection"] = "ok"
+
+            # Check tables existence
+            inspect_engine = inspect(self._engine)
+            tables = inspect_engine.get_table_names()
+            required = {"devices", "metrics"}
+            if required.issubset(set(tables)):
+                result["schema"] = "ok"
+            else:
+                result["schema"] = "error"
+        except SQLAlchemyError:
+            # Keep default values
+            pass
+
+        return result
