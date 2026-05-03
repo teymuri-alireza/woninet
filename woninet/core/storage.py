@@ -45,6 +45,18 @@ class StorageEngine:
             repo = DeviceRepository(session)
             return repo.get_db_devices()
 
+    def get_database_count(self) -> tuple[int, int]:
+        """
+        Return number of devices and metrics in the database.
+
+        Returns:
+            tuple[int,int]: Number of devices and metrics in the database.
+        """
+        with self.session_factory() as session:
+            device_repo = DeviceRepository(session)
+            metric_repo = MetricRepository(session)
+            return device_repo.get_db_devices_count(), metric_repo.get_db_metrics_count()
+
     def store_metric(self, metrics: list[MetricRecord]) -> None:
         """
         Persist newly collected metric records.

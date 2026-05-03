@@ -61,3 +61,13 @@ class MetricRepository:
         """
         self.session.query(MetricTable).delete()
         self.session.commit()
+
+    def get_db_metrics_count(self) -> int:
+        """
+        Return the number of metrics in the database.
+
+        Returns:
+            int: Number of metrics in the database.
+        """
+        total = self.session.query(MetricTable).count()
+        return total
