@@ -76,3 +76,13 @@ class DeviceRepository:
             dev.last_seen = row.last_seen
             result.append(dev)
         return result
+
+    def get_db_devices_count(self) -> int:
+        """
+        Return the number of existing devices in the database.
+
+        Returns:
+            int: Number of devices in the database.
+        """
+        total = self.session.query(DeviceTable).count()
+        return total

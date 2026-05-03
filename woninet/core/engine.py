@@ -134,3 +134,9 @@ class NetworkMonitorCore:
         Return all devices in the history.
         """
         return self.storage.get_history()
+
+    def get_history_count(self) -> tuple[int, int]:
+        """
+        Return number of devices and metrics in the history.
+        """
+        return self.storage.get_database_count()
