@@ -27,7 +27,7 @@ class NetworkMonitorCore:
 
         Args:
             ip_addr: Source IP address used to send packets.
-            arp_noise_limit: Event used to control the monitoring life cycle.
+            arp_noise_limit: Parameter which sets a limit to filter the ARP delay noise.
         """
         self._running: bool = False
         self._thread: threading.Thread | None = None
