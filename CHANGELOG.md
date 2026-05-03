@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 ---
 
 ## [Unreleased]
+### Added
+- Implemented `uptime()` method in `NetworkMonitorCore` class.
+- Implemented `database_health()` method in `NetworkMonitorCore` class to check database for connectivity and schema existence.
+- Implemented `get_history_count()` method in `NetworkMonitorCore` class to retrieve number of stored items in the database.
+- Completed the `/stats` API route.
 
 ---
 
