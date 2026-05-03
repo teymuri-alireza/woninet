@@ -59,11 +59,3 @@ The `/stats` route accesses `get_network_stats()` from the `stats_service` modul
 **To be updated:**
 
 Integrate live traffic counters, throughput analysis, and uptime information from the `NetworkMonitorCore` instance once the statistics logic is finalized.
-
-### /health — System Health
-
-The `/health` route (implemented in `system.py`) returns the health status of the main monitoring device and its local environment.
-
-**To be updated:**
-
-Extend health checks to include interface connectivity, packet loss detection, and real-time latency reports.
