@@ -1,6 +1,7 @@
 import time
 import logging
 import threading
+from datetime import datetime
 from icmplib import SocketPermissionError, SocketAddressError
 from woninet.core.models import Device
 from woninet.core.collectors import PingCollector
@@ -29,6 +30,7 @@ class NetworkMonitorCore:
         self._running: bool = False
         self._thread: threading.Thread | None = None
         self._stop_event: threading.Event = threading.Event()
+        self._start_uptime = datetime.now()
 
         self.ip_addr: str = ip_addr
         self.arp_noise_limit: float = arp_noise_limit
@@ -140,3 +142,14 @@ class NetworkMonitorCore:
         Return number of devices and metrics in the history.
         """
         return self.storage.get_database_count()
+
+    def uptime(self) -> int:
+        """
+        Calculate the uptime of program from the initialization of the
+        NetworkMonitorCore class.
+
+        Returns:
+            int: Uptime in seconds.
+        """
+        uptime_seconds = datetime.now() - self._start_uptime
+        return uptime_seconds.seconds
