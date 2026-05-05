@@ -53,6 +53,8 @@ app = FastAPI(
     description="Network Monitoring Dashboard",
     lifespan=lifespan,
     version=__version__,
+    docs_url=None,
+    redoc_url=None,
 )
 
 # Templates
