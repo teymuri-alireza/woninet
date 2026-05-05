@@ -1,5 +1,6 @@
 from typing import Any
 
+
 def get_monitor_gracefully():
     """
     Call get_monitor() and return the intance of NetworkMonitorCore class

@@ -55,7 +55,10 @@ class StorageEngine:
         with self.session_factory() as session:
             device_repo = DeviceRepository(session)
             metric_repo = MetricRepository(session)
-            return device_repo.get_db_devices_count(), metric_repo.get_db_metrics_count()
+            return (
+                device_repo.get_db_devices_count(),
+                metric_repo.get_db_metrics_count(),
+            )
 
     def store_metric(self, metrics: list[MetricRecord]) -> None:
         """
