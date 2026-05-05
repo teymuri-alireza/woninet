@@ -11,6 +11,9 @@ All notable changes to this project will be documented in this file.
 - Implemented `get_history_count()` method in `NetworkMonitorCore` class to retrieve number of stored items in the database.
 - Completed the `/stats` API route.
 
+### Changed
+- Provided local Swagger UI assets (JavaScript, CSS, favicon) for the `/docs` route to allow offline loading.
+
 ---
 
 ## [1.3.0] - 2026-05-02
