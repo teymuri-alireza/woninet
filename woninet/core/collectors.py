@@ -1,6 +1,7 @@
 import re
 import logging
 import subprocess
+from typing import Generator, Any
 from icmplib import ping, SocketPermissionError, SocketAddressError
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from woninet.core.models import Device, MetricRecord, HostStatus
@@ -154,7 +155,7 @@ class PingCollector(BaseCollector):
         db_devices,
         stop_event=None,
         arp_noise_limit: float = 300.0,
-    ) -> list | list[MetricRecord]:
+    ) -> Generator[tuple[()] | tuple, Any, None]:
         """
         For each device:
             - Use ARP + ICMP to determine existence and reachability.
@@ -166,7 +167,9 @@ class PingCollector(BaseCollector):
 
         results: list[MetricRecord] = []
 
-        def worker(ip: str, dev: Device) -> MetricRecord:
+        def worker(
+            ip: str, dev: Device
+        ) -> tuple[Device, MetricRecord] | tuple[None, MetricRecord]:
             try:
                 status = detect_host(
                     ip=ip,
