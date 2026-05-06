@@ -60,16 +60,16 @@ class StorageEngine:
                 metric_repo.get_db_metrics_count(),
             )
 
-    def store_metric(self, metrics: list[MetricRecord]) -> None:
+    def store_metric(self, metric: MetricRecord) -> None:
         """
-        Persist newly collected metric records.
+        Persist newly collected metric record.
 
         Args:
-            metrics (list[MetricRecord]): list of metric records captured during a scan cycle.
+            metric (MetricRecord): A metric record captured during a scan cycle.
         """
         with self.session_factory() as session:
             repo = MetricRepository(session)
-            repo.insert(metrics)
+            repo.insert(metric)
             session.commit()
 
     def get_metric_history(self) -> list[MetricRecord]:
