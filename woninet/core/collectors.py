@@ -1,10 +1,10 @@
 import re
 import logging
 import subprocess
+from typing import Generator, Any
 from icmplib import ping, SocketPermissionError, SocketAddressError
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from woninet.core.models import Device, MetricRecord, HostStatus
-from woninet.core.storage import StorageEngine
 
 core_logger = logging.getLogger("core")
 
@@ -135,48 +135,10 @@ def detect_host(
 class BaseCollector:
     """
     Abstract base class for all monitoring collectors.
-    Each collector periodically gathers metrics from devices.
     """
 
-    interval = 10
-
-    def collect(
-        self,
-        devices: dict[str, Device],
-        ip_addr: str,
-        store_callback: StorageEngine,
-        stop_event=None,
-        arp_noise_limit: float = 300.0,
-    ) -> list | list[MetricRecord]:
-        """
-        Collect metrics from devices.
-        Must be implemented by subclasses.
-        """
+    def collect(self, *args, **kwargs) -> Any:
         raise NotImplementedError
-
-    def run(
-        self,
-        devices: dict[str, Device],
-        ip_addr,
-        store_callback: StorageEngine,
-        stop_event=None,
-        arp_noise_limit: float = 300.0,
-    ) -> None:
-        """
-        Main execution function for the collector.
-        Send collected metrics to storage.
-        """
-        if stop_event and stop_event.is_set():
-            return
-        result = self.collect(
-            devices,
-            ip_addr=ip_addr,
-            store_callback=store_callback,
-            stop_event=stop_event,
-            arp_noise_limit=arp_noise_limit,
-        )
-        # Store metric data
-        store_callback.store_metric(result)
 
 
 class PingCollector(BaseCollector):
@@ -185,16 +147,14 @@ class PingCollector(BaseCollector):
     enhanced with ARP-based existence detection.
     """
 
-    interval = 5
-
     def collect(
         self,
         devices: dict[str, Device],
         ip_addr: str,
-        store_callback: StorageEngine,
+        db_devices,
         stop_event=None,
         arp_noise_limit: float = 300.0,
-    ) -> list | list[MetricRecord]:
+    ) -> Generator[tuple[()] | tuple, Any, None]:
         """
         For each device:
             - Use ARP + ICMP to determine existence and reachability.
@@ -202,12 +162,11 @@ class PingCollector(BaseCollector):
             - Record latency metric only when reachable and latency is sane.
         """
         if stop_event and stop_event.is_set():
-            return []
+            yield ()
 
-        results: list[MetricRecord] = []
-        db_devices = store_callback.get_history()
-
-        def worker(ip: str, dev: Device) -> MetricRecord:
+        def worker(
+            ip: str, dev: Device
+        ) -> tuple[Device, MetricRecord] | tuple[None, MetricRecord]:
             try:
                 status = detect_host(
                     ip=ip,
@@ -232,10 +191,8 @@ class PingCollector(BaseCollector):
                 # Only consider reachable hosts as recently seen
                 dev.update_seen()
 
-            # Store device to history
+            # Check if the found device is already stored in the database.
             is_known = any(db_device.ip == dev.ip for db_device in db_devices)
-            if dev.reachable or is_known:
-                store_callback.store(device=dev)
 
             if dev.reachable:
                 core_logger.debug(
@@ -250,7 +207,10 @@ class PingCollector(BaseCollector):
                     f"Device {ip}: \tABSENT,\t MAC={dev.mac}, latency=OFFLINE"
                 )
 
-            return MetricRecord(ip, "latency_ms", dev.latency)
+            if dev.reachable or is_known:
+                return (dev, MetricRecord(ip, "latency_ms", dev.latency))
+            else:
+                return (None, MetricRecord(ip, "latency_ms", dev.latency))
 
         with ThreadPoolExecutor(max_workers=10) as executor:
             future_to_ip = {
@@ -258,12 +218,17 @@ class PingCollector(BaseCollector):
             }
 
             for future in as_completed(future_to_ip):
+                results = []
                 if stop_event and stop_event.is_set():
                     break
                 if stop_event.is_set():
-                    return results
+                    yield ()
                 try:
-                    metric = future.result()
+                    future_device, future_metric = (
+                        future.result()[0],
+                        future.result()[1],
+                    )
+                    results.append(future_device)
                 except (PermissionError, SocketPermissionError):
                     raise
                 except SocketAddressError:
@@ -273,7 +238,11 @@ class PingCollector(BaseCollector):
                     core_logger.error(f"Error in PingCollector for {ip}: {e}")
                     continue
                 else:
-                    if metric.value != 0:
-                        results.append(metric)
+                    if future_metric.value != 0:
+                        results.append(future_metric)
+                    else:
+                        results.append(None)
+                finally:
+                    yield tuple(results)
 
-        return results
+        yield ()

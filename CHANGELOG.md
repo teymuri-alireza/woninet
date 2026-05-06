@@ -13,6 +13,8 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 - Provided local Swagger UI assets (JavaScript, CSS, favicon) for the `/docs` route to allow offline loading.
+- Prevented giving direct access to storage in `PingCollector`, by passing a variable of database devices instead of an instance of `StorageEngine` class.
+- Switched from `return` to `yield` in `PingCollector` to store outputs in real-time, and handle outputs inside `engine.py`.
 
 ---
 

@@ -5,7 +5,7 @@ from datetime import datetime
 from sqlalchemy import text, inspect
 from sqlalchemy.exc import SQLAlchemyError
 from icmplib import SocketPermissionError, SocketAddressError
-from woninet.core.models import Device
+from woninet.core.models import Device, MetricRecord
 from woninet.core.collectors import PingCollector
 from woninet.core.storage import StorageEngine
 from woninet.core.alerts import AlertEngine, AlertRule
@@ -48,9 +48,7 @@ class NetworkMonitorCore:
 
         self.devices = self.subnet_enumerator.scan_subnet(self.ip_addr)
 
-        self.collectors = [
-            PingCollector(),
-        ]
+        self.ping_collector = PingCollector()
 
         self.alert_engine = AlertEngine(
             storage=self.storage,
@@ -99,17 +97,17 @@ class NetworkMonitorCore:
         """
         try:
             while self._running and not self._stop_event.is_set():
-                for collector in self.collectors:
-                    if not self._running or self._stop_event.is_set():
-                        break
+                if not self._running or self._stop_event.is_set():
+                    break
 
-                    collector.run(
-                        self.devices,
-                        self.ip_addr,
-                        self.storage,
-                        stop_event=self._stop_event,
-                        arp_noise_limit=self.arp_noise_limit,
-                    )
+                for result in self.ping_collector.collect(
+                    devices=self.devices,
+                    ip_addr=self.ip_addr,
+                    db_devices=self.storage.get_history(),
+                    stop_event=self._stop_event,
+                    arp_noise_limit=self.arp_noise_limit,
+                ):
+                    self.submit_to_history(value=result)
                     self.alert_engine.evaluate()
                 time.sleep(1)
         except (PermissionError, SocketPermissionError):
@@ -145,6 +143,18 @@ class NetworkMonitorCore:
         Return number of devices and metrics in the history.
         """
         return self.storage.get_database_count()
+
+    def submit_to_history(self, value: tuple[()] | tuple) -> None:
+        """ """
+        try:
+            device, metric = value
+            if isinstance(device, Device):
+                self.storage.store(device=device)
+            if isinstance(metric, MetricRecord):
+                self.storage.store_metric(metric=metric)
+        except ValueError:
+            # If the tuple doesn't have enough values to unpack
+            pass
 
     def uptime(self) -> int:
         """

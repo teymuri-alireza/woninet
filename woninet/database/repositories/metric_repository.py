@@ -21,22 +21,21 @@ class MetricRepository:
         """
         self.session: Session = session
 
-    def insert(self, metrics: list[MetricRecord]) -> None:
+    def insert(self, metric: MetricRecord) -> None:
         """
-        Insert new metrics in the database.
+        Insert new metric in the database.
 
         Args:
-            metrics (list[MetricRecord]): A list of domain `MetricRecord` instances.
+            metric (MetricRecord): An object of domain `MetricRecord` instance.
         """
-        for metric in metrics:
-            self.session.add(
-                MetricTable(
-                    device_ip=metric.device_ip,
-                    metric=metric.metric,
-                    value=metric.value,
-                    timestamp=metric.timestamp or datetime.now(),
-                )
+        self.session.add(
+            MetricTable(
+                device_ip=metric.device_ip,
+                metric=metric.metric,
+                value=metric.value,
+                timestamp=metric.timestamp or datetime.now(),
             )
+        )
         self.session.commit()
 
     def get_db_metrics(self) -> list[MetricRecord]:
