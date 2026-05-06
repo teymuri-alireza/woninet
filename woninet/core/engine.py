@@ -100,13 +100,14 @@ class NetworkMonitorCore:
                 if not self._running or self._stop_event.is_set():
                     break
 
-                    collector.run(
-                        self.devices,
-                        self.ip_addr,
-                        self.storage,
-                        stop_event=self._stop_event,
-                        arp_noise_limit=self.arp_noise_limit,
-                    )
+                for result in self.ping_collector.collect(
+                    devices=self.devices,
+                    ip_addr=self.ip_addr,
+                    db_devices=self.storage.get_history(),
+                    stop_event=self._stop_event,
+                    arp_noise_limit=self.arp_noise_limit,
+                ):
+                    self.submit_to_history(value=result)
                     self.alert_engine.evaluate()
                 time.sleep(1)
         except (PermissionError, SocketPermissionError):
