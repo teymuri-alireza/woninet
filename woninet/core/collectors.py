@@ -147,8 +147,6 @@ class PingCollector(BaseCollector):
     enhanced with ARP-based existence detection.
     """
 
-    interval = 5
-
     def collect(
         self,
         devices: dict[str, Device],
