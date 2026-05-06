@@ -195,8 +195,6 @@ class PingCollector(BaseCollector):
 
             # Check if the found device is already stored in the database.
             is_known = any(db_device.ip == dev.ip for db_device in db_devices)
-            if dev.reachable or is_known:
-                store_callback.store(device=dev)
 
             if dev.reachable:
                 core_logger.debug(
@@ -211,7 +209,10 @@ class PingCollector(BaseCollector):
                     f"Device {ip}: \tABSENT,\t MAC={dev.mac}, latency=OFFLINE"
                 )
 
-            return MetricRecord(ip, "latency_ms", dev.latency)
+            if dev.reachable or is_known:
+                return (dev, MetricRecord(ip, "latency_ms", dev.latency))
+            else:
+                return (None, MetricRecord(ip, "latency_ms", dev.latency))
 
         with ThreadPoolExecutor(max_workers=10) as executor:
             future_to_ip = {
