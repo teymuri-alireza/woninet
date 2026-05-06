@@ -5,7 +5,6 @@ from typing import Generator, Any
 from icmplib import ping, SocketPermissionError, SocketAddressError
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from woninet.core.models import Device, MetricRecord, HostStatus
-from woninet.core.storage import StorageEngine
 
 core_logger = logging.getLogger("core")
 
