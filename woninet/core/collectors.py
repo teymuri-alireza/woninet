@@ -151,7 +151,7 @@ class PingCollector(BaseCollector):
         self,
         devices: dict[str, Device],
         ip_addr: str,
-        store_callback: StorageEngine,
+        db_devices,
         stop_event=None,
         arp_noise_limit: float = 300.0,
     ) -> list | list[MetricRecord]:
@@ -165,7 +165,6 @@ class PingCollector(BaseCollector):
             return []
 
         results: list[MetricRecord] = []
-        db_devices = store_callback.get_history()
 
         def worker(ip: str, dev: Device) -> MetricRecord:
             try:
