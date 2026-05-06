@@ -10,7 +10,7 @@ This section explains the full sequence of operations *woninet* performs to scan
 
 The [Core Logic](./core_logic.md) documentation.
 
-## 2. Web Dashboard
+### 2. Web Dashboard
 
 This section explains the sequence of operations performed to serve the web dashboard.
 
