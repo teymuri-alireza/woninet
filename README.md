@@ -93,6 +93,10 @@ python3 -m woninet --version
 sudo ../venv/bin/python3 -m woninet
 ```
 
+## Usage
+
+This [guide](./docs/usage.md) explains common ways to run *woninet* and how to resolve common issues.
+
 ## Requirements
 
 - Unix-based operating systems

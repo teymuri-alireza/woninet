@@ -1,0 +1,70 @@
+# Usage
+
+This guide explains common ways to run woninet and how to resolve common issues.
+
+# Running Modes
+
+## CLI mode
+
+The simplest way to run **woninet in CLI is:
+
+```shell
+woninet
+```
+
+In this method, logging runs at the `INFO` level. Output is minimal, but warnings will still appear if a metric exceeds a rule in the `AlertEngine`.
+
+You can enable more verbose output using:
+
+```shell
+woninet -v # DEBUG level
+woninet -vv # TRACE level
+```
+
+## Web Dashboard
+
+You can serve *woninet* dashboard on port 8080 with:
+
+```shell
+woninet --serve
+```
+
+In this mode, core logging is set to ERROR to reduce unnecessary output.
+
+---
+
+# Logging
+
+Logs can be written to a file using the `-o` or `--output` parameter.
+By default, logs are printed only to `stdout`
+
+```shell
+woninet -o logs.log
+woninet --output logs.log
+```
+
+---
+
+# Issues and Troubleshooting
+
+## ARP Noise Limit
+
+The default value for the `--arp-noise-limit` paramter is 300.0.
+Devices with latency equal to or higher than this value are considered ARP noise and will not be stored in the database.
+If you are on a weak or unstable network, you may want to adjust this threshold.
+
+Examples:
+
+```shell
+woninet --arp-noise-limit 0
+```
+Stores all detected devices regardless of latency.
+
+```
+woninet --arp-noise-limit 800 # Will consider latency above 800.0 as ARP noise
+```
+Only considers devices with latency above 800.0 as ARP noise
+
+---
+
+If you encounter additional issues, feel free to open an issue on the [woninet](https://github.com/teymuri-alireza/woninet) GitHub repository
