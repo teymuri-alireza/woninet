@@ -48,9 +48,7 @@ class NetworkMonitorCore:
 
         self.devices = self.subnet_enumerator.scan_subnet(self.ip_addr)
 
-        self.collectors = [
-            PingCollector(),
-        ]
+        self.ping_collector = PingCollector()
 
         self.alert_engine = AlertEngine(
             storage=self.storage,
@@ -99,9 +97,8 @@ class NetworkMonitorCore:
         """
         try:
             while self._running and not self._stop_event.is_set():
-                for collector in self.collectors:
-                    if not self._running or self._stop_event.is_set():
-                        break
+                if not self._running or self._stop_event.is_set():
+                    break
 
                     collector.run(
                         self.devices,
