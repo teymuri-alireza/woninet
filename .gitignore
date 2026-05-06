@@ -4,6 +4,7 @@ __pycache__/
 
 # database
 woninet.db
+woninet.db-journal
 
 # python venv
 *venv*/
