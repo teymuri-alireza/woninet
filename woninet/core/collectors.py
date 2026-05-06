@@ -162,9 +162,7 @@ class PingCollector(BaseCollector):
             - Record latency metric only when reachable and latency is sane.
         """
         if stop_event and stop_event.is_set():
-            return []
-
-        results: list[MetricRecord] = []
+            yield ()
 
         def worker(
             ip: str, dev: Device
@@ -220,12 +218,17 @@ class PingCollector(BaseCollector):
             }
 
             for future in as_completed(future_to_ip):
+                results = []
                 if stop_event and stop_event.is_set():
                     break
                 if stop_event.is_set():
-                    return results
+                    yield ()
                 try:
-                    metric = future.result()
+                    future_device, future_metric = (
+                        future.result()[0],
+                        future.result()[1],
+                    )
+                    results.append(future_device)
                 except (PermissionError, SocketPermissionError):
                     raise
                 except SocketAddressError:
@@ -235,7 +238,11 @@ class PingCollector(BaseCollector):
                     core_logger.error(f"Error in PingCollector for {ip}: {e}")
                     continue
                 else:
-                    if metric.value != 0:
-                        results.append(metric)
+                    if future_metric.value != 0:
+                        results.append(future_metric)
+                    else:
+                        results.append(None)
+                finally:
+                    yield tuple(results)
 
-        return results
+        yield ()
