@@ -135,48 +135,10 @@ def detect_host(
 class BaseCollector:
     """
     Abstract base class for all monitoring collectors.
-    Each collector periodically gathers metrics from devices.
     """
 
-    interval = 10
-
-    def collect(
-        self,
-        devices: dict[str, Device],
-        ip_addr: str,
-        store_callback: StorageEngine,
-        stop_event=None,
-        arp_noise_limit: float = 300.0,
-    ) -> list | list[MetricRecord]:
-        """
-        Collect metrics from devices.
-        Must be implemented by subclasses.
-        """
+    def collect(self, *args, **kwargs) -> Any:
         raise NotImplementedError
-
-    def run(
-        self,
-        devices: dict[str, Device],
-        ip_addr,
-        store_callback: StorageEngine,
-        stop_event=None,
-        arp_noise_limit: float = 300.0,
-    ) -> None:
-        """
-        Main execution function for the collector.
-        Send collected metrics to storage.
-        """
-        if stop_event and stop_event.is_set():
-            return
-        result = self.collect(
-            devices,
-            ip_addr=ip_addr,
-            store_callback=store_callback,
-            stop_event=stop_event,
-            arp_noise_limit=arp_noise_limit,
-        )
-        # Store metric data
-        store_callback.store_metric(result)
 
 
 class PingCollector(BaseCollector):
