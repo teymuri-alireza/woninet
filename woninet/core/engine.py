@@ -5,7 +5,7 @@ from datetime import datetime
 from sqlalchemy import text, inspect
 from sqlalchemy.exc import SQLAlchemyError
 from icmplib import SocketPermissionError, SocketAddressError
-from woninet.core.models import Device
+from woninet.core.models import Device, MetricRecord
 from woninet.core.collectors import PingCollector
 from woninet.core.storage import StorageEngine
 from woninet.core.alerts import AlertEngine, AlertRule
@@ -142,6 +142,18 @@ class NetworkMonitorCore:
         Return number of devices and metrics in the history.
         """
         return self.storage.get_database_count()
+
+    def submit_to_history(self, value: tuple[()] | tuple) -> None:
+        """ """
+        try:
+            device, metric = value
+            if isinstance(device, Device):
+                self.storage.store(device=device)
+            if isinstance(metric, MetricRecord):
+                self.storage.store_metric(metric=metric)
+        except ValueError:
+            # If the tuple doesn't have enough values to unpack
+            pass
 
     def uptime(self) -> int:
         """
