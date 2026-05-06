@@ -193,7 +193,7 @@ class PingCollector(BaseCollector):
                 # Only consider reachable hosts as recently seen
                 dev.update_seen()
 
-            # Store device to history
+            # Check if the found device is already stored in the database.
             is_known = any(db_device.ip == dev.ip for db_device in db_devices)
             if dev.reachable or is_known:
                 store_callback.store(device=dev)
