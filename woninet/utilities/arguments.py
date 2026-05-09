@@ -28,6 +28,13 @@ are collected continuously and processed through an alert engine."""
     )
 
     parser.add_argument(
+        "-p",
+        "--port",
+        type=int,
+        help="Port number to serve the web dashboard (defaut: 8080).",
+    )
+
+    parser.add_argument(
         "--arp-noise-limit",
         type=float,
         default=300.0,
