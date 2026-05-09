@@ -34,7 +34,6 @@ reachability, and latency. Metrics are collected continuously and processed thro
 ## Known Issues
 
 - Monitoring Scope Limited to /24 Subnet
-- Avoid the `address already in use` error by incrementing the port number.
 
 ## How To Run
 
