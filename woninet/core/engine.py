@@ -107,8 +107,20 @@ class NetworkMonitorCore:
                     stop_event=self._stop_event,
                     arp_noise_limit=self.arp_noise_limit,
                 ):
-                    self.submit_to_history(value=result)
-                    self.alert_engine.evaluate()
+                    try:
+                        result_device, result_metric = result
+                        if result_device is not None and result_metric is not None:
+                            self.submit_to_history(
+                                device=result_device, metric=result_metric
+                            )
+                            self.alert_engine.evaluate(
+                                ip=result_device.ip,
+                                metric=result_metric.metric,
+                                value=result_metric.value,
+                            )
+                    except ValueError:
+                        # If the tuple doesn't have enough values to unpack
+                        pass
                 time.sleep(1)
         except (PermissionError, SocketPermissionError):
             core_logger.error("woninet requires root privileges to scan.")
