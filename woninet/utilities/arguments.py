@@ -43,6 +43,13 @@ are collected continuously and processed through an alert engine."""
     )
 
     parser.add_argument(
+        "--db",
+        type=str,
+        default="woninet.db",
+        help="The Path to the SQLite database file (default: woninet.db).",
+    )
+
+    parser.add_argument(
         "-o",
         "--output",
         type=str,
