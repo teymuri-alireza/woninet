@@ -135,15 +135,29 @@ Each valid measurement (ARP-confirmed + reachability) is stored as a MetricRecor
 
 ## 6. Alert Engine Evaluation
 
-After every monitoring cycle, all stored metrics are passed to the `AlertEngine`.
+Captured device metrics are passed to the `AlertEngine` in real-time for evaluation.
 
-Each rule evaluates conditions such as:
+During the `evaluate()` process, the current alert state of the `(device_ip, metric)` pair  is retrieved from the database,
+The engine then determines whether the incoming metric value violates the configured threshold rule.
 
-- matric value higher than a threshold
-- device unreachable (future update)
-- high jitter (future update)
+If a state transition occurs, two actions are performed:
 
-If a rule is triggered, an alert event is logged.
+- The `AlertState` record is updated to reflect the new condition
+- A corresponding `AlertEvent` is created to record the transition
+
+State transitions occur in two situations:
+
+- Trigger: `ok → warning`
+
+    The metric value has crossed the configured threshold
+
+- Recovery: `warning → ok`
+
+    The metric value has returned to a healthy range
+
+Alert events are generated only when a state transition occurs, preventing repeated alerts while a metric remains in the same condition.
+
+When a trigger or recovery occurs, the event is logged and stored in the alert history.
 
 ## 7. Looping and Scheduling
 
