@@ -65,6 +65,23 @@ woninet --arp-noise-limit 800 # Will consider latency above 800.0 as ARP noise
 ```
 Only considers devices with latency above 800.0 as ARP noise
 
+## Database and Network Synchronization
+
+The `SQLite` database identifies devices using a combination of MAC and IP addresses.
+If you move *woninet* to a different network, the IP subnet will likely change (e.g.,
+from `192.168.1.x` to `192.168.2.x`).
+
+Using the same database across different subnets can lead to data inconsistency. Stale
+records for devices that are not currently online may presist, and historical alert events
+may no longer correctly correlate with the new network topology.
+
+**Recommendation:** It is highly recommended to initialize a new database file when switching
+to a different network to ensure data integrity. You can do this using:
+
+```shell
+woninet --db path_to_new_database
+```
+
 ---
 
 If you encounter additional issues, feel free to open an issue on the [woninet](https://github.com/teymuri-alireza/woninet) GitHub repository
