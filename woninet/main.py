@@ -14,21 +14,18 @@ PORT = 8080
 
 argument = args()
 
-# The --port Argument
+# Handle Argument Values
 if argument.port:
     PORT = argument.port
 
-# The --version Argument
 if argument.version:
     from woninet.__init__ import __version__
 
     print(__version__)
     exit(0)
 
-# The --arp-noise-limit argument
 arp_noise_limit = argument.arp_noise_limit
 
-# The --output argument
 log_output = None
 if argument.output:
     log_output = argument.output
