@@ -9,6 +9,7 @@ from woninet.utilities.logger import get_core_logger, TRACE_LEVEL
 
 # Global Variables
 LOGGING_YAML_PATH = Path(__file__).parent / "logging.yaml"
+DATABASE_PATH = "woninet.db"
 REMOTE_PROBE_IP = "8.8.8.8"
 PORT = 8080
 
@@ -25,6 +26,8 @@ if argument.version:
     exit(0)
 
 arp_noise_limit = argument.arp_noise_limit
+
+DATABASE_PATH = argument.db
 
 log_output = None
 if argument.output:
@@ -83,7 +86,12 @@ def get_monitor() -> NetworkMonitorCore:
     global monitor
     if monitor is None:
         core_logger.debug(f"ARP noise limit set to {arp_noise_limit}")
-        monitor = NetworkMonitorCore(local_ip=local_ip, arp_noise_limit=arp_noise_limit)
+        core_logger.trace(f"Using {DATABASE_PATH} as SQLite database.")
+        monitor = NetworkMonitorCore(
+            local_ip=local_ip,
+            arp_noise_limit=arp_noise_limit,
+            database_path=DATABASE_PATH,
+        )
     return monitor
 
 
