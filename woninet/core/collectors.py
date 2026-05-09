@@ -29,8 +29,8 @@ def get_arp_mac(ip: str) -> str | None:
 
 
 def detect_host(
-    ip: str,
-    src_addr: str,
+    target_ip: str,
+    source_ip: str,
     timeout: float = 1.0,
     stop_event=None,
     arp_noise_limit: float = 300.0,
@@ -45,8 +45,8 @@ def detect_host(
         - ARP_OK and ICMP_OK >= arp_noise_limit → Treat as ARP-timeout noise (unreachable)
 
     Args:
-        ip: IP address of the host to scan.
-        src_addr: Source IP address used to send packets.
+        target_ip: IP address of the host to scan.
+        source_ip: Source IP address used to send packets.
         timeout: Timeout for ICMP scan.
         stop_event: Event used to control the monitoring life cycle.
         arp_noise_limit: Threshold above which ARP fluctuations are considered noise.
@@ -54,10 +54,10 @@ def detect_host(
     Returns:
         HostStatus|None: A `HostStatus` instance if the stop event is not triggered; otherwise, None.
     """
-    status = HostStatus(ip=ip)
+    status = HostStatus(ip=target_ip)
 
     # Skip source ip to prevent confusion.
-    if ip == src_addr:
+    if target_ip == source_ip:
         status.exists = False
         status.reachable = False
         status.mac = None
@@ -68,7 +68,7 @@ def detect_host(
         return None
 
     # ARP check
-    mac = get_arp_mac(ip=ip)
+    mac = get_arp_mac(ip=target_ip)
     if mac:
         status.exists = True
         status.mac = mac
@@ -76,8 +76,8 @@ def detect_host(
     # ICMP check
     try:
         response = ping(
-            source=src_addr,
-            address=ip.strip(),
+            source=source_ip,
+            address=target_ip.strip(),
             timeout=timeout,
             count=2,
             privileged=True,
@@ -91,7 +91,7 @@ def detect_host(
         raise
     except Exception as e:
         core_logger.error(
-            f"Error during ICMP ping at detect_host function, to {ip}: {e}"
+            f"Error during ICMP ping at detect_host function, to {target_ip}: {e}"
         )
         response = 0
 
@@ -124,7 +124,7 @@ def detect_host(
 
     # Refresh MAC if host responded to ICMP but ARP cache was stale
     if status.reachable and mac is None:
-        new_mac = get_arp_mac(ip=ip)
+        new_mac = get_arp_mac(ip=target_ip)
         if new_mac:
             status.exists = True
             status.mac = new_mac
@@ -149,9 +149,9 @@ class PingCollector(BaseCollector):
 
     def collect(
         self,
-        devices: dict[str, Device],
-        ip_addr: str,
-        db_devices,
+        candidate_devices: dict[str, Device],
+        local_ip: str,
+        device_records: list[Device],
         stop_event=None,
         arp_noise_limit: float = 300.0,
     ) -> Generator[tuple[()] | tuple, Any, None]:
@@ -169,8 +169,8 @@ class PingCollector(BaseCollector):
         ) -> tuple[Device, MetricRecord] | tuple[None, MetricRecord]:
             try:
                 status = detect_host(
-                    ip=ip,
-                    src_addr=ip_addr,
+                    target_ip=ip,
+                    source_ip=local_ip,
                     timeout=1.0,
                     stop_event=stop_event,
                     arp_noise_limit=arp_noise_limit,
@@ -192,7 +192,9 @@ class PingCollector(BaseCollector):
                 dev.update_seen()
 
             # Check if the found device is already stored in the database.
-            is_known = any(db_device.ip == dev.ip for db_device in db_devices)
+            is_known = any(
+                device_record.ip == dev.ip for device_record in device_records
+            )
 
             if dev.reachable:
                 core_logger.debug(
@@ -214,7 +216,8 @@ class PingCollector(BaseCollector):
 
         with ThreadPoolExecutor(max_workers=10) as executor:
             future_to_ip = {
-                executor.submit(worker, ip, dev): ip for ip, dev in devices.items()
+                executor.submit(worker, ip, dev): ip
+                for ip, dev in candidate_devices.items()
             }
 
             for future in as_completed(future_to_ip):

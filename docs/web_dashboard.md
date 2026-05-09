@@ -47,7 +47,7 @@ The `/devices` route invokes `list_devices()`, which calls the **device service*
 Internally:
 
 - The `device_service` module uses `get_monitor_gracefully()` to obtain an instance of `NetworkMonitorCore` while avoiding circular import issues.
-- The `monitor`'s `get_devices()` method is invocked to collect a list of discovered devices.
+- The `monitor`'s `get_device_history()` method is invocked to collect a list of discovered devices.
 - Discovered devices are returned as a structured JSON list to the dashboard.
 
 This endpoint dynamically reflects real-time network topology.

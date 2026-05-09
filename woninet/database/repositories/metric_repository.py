@@ -38,7 +38,7 @@ class MetricRepository:
         )
         self.session.commit()
 
-    def get_db_metrics(self) -> list[MetricRecord]:
+    def fetch_metrics(self) -> list[MetricRecord]:
         """
         Return all metric records from database.
 
@@ -61,7 +61,7 @@ class MetricRepository:
         self.session.query(MetricTable).delete()
         self.session.commit()
 
-    def get_db_metrics_count(self) -> int:
+    def count_metrics(self) -> int:
         """
         Return the number of metrics in the database.
 

@@ -36,7 +36,7 @@ class StorageEngine:
             repo.upsert(device)
             session.commit()
 
-    def get_history(self) -> list[Device]:
+    def list_device_history(self) -> list[Device]:
         """
         Return all stored devices in the database.
 
@@ -45,9 +45,9 @@ class StorageEngine:
         """
         with self.session_factory() as session:
             repo = DeviceRepository(session)
-            return repo.get_db_devices()
+            return repo.fetch_devices()
 
-    def get_database_count(self) -> tuple[int, int]:
+    def count_devices_and_metrics(self) -> tuple[int, int]:
         """
         Return number of devices and metrics in the database.
 
@@ -58,8 +58,8 @@ class StorageEngine:
             device_repo = DeviceRepository(session)
             metric_repo = MetricRepository(session)
             return (
-                device_repo.get_db_devices_count(),
-                metric_repo.get_db_metrics_count(),
+                device_repo.count_devices(),
+                metric_repo.count_metrics(),
             )
 
     def store_metric(self, metric: MetricRecord) -> None:
@@ -74,7 +74,7 @@ class StorageEngine:
             repo.insert(metric)
             session.commit()
 
-    def get_metric_history(self) -> list[MetricRecord]:
+    def list_metric_history(self) -> list[MetricRecord]:
         """
         Return stored metric history.
 
@@ -83,9 +83,9 @@ class StorageEngine:
         """
         with self.session_factory() as session:
             repo = MetricRepository(session)
-            return repo.get_db_metrics()
+            return repo.fetch_metrics()
 
-    def fetch_alert_state(self, ip: str, metric: str) -> AlertStateTable:
+    def get_or_create_alert_state(self, ip: str, metric: str) -> AlertStateTable:
         """
         Return the alert state for a given IP address and metric.
 
@@ -94,9 +94,9 @@ class StorageEngine:
         """
         with self.session_factory() as session:
             repo = AlertStateRepository(session=session)
-            return repo.fetch_alert_state(ip=ip, metric=metric)
+            return repo.fetch_or_create_alert_state(ip=ip, metric=metric)
 
-    def update_state(self, state: AlertStateTable) -> None:
+    def update_alert_state(self, state: AlertStateTable) -> None:
         """
         Update an alert state.
 

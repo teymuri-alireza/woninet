@@ -21,12 +21,12 @@ class NetworkMonitorCore:
     storage, and alert processing.
     """
 
-    def __init__(self, ip_addr: str, arp_noise_limit: float) -> None:
+    def __init__(self, local_ip: str, arp_noise_limit: float) -> None:
         """
         Initialize the monitor core.
 
         Args:
-            ip_addr: Source IP address used to send packets.
+            local_ip: Source IP address used to send packets.
             arp_noise_limit: Parameter which sets a limit to filter the ARP delay noise.
         """
         self._running: bool = False
@@ -35,18 +35,18 @@ class NetworkMonitorCore:
         self._start_uptime = datetime.now()
         self._engine = engine
 
-        self.ip_addr: str = ip_addr
+        self.local_ip: str = local_ip
         self.arp_noise_limit: float = arp_noise_limit
 
         # Initialize database
         init_db()
 
-        core_logger.info(f"Initializing network monitor for {self.ip_addr}")
+        core_logger.info(f"Initializing network monitor for {self.local_ip}")
 
         self.subnet_enumerator = SubnetEnumerator()
         self.storage = StorageEngine(session_factory=SessionLocal)
 
-        self.devices = self.subnet_enumerator.scan_subnet(self.ip_addr)
+        self.candidate_devices = self.subnet_enumerator.scan_subnet(self.local_ip)
 
         self.ping_collector = PingCollector()
 
@@ -101,9 +101,9 @@ class NetworkMonitorCore:
                     break
 
                 for result in self.ping_collector.collect(
-                    devices=self.devices,
-                    ip_addr=self.ip_addr,
-                    db_devices=self.storage.get_history(),
+                    candidate_devices=self.candidate_devices,
+                    local_ip=self.local_ip,
+                    device_records=self.get_device_history(),
                     stop_event=self._stop_event,
                     arp_noise_limit=self.arp_noise_limit,
                 ):
@@ -144,17 +144,17 @@ class NetworkMonitorCore:
         """
         return self._running
 
-    def get_devices(self) -> list[Device]:
+    def get_device_history(self) -> list[Device]:
         """
         Return all devices in the history.
         """
-        return self.storage.get_history()
+        return self.storage.list_device_history()
 
-    def get_history_count(self) -> tuple[int, int]:
+    def count_resources(self) -> tuple[int, int]:
         """
         Return number of devices and metrics in the history.
         """
-        return self.storage.get_database_count()
+        return self.storage.count_devices_and_metrics()
 
     def submit_to_history(self, device: str, metric: str) -> None:
         """

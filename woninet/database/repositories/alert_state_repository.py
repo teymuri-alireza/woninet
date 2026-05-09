@@ -18,7 +18,7 @@ class AlertStateRepository:
         """
         self.session = session
 
-    def fetch_alert_state(self, ip: str, metric: str) -> AlertStateTable:
+    def fetch_or_create_alert_state(self, ip: str, metric: str) -> AlertStateTable:
         """
         Return an alert state for a specfic IP address and metric; Create a new one
         if it already doesn't exist.

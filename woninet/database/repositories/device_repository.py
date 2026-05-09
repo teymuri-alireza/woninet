@@ -60,7 +60,7 @@ class DeviceRepository:
 
         self.session.commit()
 
-    def get_db_devices(self) -> list[Device]:
+    def fetch_devices(self) -> list[Device]:
         """
         Return all existing devices from the database.
 
@@ -77,7 +77,7 @@ class DeviceRepository:
             result.append(dev)
         return result
 
-    def get_db_devices_count(self) -> int:
+    def count_devices(self) -> int:
         """
         Return the number of existing devices in the database.
 

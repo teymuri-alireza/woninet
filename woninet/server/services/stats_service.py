@@ -16,13 +16,13 @@ def get_network_stats() -> dict[str, Any]:
     from woninet.__init__ import __version__
 
     monitor = get_monitor_gracefully()
-    devices_total, metrics_total = monitor.get_history_count()
+    devices_total, metrics_total = monitor.count_resources()
 
     network_stats = {
         "identity": {
             "service": "woninet",
             "version": __version__,
-            "server_ip": monitor.ip_addr,
+            "server_ip": monitor.local_ip,
         },
         "health": {
             "engine_alive": monitor.is_alive(),

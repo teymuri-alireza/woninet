@@ -11,4 +11,4 @@ def get_monitor_gracefully():
 
 def get_devices():
     monitor = get_monitor_gracefully()
-    return {"devices": monitor.get_devices()}
+    return {"devices": monitor.get_device_history()}

@@ -82,7 +82,7 @@ def get_monitor() -> NetworkMonitorCore:
     global monitor
     if monitor is None:
         core_logger.debug(f"ARP noise limit set to {arp_noise_limit}")
-        monitor = NetworkMonitorCore(ip_addr=local_ip, arp_noise_limit=arp_noise_limit)
+        monitor = NetworkMonitorCore(local_ip=local_ip, arp_noise_limit=arp_noise_limit)
     return monitor
 
 

@@ -56,14 +56,14 @@ class AlertEngine:
         is violated and the status of a device is changed (e.g., from "ok"
         to "warning" or vice versa).
         """
-        state = self.storage.fetch_alert_state(ip=ip, metric=metric)
+        state = self.storage.get_or_create_alert_state(ip=ip, metric=metric)
         violated = self.is_metric_violated(metric=metric, value=value)
         if violated:
             if state.state == "ok":
                 # Update "ok" to "warning"
                 state.state = "warning"
                 state.triggered_at = datetime.now()
-                self.storage.update_state(state)
+                self.storage.update_alert_state(state)
 
                 event = AlertEventTable(
                     device_ip=ip, metric=metric, value=value, event_type="trigger"
@@ -77,7 +77,7 @@ class AlertEngine:
                 # Update "warning" to "ok"
                 state.state = "ok"
                 state.triggered_at = None
-                self.storage.update_state(state)
+                self.storage.update_alert_state(state)
 
                 event = AlertEventTable(
                     device_ip=ip, metric=metric, value=value, event_type="recover"
