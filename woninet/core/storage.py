@@ -1,7 +1,9 @@
-from woninet.core.models import Device
-from woninet.core.models import MetricRecord
+from woninet.core.models import Device, MetricRecord
+from woninet.database.tables import AlertStateTable, AlertEventTable
 from woninet.database.repositories.device_repository import DeviceRepository
 from woninet.database.repositories.metric_repository import MetricRepository
+from woninet.database.repositories.alert_state_repository import AlertStateRepository
+from woninet.database.repositories.alert_event_repository import AlertEventRepository
 
 
 class StorageEngine:
@@ -83,11 +85,37 @@ class StorageEngine:
             repo = MetricRepository(session)
             return repo.get_db_metrics()
 
-    def clear_metric_history(self) -> None:
+    def fetch_alert_state(self, ip: str, metric: str) -> AlertStateTable:
         """
-        Remove all stored metric history from the database.
+        Return the alert state for a given IP address and metric.
+
+        Returns:
+            AlertStateTable: The found alert state.
         """
         with self.session_factory() as session:
-            repo = MetricRepository(session)
-            repo.remove_db_metrics()
+            repo = AlertStateRepository(session=session)
+            return repo.fetch_alert_state(ip=ip, metric=metric)
+
+    def update_state(self, state: AlertStateTable) -> None:
+        """
+        Update an alert state.
+
+        Args:
+            state (AlertStateTable): The updated instance of AlertStateTable class.
+        """
+        with self.session_factory() as session:
+            repo = AlertStateRepository(session=session)
+            repo.update(state=state)
+            session.commit()
+
+    def store_alert_event(self, event: AlertEventTable) -> None:
+        """
+        Store the new alert event.
+
+        Args:
+            event (AlertEvent): Instance of the AlertEventTable class.
+        """
+        with self.session_factory() as session:
+            repo = AlertEventRepository(session=session)
+            repo.insert(event=event)
             session.commit()
