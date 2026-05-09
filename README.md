@@ -24,7 +24,7 @@ reachability, and latency. Metrics are collected continuously and processed thro
 
 ## Future Plans
 
-- Pass alert rules and database path as command-line arguments.
+- Pass alert rules as command-line arguments.
 - Add ARP table caching to further reduce Wi‑Fi latency noise.
 - Accept defined IP and MAC addresses as command‑line arguments.
 - Fetch MAC address from database for offline devices.
