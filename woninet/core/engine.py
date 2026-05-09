@@ -144,17 +144,14 @@ class NetworkMonitorCore:
         """
         return self.storage.get_database_count()
 
-    def submit_to_history(self, value: tuple[()] | tuple) -> None:
-        """ """
-        try:
-            device, metric = value
-            if isinstance(device, Device):
-                self.storage.store(device=device)
-            if isinstance(metric, MetricRecord):
-                self.storage.store_metric(metric=metric)
-        except ValueError:
-            # If the tuple doesn't have enough values to unpack
-            pass
+    def submit_to_history(self, device: str, metric: str) -> None:
+        """
+        Handle storing new devices and metrics in history.
+        """
+        if isinstance(device, Device):
+            self.storage.store(device=device)
+        if isinstance(metric, MetricRecord):
+            self.storage.store_metric(metric=metric)
 
     def uptime(self) -> int:
         """
