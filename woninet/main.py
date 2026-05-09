@@ -14,6 +14,10 @@ PORT = 8080
 
 argument = args()
 
+# The --port Argument
+if argument.port:
+    PORT = argument.port
+
 # The --version Argument
 if argument.version:
     from woninet.__init__ import __version__
