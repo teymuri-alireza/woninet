@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 - Implemented `database_health()` method in `NetworkMonitorCore` class to check database for connectivity and schema existence.
 - Implemented `get_history_count()` method in `NetworkMonitorCore` class to retrieve number of stored items in the database.
 - Completed the `/stats` API route.
+- Prevented metrics from being removed after alert evaluation by defining the new `AlertStateTable` and `AlertEventTable` logic.
 
 ### Changed
 - Provided local Swagger UI assets (JavaScript, CSS, favicon) for the `/docs` route to allow offline loading.
