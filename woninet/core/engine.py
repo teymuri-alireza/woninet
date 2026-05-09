@@ -21,7 +21,9 @@ class NetworkMonitorCore:
     storage, and alert processing.
     """
 
-    def __init__(self, local_ip: str, arp_noise_limit: float) -> None:
+    def __init__(
+        self, local_ip: str, arp_noise_limit: float, database_path: str
+    ) -> None:
         """
         Initialize the monitor core.
 
