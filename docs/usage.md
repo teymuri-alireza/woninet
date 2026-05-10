@@ -82,6 +82,15 @@ to a different network to ensure data integrity. You can do this using:
 woninet --db path_to_new_database
 ```
 
+## Address Already in Use
+
+The default port for server mode is `8080`. If *woninet* exits with an `Address already
+in use` error, use a different port:
+
+```shell
+woninet -p 9090
+```
+
 ---
 
 If you encounter additional issues, feel free to open an issue on the [woninet](https://github.com/teymuri-alireza/woninet) GitHub repository
