@@ -50,7 +50,9 @@ class ColorFormatter(logging.Formatter):
         return super().formatMessage(record)
 
 
-def get_core_logger(log_output: str | None = None) -> logging.Logger:
+def get_core_logger(
+    log_output: str | None = None, use_color: bool = True
+) -> logging.Logger:
     """
     Returns the core logger.
     """
@@ -62,9 +64,14 @@ def get_core_logger(log_output: str | None = None) -> logging.Logger:
 
     if not core_logger.handlers:
         console_handler = logging.StreamHandler()
-        console_handler.setFormatter(
-            ColorFormatter(fmt=console_format, datefmt=date_format)
-        )
+        if use_color:
+            console_handler.setFormatter(
+                ColorFormatter(fmt=console_format, datefmt=date_format)
+            )
+        else:
+            console_handler.setFormatter(
+                logging.Formatter(file_format, datefmt=date_format)
+            )
         console_handler.setLevel(logging.NOTSET)
 
         if log_output:
