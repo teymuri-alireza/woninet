@@ -20,6 +20,9 @@ All notable changes to this project will be documented in this file.
 - Switched from `return` to `yield` in `PingCollector` to store outputs in real-time, and handle outputs inside `engine.py`.
 - Renamed variables and methods for clarity and readability
 
+### Fixed
+- Removed `session.commit()` from `DeviceRepository` and `MetricRepository` to move transaction control outside the repository layer.
+
 ---
 
 ## [1.3.0] - 2026-05-02
