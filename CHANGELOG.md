@@ -8,7 +8,7 @@ All notable changes to this project will be documented in this file.
 ### Added
 - Implemented `uptime()` method in `NetworkMonitorCore` class.
 - Implemented `database_health()` method in `NetworkMonitorCore` class to check database for connectivity and schema existence.
-- Implemented `get_history_count()` method in `NetworkMonitorCore` class to retrieve number of stored items in the database.
+- Implemented `count_resources()` method in `NetworkMonitorCore` class to retrieve number of stored items in the database.
 - Completed the `/stats` API route.
 - Prevented metrics from being removed after alert evaluation by defining the new `AlertStateTable` and `AlertEventTable` logic.
 - Introduced the new `-p`, `--port` CLI argument to change the port number for web dashbaord.
