@@ -50,7 +50,7 @@ class NetworkMonitorCore:
         self.subnet_enumerator = SubnetEnumerator()
         self.storage = StorageEngine(session_factory=self.session_factory)
 
-        self.candidate_devices = self.subnet_enumerator.scan_subnet(self.local_ip)
+        self.candidate_devices = self.subnet_enumerator.enumerate(self.local_ip)
 
         self.ping_collector = PingCollector()
 
