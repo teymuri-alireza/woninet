@@ -35,18 +35,18 @@ are collected continuously and processed through an alert engine."""
     )
 
     parser.add_argument(
+        "--db",
+        type=str,
+        default="woninet.db",
+        help="The Path to the SQLite database file (default: woninet.db).",
+    )
+
+    parser.add_argument(
         "--arp-noise-limit",
         type=float,
         default=300.0,
         help="Latency threshold in milliseconds used to filter ARP resolution noise "
         "(default: 300). Set to 0 to disable.",
-    )
-
-    parser.add_argument(
-        "--db",
-        type=str,
-        default="woninet.db",
-        help="The Path to the SQLite database file (default: woninet.db).",
     )
 
     parser.add_argument(
