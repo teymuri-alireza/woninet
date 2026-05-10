@@ -4,7 +4,11 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-## [Unreleased]
+[Unreleased]
+
+---
+
+## [1.4.0] - 2026-05-10
 ### Added
 - Implemented `uptime()` method in `NetworkMonitorCore` class.
 - Implemented `database_health()` method in `NetworkMonitorCore` class to check database for connectivity and schema existence.
