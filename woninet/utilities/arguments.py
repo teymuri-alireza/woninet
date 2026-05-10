@@ -69,7 +69,7 @@ are collected continuously and processed through an alert engine."""
         "--verbose",
         action="count",
         default=0,
-        help="Talks more. (Can be used multiple times)",
+        help="Increase verbosity (repeat for more detail)",
     )
 
     parser.add_argument(
