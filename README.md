@@ -29,7 +29,6 @@ reachability, and latency. Metrics are collected continuously and processed thro
 - Accept defined IP and MAC addresses as command‑line arguments.
 - Fetch MAC address from database for offline devices.
 - Add command line argument to easier access to database.
-- Ensure MAC address is unique in the DeviceTable in the database.
 
 ## Known Issues
 
