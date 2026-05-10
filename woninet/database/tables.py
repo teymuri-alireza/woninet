@@ -16,8 +16,8 @@ class DeviceTable(Base):
     __tablename__ = "devices"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    ip: Mapped[str] = mapped_column(String, index=True)
-    mac: Mapped[str | None] = mapped_column(String, index=True, nullable=True)
+    ip: Mapped[str] = mapped_column(String, unique=True, index=True)
+    mac: Mapped[str | None] = mapped_column(String, unique=True, index=True, nullable=True)
     latency: Mapped[float] = mapped_column(Float)
     last_seen: Mapped[datetime] = mapped_column(
         DateTime(timezone=False), default=lambda: datetime.now(), index=True
