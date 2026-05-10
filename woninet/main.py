@@ -33,8 +33,12 @@ log_output = None
 if argument.output:
     log_output = argument.output
 
+use_color = True
+if argument.color == "false":
+    use_color = False
+
 # Get Logger Configuration
-core_logger = get_core_logger(log_output)
+core_logger = get_core_logger(log_output, use_color)
 
 # Load YAML
 with open(LOGGING_YAML_PATH) as file:

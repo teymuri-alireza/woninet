@@ -5,6 +5,8 @@ All notable changes to this project will be documented in this file.
 ---
 
 [Unreleased]
+### Added
+- Introduced a `--color` CLI argument to enable or disable colored console log output.
 
 ---
 

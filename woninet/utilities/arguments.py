@@ -57,6 +57,14 @@ are collected continuously and processed through an alert engine."""
     )
 
     parser.add_argument(
+        "--color",
+        type=str,
+        choices=["true", "false"],
+        default="true",
+        help="Whether to enable colored console log output (default: true)",
+    )
+
+    parser.add_argument(
         "-v",
         "--verbose",
         action="count",
