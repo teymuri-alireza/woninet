@@ -36,7 +36,6 @@ class MetricRepository:
                 timestamp=metric.timestamp or datetime.now(),
             )
         )
-        self.session.commit()
 
     def fetch_metrics(self) -> list[MetricRecord]:
         """

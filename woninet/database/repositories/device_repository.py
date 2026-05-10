@@ -58,8 +58,6 @@ class DeviceRepository:
             )
             self.session.add(existing)
 
-        self.session.commit()
-
     def fetch_devices(self) -> list[Device]:
         """
         Return all existing devices from the database.
