@@ -125,7 +125,7 @@ The `Device` class has 2 more additional fields which are used in the scanning l
 
 Each valid measurement (ARP-confirmed + reachability) is stored as a MetricRecord, containing:
 
-- Unique IP
+- Unique ID
 - IP address
 - Metric
 - value
