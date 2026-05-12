@@ -149,7 +149,7 @@ def main() -> None:
         print(__version__)
         return
 
-    port = arguments.port or 8080
+    port = arguments.port
     database_path = arguments.db
     arp_noise_limit = arguments.arp_noise_limit
 
