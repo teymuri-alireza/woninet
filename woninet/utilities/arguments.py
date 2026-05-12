@@ -31,6 +31,7 @@ are collected continuously and processed through an alert engine."""
         "-p",
         "--port",
         type=int,
+        default=8080,
         help="Port number to serve the web dashboard (defaut: 8080).",
     )
 
