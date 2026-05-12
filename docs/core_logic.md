@@ -131,7 +131,26 @@ Each valid measurement (ARP-confirmed + reachability) is stored as a MetricRecor
 - value
 - timestamp
 
-**Note:** Rows in the metrics table are currently removed when the `AlertEngine` runs. This issue will be fixed in a future update.
+### 3. Alert State Table
+
+Each unique IP and metric is stored as an `AlertStateTable`, containing:
+
+- Unique ID
+- IP address
+- metric
+- state
+- triggered_at
+
+### 4. Alert Event Table
+
+Each alert evaluation event is stored as an `AlertEventTable`, containing:
+
+- Unique ID
+- IP address
+- metric
+- value
+- event_type
+- timestamp
 
 ## 6. Alert Engine Evaluation
 
