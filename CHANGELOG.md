@@ -8,6 +8,9 @@ All notable changes to this project will be documented in this file.
 ### Added
 - Introduced a `--color` CLI argument to enable or disable colored console log output.
 
+### Changed
+- Used function-based structure in `main.py` for clarity and to control codes from running at import time.
+
 ---
 
 ## [1.4.0] - 2026-05-10
