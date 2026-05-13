@@ -20,6 +20,8 @@ reachability, and latency. Metrics are collected continuously and processed thro
 
 - **SQLite database for devices and recorded metrics**
 
+- **Positional Argument for easier access to the database from the CLI**
+
 - **Detailed Logging**
 
 ## Future Plans
@@ -28,7 +30,6 @@ reachability, and latency. Metrics are collected continuously and processed thro
 - Add ARP table caching to further reduce Wi‑Fi latency noise.
 - Accept defined IP and MAC addresses as command‑line arguments.
 - Fetch MAC address from database for offline devices.
-- Add command line argument to easier access to database.
 
 ## Known Issues
 
