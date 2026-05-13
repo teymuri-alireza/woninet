@@ -159,12 +159,20 @@ def main() -> None:
     local_ip = detect_local_ip(logger=core_logger)
 
     try:
+        if hasattr(arguments, "func"):
+            core_logger.setLevel(logging.ERROR)
+
         monitor = create_monitor(
             local_ip=local_ip,
             database_path=database_path,
             arp_noise_limit=arp_noise_limit,
             logger=core_logger,
         )
+
+        if hasattr(arguments, "func"):
+            arguments.monitor = monitor
+            arguments.func(arguments)
+
         if arguments.serve:
             run_server(ip=local_ip, port=port, log_yaml=log_yaml)
         else:
