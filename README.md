@@ -10,15 +10,11 @@ reachability, and latency. Metrics are collected continuously and processed thro
 
 - **ARP + ICMP Host Detection** (Distinguishes real devices from nonexistent IPs and filters out Wi‑Fi ARP‑delay noise.)
 
-- **Continuous Monitoring Loop**
-
 - **Alert Engine** (Evaluates real‑time alert rules (e.g., latency thresholds))
 
 - **Threaded Collectors**
 
-- **Structured Device Model** (Tracks metadata such as last‑seen timestamp, MAC address (when available), reachability, and latency.)
-
-- **SQLite database for devices and recorded metrics**
+- **SQLite database** (for devices, recorded metrics, alert states, and alert events.)
 
 - **Positional Argument for easier access to the database from the CLI**
 
