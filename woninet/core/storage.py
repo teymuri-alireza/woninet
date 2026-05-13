@@ -117,6 +117,14 @@ class StorageEngine:
             repo.update(state=state)
             session.commit()
 
+    def get_device_alert_state(self, ip: str) -> tuple[str, str] | None:
+        """
+        Return alert state of a device for a given IP address.
+        """
+        with self.session_factory() as session:
+            repo = AlertStateRepository(session)
+            return repo.fetch_alert_state(ip=ip)
+
     def store_alert_event(self, event: AlertEventTable) -> None:
         """
         Store the new alert event.

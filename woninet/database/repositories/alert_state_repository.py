@@ -52,3 +52,20 @@ class AlertStateRepository:
             state (AlertStateTable): The updated instance of AlertStateTable class.
         """
         self.session.add(state)
+
+    def fetch_alert_state(self, ip: str) -> tuple[str, str] | None:
+        """
+        Return current alert state for a given IP address.
+
+        Args:
+            ip (str): IP address to search for.
+
+        Returns:
+            tuple[str,str]: A tuple containing `metric` and `state`.
+        """
+        device_state = (
+            self.session.query(AlertStateTable).filter_by(device_ip=ip).one_or_none()
+        )
+        if device_state is None:
+            return None
+        return (device_state.metric, device_state.state)
