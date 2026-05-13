@@ -26,3 +26,24 @@ class AlertEventRepository:
             event (AlertEvent): Instance of the AlertEventTable class.
         """
         self.session.add(event)
+
+    def fetch_recent_device_alert_events(
+        self, ip: str, limit: int = 10
+    ) -> list[AlertEventTable]:
+        """
+        Returns the last 10 alert events of a device for a given IP address.
+
+        Args:
+            ip (str): IP address to search for.
+            limit (int): Apply a limit to search.
+
+        Returns:
+            list[AlertEventTable]: List of found event, or an empty list if found none.
+        """
+        return (
+            self.session.query(AlertEventTable)
+            .filter_by(device_ip=ip)
+            .order_by(AlertEventTable.id.desc())
+            .limit(limit)
+            .all()
+        )

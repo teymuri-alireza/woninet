@@ -136,3 +136,11 @@ class StorageEngine:
             repo = AlertEventRepository(session=session)
             repo.insert(event=event)
             session.commit()
+
+    def get_recent_device_alert_events(self, ip: str) -> list[AlertEventTable]:
+        """
+        Return recent alert events of a device for a given IP address.
+        """
+        with self.session_factory() as session:
+            repo = AlertEventRepository(session=session)
+            return repo.fetch_recent_device_alert_events(ip=ip)
