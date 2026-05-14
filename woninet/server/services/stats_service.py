@@ -33,5 +33,6 @@ def get_network_stats() -> dict[str, Any]:
             "metrics_total": metrics_total,
             "uptime_seconds": monitor.uptime(),
         },
+        "recent_alert_events": monitor.classify_recent_alert_events(),
     }
     return network_stats

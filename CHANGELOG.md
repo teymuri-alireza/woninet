@@ -8,6 +8,10 @@ All notable changes to this project will be documented in this file.
 ### Added
 - Introduced a `--color` CLI argument to enable or disable colored console log output.
 - Implemented `device` positional argument for easier access to the database from the CLI.
+- Implemented `fetch_recent_alert_events()` in `alert_event_repository.py`
+- Implemented `get_recent_alert_events()` in `storage.py`
+- Implemented `classify_recent_alert_events()` in `engine.py`
+- Implemented `recent_alert_events` field in the `/stats` API route.
 
 ### Changed
 - Used function-based structure in `main.py` for clarity and to control codes from running at import time.
