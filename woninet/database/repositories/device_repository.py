@@ -75,6 +75,19 @@ class DeviceRepository:
             result.append(dev)
         return result
 
+    def fetch_device(self, ip: str) -> Device | None:
+        """
+        Return a device from the database for the given IP address or
+        `None` if not found.
+        """
+        row = self.session.query(DeviceTable).filter_by(ip=ip).one_or_none()
+        if row is not None:
+            device = Device(ip=row.ip)
+            device.mac = row.mac
+            device.last_seen = row.last_seen
+            return device
+        return None
+
     def count_devices(self) -> int:
         """
         Return the number of existing devices in the database.

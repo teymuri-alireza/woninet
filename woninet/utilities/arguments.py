@@ -1,4 +1,5 @@
 import argparse
+from woninet.utilities.cli_parser import list_devices, show_device_info
 
 
 def args() -> argparse.Namespace:
@@ -20,6 +21,24 @@ are collected continuously and processed through an alert engine."""
         prog="woninet",
         epilog=epilog,
     )
+
+    subparsers = parser.add_subparsers(dest="command")
+
+    device_parser = subparsers.add_parser(
+        "device", help="Fetch Device informations from the database."
+    )
+    device_subparsers = device_parser.add_subparsers(dest="action", required=True)
+
+    device_list = device_subparsers.add_parser(
+        "list", description="List all devices.", help="List all devices."
+    )
+    device_list.set_defaults(func=list_devices)
+
+    device_show = device_subparsers.add_parser(
+        "show", description="Show device info for a given IP.", help="Show device info."
+    )
+    device_show.add_argument("ip", help="Device IP address")
+    device_show.set_defaults(func=show_device_info)
 
     parser.add_argument(
         "--serve",

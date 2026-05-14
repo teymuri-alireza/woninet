@@ -11,6 +11,7 @@ from woninet.core.storage import StorageEngine
 from woninet.core.alerts import AlertEngine, AlertRule
 from woninet.core.subnet_enumerator import SubnetEnumerator
 from woninet.database.engine import DatabaseEngine
+from woninet.database.tables import AlertEventTable
 
 core_logger = logging.getLogger("core")
 
@@ -153,6 +154,28 @@ class NetworkMonitorCore:
         Return all devices in the history.
         """
         return self.storage.list_device_history()
+
+    def get_device_info(
+        self, ip: str
+    ) -> tuple[Device | None, tuple[str, str] | None, list[AlertEventTable]]:
+        """
+        Retrieve device information and related alert data for a given IP address.
+
+        Args:
+            ip (str): IP address of the device to search for.
+
+        Returns:
+            tuple[Device|None,tuple[str,str]|None,list[AlertEventTable]]:
+                A tuple containing:
+
+                1. The found device, or `None` if no device exists for the given IP.
+                2. The current alert state as `(metric_name, value)`, or `None` if no state exists.
+                3. The last 10 alert events for the device, or an empty list if none exist..
+        """
+        device_info = self.storage.fetch_device_info(ip=ip)
+        device_alert_state = self.storage.get_device_alert_state(ip=ip)
+        recent_device_alert_events = self.storage.get_recent_device_alert_events(ip=ip)
+        return (device_info, device_alert_state, recent_device_alert_events)
 
     def count_resources(self) -> tuple[int, int]:
         """

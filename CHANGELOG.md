@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 [Unreleased]
 ### Added
 - Introduced a `--color` CLI argument to enable or disable colored console log output.
+- Implemented `device` positional argument for easier access to the database from the CLI.
 
 ### Changed
 - Used function-based structure in `main.py` for clarity and to control codes from running at import time.

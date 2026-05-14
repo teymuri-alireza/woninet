@@ -47,6 +47,15 @@ class StorageEngine:
             repo = DeviceRepository(session)
             return repo.fetch_devices()
 
+    def fetch_device_info(self, ip) -> Device | None:
+        """
+        Return a device from the database for the given IP address or
+        `None` if not found.
+        """
+        with self.session_factory() as session:
+            repo = DeviceRepository(session)
+            return repo.fetch_device(ip)
+
     def count_devices_and_metrics(self) -> tuple[int, int]:
         """
         Return number of devices and metrics in the database.
@@ -108,6 +117,14 @@ class StorageEngine:
             repo.update(state=state)
             session.commit()
 
+    def get_device_alert_state(self, ip: str) -> tuple[str, str] | None:
+        """
+        Return alert state of a device for a given IP address.
+        """
+        with self.session_factory() as session:
+            repo = AlertStateRepository(session)
+            return repo.fetch_alert_state(ip=ip)
+
     def store_alert_event(self, event: AlertEventTable) -> None:
         """
         Store the new alert event.
@@ -119,3 +136,11 @@ class StorageEngine:
             repo = AlertEventRepository(session=session)
             repo.insert(event=event)
             session.commit()
+
+    def get_recent_device_alert_events(self, ip: str) -> list[AlertEventTable]:
+        """
+        Return recent alert events of a device for a given IP address.
+        """
+        with self.session_factory() as session:
+            repo = AlertEventRepository(session=session)
+            return repo.fetch_recent_device_alert_events(ip=ip)
