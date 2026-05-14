@@ -84,6 +84,7 @@ class DeviceRepository:
         if row is not None:
             device = Device(ip=row.ip)
             device.mac = row.mac
+            device.latency = row.latency
             device.last_seen = row.last_seen
             return device
         return None
