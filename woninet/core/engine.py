@@ -115,10 +115,10 @@ class NetworkMonitorCore:
                 ):
                     try:
                         result_device, result_metric = result
+                        self.submit_to_history(
+                            device=result_device, metric=result_metric
+                        )
                         if result_device is not None and result_metric is not None:
-                            self.submit_to_history(
-                                device=result_device, metric=result_metric
-                            )
                             self.alert_engine.evaluate(
                                 ip=result_device.ip,
                                 metric=result_metric.metric,
