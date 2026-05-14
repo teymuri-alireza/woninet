@@ -16,6 +16,9 @@ All notable changes to this project will be documented in this file.
 ### Changed
 - Used function-based structure in `main.py` for clarity and to control codes from running at import time.
 
+### Fixed
+- Moved `submit_to_history()` before type check condition in `main.py` to update latency for offline devices to 0.0.
+
 ---
 
 ## [1.4.0] - 2026-05-10
