@@ -33,6 +33,29 @@ In this mode, core logging is set to ERROR to reduce unnecessary output.
 
 ---
 
+# Positional Arguments
+
+Positional arguments provide quick access to database information from the CLI.
+
+## List devices
+
+Display all stored devices:
+
+```shell
+woninet device list
+```
+
+## Show Device Information
+
+Display detailed information about a device by IP address,
+including its current alert state and recent alert events:
+
+```shell
+woninet device show 192.168.1.10
+```
+
+---
+
 # Logging
 
 Logs can be written to a file using the `-o` or `--output` parameter.
