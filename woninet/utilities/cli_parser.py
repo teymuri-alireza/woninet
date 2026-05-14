@@ -15,8 +15,11 @@ def show_device_info(args):
     if device is None:
         print(f"Device {args.ip} was not found.")
     else:
+        latency = device.latency
+        if latency == 0:
+            latency = "OFFLINE"
         print(
-            f"Found device {device.ip}: MAC={device.mac}, Last seen={device.last_seen}"
+            f"Found device {device.ip}: MAC={device.mac}, Last latency: {latency}, Last seen={device.last_seen}"
         )
         metric, state = device_state
         print(f"Current alert state for {metric}: state={state}")
