@@ -78,13 +78,15 @@ This endpoint responds with a JSON object that includes the following sections:
 - metrics_total: Total number of metrics collected.
 - uptime_seconds: Total uptime of the service in seconds..
 
+4. **recent_alert_events:** The last 10 alert events fetched from the database.
+
 **Example Response:**
 
 ```json
 {
   "identity": {
     "service": "woninet",
-    "version": "1.3.0",
+    "version": "1.4.0",
     "server_ip": "192.168.120.56",
   },
   "health": {
@@ -99,5 +101,31 @@ This endpoint responds with a JSON object that includes the following sections:
     "metrics_total": 125,
     "uptime_seconds": 45685,
   },
+  "recent_alert_events": [
+    {
+      "device_ip": "192.168.120.67",
+      "id": 47,
+      "metric": "latency_ms",
+      "event_type": "recover",
+      "value": 41.65,
+      "timestamp": "2026-05-14T20:49:52.681306"
+    },
+    {
+      "device_ip": "192.168.120.67",
+      "id": 46,
+      "metric": "latency_ms",
+      "event_type": "trigger",
+      "value": 259.642,
+      "timestamp": "2026-05-14T20:49:52.681306"
+    },
+    {
+      "device_ip": "192.168.120.85",
+      "id": 45,
+      "metric": "latency_ms",
+      "event_type": "trigger",
+      "value": 259.642,
+      "timestamp": "2026-05-14T20:49:52.681306"
+    },
+  ]
 }
 ```
