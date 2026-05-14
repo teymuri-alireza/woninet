@@ -2,6 +2,7 @@ import time
 import logging
 import threading
 from datetime import datetime
+from typing import Any
 from sqlalchemy import text, inspect
 from sqlalchemy.exc import SQLAlchemyError
 from icmplib import SocketPermissionError, SocketAddressError
@@ -176,6 +177,25 @@ class NetworkMonitorCore:
         device_alert_state = self.storage.get_device_alert_state(ip=ip)
         recent_device_alert_events = self.storage.get_recent_device_alert_events(ip=ip)
         return (device_info, device_alert_state, recent_device_alert_events)
+
+    def classify_recent_alert_events(self) -> list[dict[str, Any]]:
+        """
+        Re-order and organize the recent alert events
+        dictionary keys and values.
+        """
+        result = []
+        for event in self.storage.get_recent_alert_events():
+            result.append(
+                {
+                    "device_ip": event.device_ip,
+                    "id": event.id,
+                    "metric": event.metric,
+                    "event_type": event.event_type,
+                    "value": event.value,
+                    "timestamp": event.timestamp,
+                }
+            )
+        return result
 
     def count_resources(self) -> tuple[int, int]:
         """
