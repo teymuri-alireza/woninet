@@ -24,7 +24,7 @@ class StorageEngine:
         """
         self.session_factory = session_factory
 
-    def store(self, device: Device) -> None:
+    def store_device(self, device: Device) -> None:
         """
         Insert or update a collected device.
 

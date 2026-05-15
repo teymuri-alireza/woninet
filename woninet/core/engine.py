@@ -208,7 +208,7 @@ class NetworkMonitorCore:
         Handle storing new devices and metrics in history.
         """
         if isinstance(device, Device):
-            self.storage.store(device=device)
+            self.storage.store_device(device=device)
         if isinstance(metric, MetricRecord):
             self.storage.store_metric(metric=metric)
 
