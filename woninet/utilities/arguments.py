@@ -66,7 +66,7 @@ are collected continuously and processed through an alert engine."""
         type=float,
         default=300.0,
         help="Latency threshold in milliseconds used to filter ARP resolution noise "
-        "(default: 300). Set to 0 to disable.",
+        "(default: 300). Set to 0 to disable filtering.",
     )
 
     parser.add_argument(
