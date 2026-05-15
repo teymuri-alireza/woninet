@@ -49,7 +49,7 @@ def detect_host(
         source_ip: Source IP address used to send packets.
         timeout: Timeout for ICMP scan.
         stop_event: Event used to control the monitoring life cycle.
-        arp_noise_limit: Threshold above which ARP fluctuations are considered noise.
+        arp_noise_limit: Threshold above which ARP fluctuations are treated as noise.
 
     Returns:
         HostStatus|None: A `HostStatus` instance if the stop event is not triggered; otherwise, None.

@@ -92,7 +92,7 @@ def create_monitor(
     Args:
         local_ip (str): IP address of device.
         database_path (str): Path to SQLite database.
-        arp_noise_limit (float): Parameter which sets a limit to filter the ARP delay noise.
+        arp_noise_limit (float): Threshold above which ARP fluctuations are treated as noise.
         logger (Logger): Logger used for recording logs
 
     Returns:

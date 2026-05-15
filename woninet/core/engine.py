@@ -31,7 +31,7 @@ class NetworkMonitorCore:
 
         Args:
             local_ip: Source IP address used to send packets.
-            arp_noise_limit: Parameter which sets a limit to filter the ARP delay noise.
+            arp_noise_limit: Threshold above which ARP fluctuations are treated as noise.
         """
         self._running: bool = False
         self._thread: threading.Thread | None = None
