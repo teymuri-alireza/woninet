@@ -19,8 +19,8 @@ core_logger = logging.getLogger("core")
 
 class NetworkMonitorCore:
     """
-    Central controller coordinating discovery, collectors,
-    storage, and alert processing.
+    Central controller coordinating database initialization,
+    collectors, storage, and alert processing.
     """
 
     def __init__(
@@ -32,6 +32,7 @@ class NetworkMonitorCore:
         Args:
             local_ip: Source IP address used to send packets.
             arp_noise_limit: Threshold above which ARP fluctuations are treated as noise.
+            database_path: Path to SQLite database.
         """
         self._running: bool = False
         self._thread: threading.Thread | None = None
@@ -152,7 +153,7 @@ class NetworkMonitorCore:
 
     def get_device_history(self) -> list[Device]:
         """
-        Return all devices in the history.
+        Return a list of all devices in the history.
         """
         return self.storage.list_device_history()
 
@@ -167,11 +168,11 @@ class NetworkMonitorCore:
 
         Returns:
             tuple[Device|None,tuple[str,str]|None,list[AlertEventTable]]:
-                A tuple containing:
+                A tuple containing
 
                 1. The found device, or `None` if no device exists for the given IP.
                 2. The current alert state as `(metric_name, value)`, or `None` if no state exists.
-                3. The last 10 alert events for the device, or an empty list if none exist..
+                3. The last 10 alert events for the device, or an empty list if none exist.
         """
         device_info = self.storage.fetch_device_info(ip=ip)
         device_alert_state = self.storage.get_device_alert_state(ip=ip)
@@ -227,15 +228,12 @@ class NetworkMonitorCore:
         """
         Check the health status of the database.
 
-        Returns a dictionary with two keys:
-
-        - 'connection': 'ok' if executing `SELECT 1` succeeds, otherwise 'error'.
-        - 'schema': 'ok' if database table inspection succeeds, otherwise 'error'.
-        If the database connection fails, this value is 'unknown'.
-
         Returns:
-            dict[str,str]: A dictionary containing the connection and schema
-            health status.
+            dict[str,str]: A dictionary with two keys
+
+            - 'connection': 'ok' if executing `SELECT 1` succeeds, otherwise 'error'.
+            - 'schema': 'ok' if database table inspection succeeds, otherwise 'error'.
+            If the database connection fails, this value is 'unknown'.
         """
         result = {
             "connection": "error",
