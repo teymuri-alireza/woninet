@@ -16,11 +16,9 @@ class Device:
         """
         self.ip: str = ip
         self.last_seen: datetime | None = None
-        self.exists: bool = False  # True if ARP has seen this IP
-        self.reachable: bool = (
-            False  # True if ICMP is sane and within latency threshold
-        )
-        self.mac: str | None = None  # MAC address from ARP table
+        self.exists: bool = False
+        self.reachable: bool = False
+        self.mac: str | None = None
         self.latency: float = 0
 
     def update_seen(self) -> None:
@@ -50,7 +48,7 @@ class MetricRecord:
 
 class HostStatus:
     """
-    Combined ARP + ICMP status for a given IP
+    Represent a Combined ARP + ICMP status for a given IP.
     """
 
     def __init__(
