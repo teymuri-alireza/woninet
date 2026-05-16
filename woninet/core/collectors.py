@@ -9,6 +9,28 @@ from woninet.core.models import Device, MetricRecord, HostStatus
 core_logger = logging.getLogger("core")
 
 
+def read_arp_table() -> dict[str, str]:
+    """
+    Return all valid MAC addresses from the ARP table.
+
+    Returns:
+        dict[str,str]: Dictionary contaning IP addressses and the related MAC addresses.
+    """
+    table = {}
+    try:
+        # Suppress strerr to avoid clutter when ARP table is empty or limited
+        output = subprocess.check_output(["arp", "-an"], stderr=subprocess.DEVNULL)
+        output = output.decode()
+    except Exception:
+        return table
+
+    for line in output.splitlines():
+        match = re.search(r"\((.*?)\)\s+at\s+([0-9a-fA-F:]+)", line)
+        if match:
+            table[match.group(1)] = match.group(2)
+    return table
+
+
 def get_arp_mac(ip: str) -> str | None:
     """
     Return MAC address from ARP table for the given IP, or None if not present.
@@ -34,6 +56,7 @@ def detect_host(
     timeout: float = 1.0,
     stop_event=None,
     arp_noise_limit: float = 300.0,
+    arp_table: dict[str, str] = None,
 ) -> HostStatus | None:
     """
     Combined ARP + ICMP detection for accurate device status.
@@ -68,7 +91,7 @@ def detect_host(
         return None
 
     # ARP check
-    mac = get_arp_mac(ip=target_ip)
+    mac = arp_table.get(target_ip)
     if mac:
         status.exists = True
         status.mac = mac
@@ -154,6 +177,7 @@ class PingCollector(BaseCollector):
         device_records: list[Device],
         stop_event=None,
         arp_noise_limit: float = 300.0,
+        max_thread_workers: int = 4,
     ) -> Generator[tuple[()] | tuple, Any, None]:
         """
         For each device:
@@ -163,6 +187,8 @@ class PingCollector(BaseCollector):
         """
         if stop_event and stop_event.is_set():
             yield ()
+
+        arp_table = read_arp_table()
 
         def worker(
             ip: str, dev: Device
@@ -174,6 +200,7 @@ class PingCollector(BaseCollector):
                     timeout=1.0,
                     stop_event=stop_event,
                     arp_noise_limit=arp_noise_limit,
+                    arp_table=arp_table,
                 )
             except (PermissionError, SocketPermissionError):
                 raise
@@ -214,7 +241,7 @@ class PingCollector(BaseCollector):
             else:
                 return (None, MetricRecord(ip, "latency_ms", dev.latency))
 
-        with ThreadPoolExecutor(max_workers=10) as executor:
+        with ThreadPoolExecutor(max_workers=max_thread_workers) as executor:
             future_to_ip = {
                 executor.submit(worker, ip, dev): ip
                 for ip, dev in candidate_devices.items()
@@ -227,10 +254,7 @@ class PingCollector(BaseCollector):
                 if stop_event.is_set():
                     yield ()
                 try:
-                    future_device, future_metric = (
-                        future.result()[0],
-                        future.result()[1],
-                    )
+                    future_device, future_metric = future.result()
                     results.append(future_device)
                 except (PermissionError, SocketPermissionError):
                     raise

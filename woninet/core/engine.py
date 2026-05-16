@@ -24,7 +24,11 @@ class NetworkMonitorCore:
     """
 
     def __init__(
-        self, local_ip: str, arp_noise_limit: float, database_path: str
+        self,
+        local_ip: str,
+        arp_noise_limit: float,
+        database_path: str,
+        max_thread_workers: int,
     ) -> None:
         """
         Initialize the monitor core.
@@ -41,6 +45,7 @@ class NetworkMonitorCore:
 
         self.local_ip: str = local_ip
         self.arp_noise_limit: float = arp_noise_limit
+        self.max_thread_workers: int = max_thread_workers
 
         # Initialize database
         self.database_engine = DatabaseEngine(database_path=database_path)
@@ -113,6 +118,7 @@ class NetworkMonitorCore:
                     device_records=self.get_device_history(),
                     stop_event=self._stop_event,
                     arp_noise_limit=self.arp_noise_limit,
+                    max_thread_workers=self.max_thread_workers,
                 ):
                     try:
                         result_device, result_metric = result

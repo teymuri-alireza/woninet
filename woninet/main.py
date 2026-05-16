@@ -84,7 +84,11 @@ def configure_logger(arguments: Namespace) -> logging.Logger:
 
 
 def create_monitor(
-    local_ip: str, database_path: str, arp_noise_limit: float, logger: logging.Logger
+    local_ip: str,
+    database_path: str,
+    arp_noise_limit: float,
+    max_thread_workers: int,
+    logger: logging.Logger,
 ) -> NetworkMonitorCore:
     """
     Create an instance of NetworkMonitoreCore.
@@ -102,10 +106,12 @@ def create_monitor(
     if monitor is None:
         logger.debug(f"ARP noise limit set to {arp_noise_limit}")
         logger.trace(f"Using {database_path} as SQLite database.")
+        logger.trace(f"Max thread workers for scanning set to {max_thread_workers}.")
         monitor = NetworkMonitorCore(
             local_ip=local_ip,
             arp_noise_limit=arp_noise_limit,
             database_path=database_path,
+            max_thread_workers=max_thread_workers,
         )
     return monitor
 
@@ -152,6 +158,7 @@ def main() -> None:
     port = arguments.port
     database_path = arguments.db
     arp_noise_limit = arguments.arp_noise_limit
+    max_thread_workers = arguments.max_workers
 
     core_logger = configure_logger(arguments=arguments)
     log_yaml = load_logging_yaml(log_output=arguments.output)
@@ -166,6 +173,7 @@ def main() -> None:
             local_ip=local_ip,
             database_path=database_path,
             arp_noise_limit=arp_noise_limit,
+            max_thread_workers=max_thread_workers,
             logger=core_logger,
         )
 
