@@ -51,14 +51,14 @@ are collected continuously and processed through an alert engine."""
         "--port",
         type=int,
         default=8080,
-        help="Port number to serve the web dashboard (defaut: 8080).",
+        help="Port number to serve the web dashboard (defaut: %(default)s).",
     )
 
     parser.add_argument(
         "--db",
         type=str,
         default="woninet.db",
-        help="The Path to the SQLite database file (default: woninet.db).",
+        help="The Path to the SQLite database file (default: %(default)s).",
     )
 
     parser.add_argument(
@@ -66,7 +66,7 @@ are collected continuously and processed through an alert engine."""
         type=float,
         default=300.0,
         help="Latency threshold in milliseconds used to filter ARP resolution noise "
-        "(default: 300). Set to 0 to disable filtering.",
+        "(default: %(default)s). Set to 0 to disable filtering.",
     )
 
     parser.add_argument(
@@ -74,7 +74,7 @@ are collected continuously and processed through an alert engine."""
         type=int,
         default=4,
         help="Maximum number of thread workers used to send ICMP pings. "
-        "Higher values may increase latency (default: 4).",
+        "Higher values may increase latency (default: %(default)s).",
     )
 
     parser.add_argument(
@@ -89,7 +89,7 @@ are collected continuously and processed through an alert engine."""
         type=str,
         choices=["true", "false"],
         default="true",
-        help="Whether to enable colored console log output (default: true)",
+        help="Whether to enable colored console log output (default: %(default)s)",
     )
 
     parser.add_argument(
