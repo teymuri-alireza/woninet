@@ -177,6 +177,7 @@ class PingCollector(BaseCollector):
         device_records: list[Device],
         stop_event=None,
         arp_noise_limit: float = 300.0,
+        max_thread_workers: int = 4,
     ) -> Generator[tuple[()] | tuple, Any, None]:
         """
         For each device:
@@ -240,7 +241,7 @@ class PingCollector(BaseCollector):
             else:
                 return (None, MetricRecord(ip, "latency_ms", dev.latency))
 
-        with ThreadPoolExecutor(max_workers=10) as executor:
+        with ThreadPoolExecutor(max_workers=max_thread_workers) as executor:
             future_to_ip = {
                 executor.submit(worker, ip, dev): ip
                 for ip, dev in candidate_devices.items()
