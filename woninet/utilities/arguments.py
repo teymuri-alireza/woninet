@@ -70,6 +70,14 @@ are collected continuously and processed through an alert engine."""
     )
 
     parser.add_argument(
+        "--max-workers",
+        type=int,
+        default=4,
+        help="Maximum number of thread workers used to send ICMP pings. "
+        "Higher values may increase latency (default: 4).",
+    )
+
+    parser.add_argument(
         "-o",
         "--output",
         type=str,
