@@ -15,3 +15,15 @@ The [Core Logic](./core_logic.md) documentation.
 This section explains the sequence of operations performed to serve the web dashboard.
 
 The [Web Dashboard](./web_dashboard.md) documentation.
+
+### 3. Usage
+
+This section explains common ways to run *woninet* and how to resolve common issues.
+
+The [Usage](./usage.md) documentation.
+
+### 4. Versioning
+
+This section explains the versioning system of *woninet*.
+
+The [versioning](./versioning.md) documentation.
