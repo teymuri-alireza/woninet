@@ -253,10 +253,7 @@ class PingCollector(BaseCollector):
                 if stop_event.is_set():
                     yield ()
                 try:
-                    future_device, future_metric = (
-                        future.result()[0],
-                        future.result()[1],
-                    )
+                    future_device, future_metric = future.result()
                     results.append(future_device)
                 except (PermissionError, SocketPermissionError):
                     raise
