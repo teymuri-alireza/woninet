@@ -46,6 +46,7 @@ class NetworkMonitorCore:
         self.local_ip: str = local_ip
         self.arp_noise_limit: float = arp_noise_limit
         self.max_thread_workers: int = max_thread_workers
+        self.consecutive_checks: int = 2
 
         # Initialize database
         self.database_engine = DatabaseEngine(database_path=database_path)
@@ -65,7 +66,7 @@ class NetworkMonitorCore:
         self.alert_engine = AlertEngine(
             storage=self.storage,
             rules=[
-                AlertRule("latency_ms", 100, 10),
+                AlertRule("latency_ms", 100, self.consecutive_checks),
             ],
         )
 
@@ -130,6 +131,7 @@ class NetworkMonitorCore:
                                 ip=result_device.ip,
                                 metric=result_metric.metric,
                                 value=result_metric.value,
+                                default_consecutive_checks=self.consecutive_checks,
                             )
                     except ValueError:
                         # If the tuple doesn't have enough values to unpack

@@ -62,6 +62,7 @@ class AlertStateTable(Base):
     device_ip: Mapped[str] = mapped_column(String, index=True)
     metric: Mapped[str] = mapped_column(String, index=True)
     state: Mapped[str] = mapped_column(String, default="ok", index=True)
+    consecutive_checks: Mapped[int] = mapped_column(Integer, index=True, nullable=False)
     triggered_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=False), index=True, nullable=True
     )

@@ -12,18 +12,19 @@ class AlertRule:
     when a metric exceeds a defined threshold.
     """
 
-    def __init__(self, metric: str, threshold: float, duration: int) -> None:
+    def __init__(self, metric: str, threshold: float, consecutive_checks: int) -> None:
         """
         Initialize the alert rule.
 
         Args:
             metric: Name of the metric the rule evaluates.
             threshold: The Limit the metric must exceed to trigger the alert.
-            duration: Number of consecutive checks the metric must exceed the threshold before triggering
+            consecutive_checks: Number of consecutive evaluations required before
+                a state change.
         """
         self.metric: str = metric
         self.threshold: float = threshold
-        self.duration: int = duration
+        self.consecutive_checks: int = consecutive_checks
 
 
 class AlertEngine:
@@ -50,19 +51,29 @@ class AlertEngine:
         for rule in self.rules:
             return metric == rule.metric and value > rule.threshold
 
-    def evaluate(self, ip: str, metric: str, value: float) -> None:
+    def evaluate(
+        self, ip: str, metric: str, value: float, default_consecutive_checks: int
+    ) -> None:
         """
         Update an alert state and create an alert event if a specific rule
         is violated and the status of a device is changed (e.g., from "ok"
         to "warning" or vice versa).
         """
-        state = self.storage.get_or_create_alert_state(ip=ip, metric=metric)
+        state = self.storage.get_or_create_alert_state(
+            ip=ip, metric=metric, consecutive_checks=default_consecutive_checks
+        )
         violated = self.is_metric_violated(metric=metric, value=value)
         if violated:
             if state.state == "ok":
+                # Confirm remaining consecutive checks for before a state change
+                if state.consecutive_checks > 0:
+                    state.consecutive_checks = state.consecutive_checks - 1
+                    self.storage.update_alert_state(state)
+                    return
                 # Update "ok" to "warning"
                 state.state = "warning"
                 state.triggered_at = datetime.now()
+                state.consecutive_checks = default_consecutive_checks
                 self.storage.update_alert_state(state)
 
                 event = AlertEventTable(
@@ -72,11 +83,21 @@ class AlertEngine:
                 core_logger.warning(
                     f"ALERT TRIGGERED | {ip}, metric={metric}, value={value} ms"
                 )
+            else:
+                # Reset consecutive checks to its default value
+                state.consecutive_checks = default_consecutive_checks
+                self.storage.update_alert_state(state)
         else:
             if state.state == "warning":
+                # Confirm remaining consecutive checks for before a state change
+                if state.consecutive_checks > 0:
+                    state.consecutive_checks = state.consecutive_checks - 1
+                    self.storage.update_alert_state(state)
+                    return
                 # Update "warning" to "ok"
                 state.state = "ok"
                 state.triggered_at = None
+                state.consecutive_checks = default_consecutive_checks
                 self.storage.update_alert_state(state)
 
                 event = AlertEventTable(
@@ -86,3 +107,7 @@ class AlertEngine:
                 core_logger.warning(
                     f"ALERT RECOVERED | {ip}, metric={metric}, value={value} ms"
                 )
+            else:
+                # Reset consecutive checks to its default value
+                state.consecutive_checks = default_consecutive_checks
+                self.storage.update_alert_state(state)
