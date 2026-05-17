@@ -14,9 +14,11 @@ All notable changes to this project will be documented in this file.
 - Implemented `recent_alert_events` field in the `/stats` API route.
 - Implemented `--max-workers` argument to control number of workers used to send ICMP ping
 - Implemented `read_arp_table()` in `collectors.py` for faster ARP scans
+- Implemented and used `consecutive_checks` parameter in `AlertStateTable`, `AlertStateRepository`, and `AlertEngine`.
 
 ### Changed
 - Used function-based structure in `main.py` for clarity and to control codes from running at import time.
+- Renamed `duration` parameter to `consecutive_checks` in `AlertRule` for clarity.
 
 ### Fixed
 - Moved `submit_to_history()` before type check condition in `main.py` to update latency for offline devices to 0.0.
