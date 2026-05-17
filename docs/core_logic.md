@@ -178,6 +178,8 @@ Alert events are generated only when a state transition occurs, preventing repea
 
 When a trigger or recovery occurs, the event is logged and stored in the alert history.
 
+**Note:** The `AlertEngine` evaluation logic verify required consecutive checks before a state change.
+
 ## 7. Looping and Scheduling
 
 Looping behavior depends on the execution mode:
