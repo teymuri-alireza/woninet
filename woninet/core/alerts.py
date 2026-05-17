@@ -12,18 +12,18 @@ class AlertRule:
     when a metric exceeds a defined threshold.
     """
 
-    def __init__(self, metric: str, threshold: float, duration: int) -> None:
+    def __init__(self, metric: str, threshold: float, consecutive_checks: int) -> None:
         """
         Initialize the alert rule.
 
         Args:
             metric: Name of the metric the rule evaluates.
             threshold: The Limit the metric must exceed to trigger the alert.
-            duration: Number of consecutive checks the metric must exceed the threshold before triggering
+            consecutive_checks: Number of consecutive evaluations required before a state change.
         """
         self.metric: str = metric
         self.threshold: float = threshold
-        self.duration: int = duration
+        self.consecutive_checks: int = consecutive_checks
 
 
 class AlertEngine:
