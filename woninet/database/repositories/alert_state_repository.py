@@ -18,7 +18,7 @@ class AlertStateRepository:
         """
         self.session = session
 
-    def fetch_or_create_alert_state(self, ip: str, metric: str) -> AlertStateTable:
+    def fetch_or_create_alert_state(self, ip: str, metric: str, consecutive_checks: int) -> AlertStateTable:
         """
         Return an alert state for a specfic IP address and metric; Create a new one
         if it already doesn't exist.
@@ -26,6 +26,7 @@ class AlertStateRepository:
         Args:
             ip (str): IP address of host.
             metric (str): Name of the metric beaing monitored.
+            consecutive_checks (int): Number of consecutive evaluations required before a state change.
 
         Returns:
             AlertStateTable: The found alert state for a given IP and metric,
@@ -40,6 +41,7 @@ class AlertStateRepository:
         if state is None:
             state = AlertStateTable(device_ip=ip, metric=metric)
             state.state = "ok"
+            state.consecutive_checks = consecutive_checks
             self.session.add(state)
 
         return state
