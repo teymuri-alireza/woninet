@@ -20,7 +20,8 @@ class StorageEngine:
         Initialize the storage engine.
 
         Args:
-            session_factory (SessionLocal): Factory responsible for creating SQLAlchemy sessions.
+            session_factory (SessionLocal): Factory responsible for
+                creating SQLAlchemy sessions.
         """
         self.session_factory = session_factory
 
@@ -94,7 +95,9 @@ class StorageEngine:
             repo = MetricRepository(session)
             return repo.fetch_metrics()
 
-    def get_or_create_alert_state(self, ip: str, metric: str, consecutive_checks: int) -> AlertStateTable:
+    def get_or_create_alert_state(
+        self, ip: str, metric: str, consecutive_checks: int
+    ) -> AlertStateTable:
         """
         Return the alert state for a given IP address and metric.
 
@@ -103,7 +106,9 @@ class StorageEngine:
         """
         with self.session_factory() as session:
             repo = AlertStateRepository(session=session)
-            return repo.fetch_or_create_alert_state(ip=ip, metric=metric, consecutive_checks=consecutive_checks)
+            return repo.fetch_or_create_alert_state(
+                ip=ip, metric=metric, consecutive_checks=consecutive_checks
+            )
 
     def update_alert_state(self, state: AlertStateTable) -> None:
         """

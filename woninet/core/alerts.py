@@ -19,7 +19,8 @@ class AlertRule:
         Args:
             metric: Name of the metric the rule evaluates.
             threshold: The Limit the metric must exceed to trigger the alert.
-            consecutive_checks: Number of consecutive evaluations required before a state change.
+            consecutive_checks: Number of consecutive evaluations required before
+                a state change.
         """
         self.metric: str = metric
         self.threshold: float = threshold
@@ -50,13 +51,17 @@ class AlertEngine:
         for rule in self.rules:
             return metric == rule.metric and value > rule.threshold
 
-    def evaluate(self, ip: str, metric: str, value: float, default_consecutive_checks: int) -> None:
+    def evaluate(
+        self, ip: str, metric: str, value: float, default_consecutive_checks: int
+    ) -> None:
         """
         Update an alert state and create an alert event if a specific rule
         is violated and the status of a device is changed (e.g., from "ok"
         to "warning" or vice versa).
         """
-        state = self.storage.get_or_create_alert_state(ip=ip, metric=metric, consecutive_checks=default_consecutive_checks)
+        state = self.storage.get_or_create_alert_state(
+            ip=ip, metric=metric, consecutive_checks=default_consecutive_checks
+        )
         violated = self.is_metric_violated(metric=metric, value=value)
         if violated:
             if state.state == "ok":
