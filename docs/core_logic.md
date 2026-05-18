@@ -23,7 +23,7 @@ An instance of NetworkMonitorCore is created.
 The core receives:
 
 - The source IP address
-- Initial settings (intervals, alert rules)
+- Initial settings (intervals, alert rule)
 - The full state containers (devices, history, alerts)
 - The arp-noise-limit parameter, which will be passed to PingCollector instance.
 
