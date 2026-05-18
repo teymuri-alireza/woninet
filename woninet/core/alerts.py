@@ -33,23 +33,22 @@ class AlertEngine:
     and generates alerts when conditions are violated.
     """
 
-    def __init__(self, storage: StorageEngine, rules: list[AlertRule]) -> None:
+    def __init__(self, storage: StorageEngine, rule: AlertRule) -> None:
         """
         Initialize the alert engine.
 
         Args:
             storage: Storage backend used to manage database sessions.
-            rules: Alert rules evaluated against stored metrics.
+            rules: Alert rule evaluated against stored metrics.
         """
         self.storage: StorageEngine = storage
-        self.rules: list[AlertRule] = rules
+        self.rule: AlertRule = rule
 
     def is_metric_violated(self, metric: str, value: float) -> bool:
         """
         Check if a metric value violates a specific rule.
         """
-        for rule in self.rules:
-            return metric == rule.metric and value > rule.threshold
+        return metric == self.rule.metric and value > self.rule.threshold
 
     def evaluate(
         self, ip: str, metric: str, value: float, default_consecutive_checks: int
