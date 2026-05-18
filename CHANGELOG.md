@@ -15,6 +15,7 @@ All notable changes to this project will be documented in this file.
 - Implemented `--max-workers` argument to control number of workers used to send ICMP ping
 - Implemented `read_arp_table()` in `collectors.py` for faster ARP scans
 - Implemented and used `consecutive_checks` parameter in `AlertStateTable`, `AlertStateRepository`, and `AlertEngine`.
+- Implemented `-i`, `--ip` to use user-provided IP addresses to scan.
 
 ### Changed
 - Used function-based structure in `main.py` for clarity and to control codes from running at import time.
@@ -22,6 +23,7 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 - Moved `submit_to_history()` before type check condition in `main.py` to update latency for offline devices to 0.0.
+- Prevented `AttributeError` by adding condition for checking monitor's attribution for the global monitor variable.
 
 ---
 
