@@ -11,8 +11,10 @@ from woninet.core.collectors import PingCollector
 from woninet.core.storage import StorageEngine
 from woninet.core.alerts import AlertEngine, AlertRule
 from woninet.core.subnet_enumerator import SubnetEnumerator
+from woninet.core.manual_ip_enumerator import ManualIPEnumerator
 from woninet.database.engine import DatabaseEngine
 from woninet.database.tables import AlertEventTable
+from woninet.utilities.ip_validator import is_ip_list_valid
 
 core_logger = logging.getLogger("core")
 
@@ -26,6 +28,7 @@ class NetworkMonitorCore:
     def __init__(
         self,
         local_ip: str,
+        candidate_ip_list: list[str],
         arp_noise_limit: float,
         database_path: str,
         max_thread_workers: int,
@@ -57,9 +60,18 @@ class NetworkMonitorCore:
         core_logger.info(f"Initializing network monitor for {self.local_ip}")
 
         self.subnet_enumerator = SubnetEnumerator()
+        self.manual_ip_enumerator = ManualIPEnumerator()
         self.storage = StorageEngine(session_factory=self.session_factory)
 
-        self.candidate_devices = self.subnet_enumerator.enumerate(self.local_ip)
+        # Check if list is not empty
+        if candidate_ip_list:
+            # Validate IP addresses
+            if not is_ip_list_valid(ip_list=candidate_ip_list):
+                raise ValueError("IP addresses are not valid.")
+            self.candidate_devices = self.manual_ip_enumerator.enumerate(candidate_ip_list)
+        else:
+            # Use default IP addresses within /24 subnet if ip list is empty
+            self.candidate_devices = self.subnet_enumerator.enumerate(self.local_ip)
 
         self.ping_collector = PingCollector()
 
