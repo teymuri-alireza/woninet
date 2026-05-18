@@ -41,6 +41,14 @@ are collected continuously and processed through an alert engine."""
     device_show.set_defaults(func=show_device_info)
 
     parser.add_argument(
+        "-i",
+        "--ip",
+        type=str,
+        nargs="*",
+        help="Candidate IP addresseses list to scan."
+    )
+
+    parser.add_argument(
         "--serve",
         action="store_true",
         help="Starts the server for web-based dashboard.",
