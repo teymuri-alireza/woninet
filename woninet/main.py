@@ -150,6 +150,8 @@ def main() -> None:
     Entry point for woninet. Launch either the web dashboard or the CLI
     monitor based on command-line arguments.
     """
+    global monitor
+
     arguments = args()
 
     if arguments.version:
@@ -194,4 +196,5 @@ def main() -> None:
     except KeyboardInterrupt:
         core_logger.info("Keyboard interrupted. Wait for shut down...")
     finally:
-        monitor.stop()
+        if hasattr(monitor, "stop"):
+            monitor.stop()
