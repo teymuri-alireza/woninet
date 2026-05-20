@@ -1,12 +1,12 @@
 # Usage
 
-This guide explains common ways to run woninet and how to resolve common issues.
+This guide explains common ways to run *woninet* and how to resolve common issues.
 
-# Running Modes
+# 1. Running Modes
 
 ## CLI mode
 
-The simplest way to run **woninet in CLI is:
+The simplest way to run *woninet* in CLI is:
 
 ```shell
 woninet
@@ -33,7 +33,7 @@ In this mode, core logging is set to ERROR to reduce unnecessary output.
 
 ---
 
-# Positional Arguments
+# 2. Positional Arguments
 
 Positional arguments provide quick access to database information from the CLI.
 
@@ -56,7 +56,7 @@ woninet device show 192.168.1.10
 
 ---
 
-# Logging
+# 3. Logging
 
 Logs can be written to a file using the `-o` or `--output` parameter.
 By default, logs are printed only to `stdout`
@@ -68,25 +68,27 @@ woninet --output logs.log
 
 ---
 
-# Issues and Troubleshooting
+# 4. Issues and Troubleshooting
 
 ## ARP Noise Limit
 
-The default value for the `--arp-noise-limit` paramter is 300.0.
+The default value for the `--arp-noise-limit` paramter is 300.0 ms.
 Devices with latency equal to or higher than this value are considered ARP noise and will not be stored in the database.
 If you are on a weak or unstable network, you may want to adjust this threshold.
 
-Examples:
+**Examples:**
+
+Stores all detected devices regardless of latency:
 
 ```shell
 woninet --arp-noise-limit 0
 ```
-Stores all detected devices regardless of latency.
 
+Only considers devices with latency above 800.0 as ARP noise:
+
+```shell
+woninet --arp-noise-limit 800
 ```
-woninet --arp-noise-limit 800 # Will consider latency above 800.0 as ARP noise
-```
-Only considers devices with latency above 800.0 as ARP noise
 
 ## Database and Network Synchronization
 
