@@ -19,6 +19,7 @@ def is_ip_list_valid(ip_list: list[str]) -> bool:
             return False
     return True
 
+
 def is_device_ip_valid(devices: dict[str, Device]) -> bool:
     """
     Validate the dictionary of candidate devices.

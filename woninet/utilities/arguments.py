@@ -41,10 +41,7 @@ are collected continuously and processed through an alert engine."""
     device_show.set_defaults(func=show_device_info)
 
     parser.add_argument(
-        "-i",
-        "--ip",
-        type=str,
-        help="A single or range of target IP addresses to scan."
+        "-i", "--ip", type=str, help="A single or range of target IP addresses to scan."
     )
 
     parser.add_argument(

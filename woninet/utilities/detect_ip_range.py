@@ -1,4 +1,3 @@
-
 def detect_ip_range(ip: str) -> bool:
     """
     Detect if an IP address is provided as a range.
