@@ -44,8 +44,7 @@ are collected continuously and processed through an alert engine."""
         "-i",
         "--ip",
         type=str,
-        nargs="*",
-        help="Candidate IP addresseses list to scan."
+        help="A single or range of target IP addresses to scan."
     )
 
     parser.add_argument(
