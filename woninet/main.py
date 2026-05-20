@@ -195,6 +195,8 @@ def main() -> None:
             monitor.wait()
     except KeyboardInterrupt:
         core_logger.info("Keyboard interrupted. Wait for shut down...")
+    except ValueError as e:
+        core_logger.error(f"{e} Quitting.")
     finally:
         if hasattr(monitor, "stop"):
             monitor.stop()
