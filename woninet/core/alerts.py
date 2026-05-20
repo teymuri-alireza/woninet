@@ -39,7 +39,7 @@ class AlertEngine:
 
         Args:
             storage: Storage backend used to manage database sessions.
-            rules: Alert rule evaluated against stored metrics.
+            rule: Alert rule evaluated against stored metrics.
         """
         self.storage: StorageEngine = storage
         self.rule: AlertRule = rule
