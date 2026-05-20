@@ -85,7 +85,7 @@ def configure_logger(arguments: Namespace) -> logging.Logger:
 
 def create_monitor(
     local_ip: str,
-    candidate_ip_list: list[str],
+    target_ip: str,
     database_path: str,
     arp_noise_limit: float,
     max_thread_workers: int,
@@ -96,7 +96,7 @@ def create_monitor(
 
     Args:
         local_ip (str): IP address of device.
-        candidate_ip_list (list[str]): fill this.
+        target_ip (str): A single or range of user-provided IP addresses to scan.
         database_path (str): Path to SQLite database.
         arp_noise_limit (float): Threshold above which ARP fluctuations are treated as noise.
         logger (Logger): Logger used for recording logs
@@ -111,7 +111,7 @@ def create_monitor(
         logger.trace(f"Max thread workers for scanning set to {max_thread_workers}.")
         monitor = NetworkMonitorCore(
             local_ip=local_ip,
-            candidate_ip_list=candidate_ip_list,
+            target_ip=target_ip,
             arp_noise_limit=arp_noise_limit,
             database_path=database_path,
             max_thread_workers=max_thread_workers,
@@ -160,7 +160,7 @@ def main() -> None:
         print(__version__)
         return
 
-    candidate_ips = arguments.ip
+    target_ip = arguments.ip
     port = arguments.port
     database_path = arguments.db
     arp_noise_limit = arguments.arp_noise_limit
@@ -177,7 +177,7 @@ def main() -> None:
 
         monitor = create_monitor(
             local_ip=local_ip,
-            candidate_ip_list=candidate_ips,
+            target_ip=target_ip,
             database_path=database_path,
             arp_noise_limit=arp_noise_limit,
             max_thread_workers=max_thread_workers,
@@ -195,6 +195,8 @@ def main() -> None:
             monitor.wait()
     except KeyboardInterrupt:
         core_logger.info("Keyboard interrupted. Wait for shut down...")
+    except ValueError as e:
+        core_logger.error(f"{e} Quitting.")
     finally:
         if hasattr(monitor, "stop"):
             monitor.stop()

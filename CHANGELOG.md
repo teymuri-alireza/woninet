@@ -16,6 +16,9 @@ All notable changes to this project will be documented in this file.
 - Implemented `read_arp_table()` in `collectors.py` for faster ARP scans
 - Implemented and used `consecutive_checks` parameter in `AlertStateTable`, `AlertStateRepository`, and `AlertEngine`.
 - Implemented `-i`, `--ip` to use user-provided IP addresses to scan.
+- Implemented `detect_ip_range()` in `utilities/detect_ip_range.py` to detect if an IP address is provided as a range or as a single IP.
+- Implemented `is_device_ip_valid()` in `utilities/ip_validator.py` to handle validation on IP addresses of the dictionary of candidate devices.
+- Implemented `enumerate_range()` in `ManualIPEnumerator` class to handle enumeration for range of IP addresses.
 
 ### Changed
 - Used function-based structure in `main.py` for clarity and to control codes from running at import time.
@@ -24,6 +27,7 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 - Moved `submit_to_history()` before type check condition in `main.py` to update latency for offline devices to 0.0.
 - Prevented `AttributeError` by adding condition for checking monitor's attribution for the global monitor variable.
+- Add exception handler for `ValueError` to handle the error gracfully.
 
 ---
 
