@@ -14,7 +14,8 @@ from woninet.core.subnet_enumerator import SubnetEnumerator
 from woninet.core.manual_ip_enumerator import ManualIPEnumerator
 from woninet.database.engine import DatabaseEngine
 from woninet.database.tables import AlertEventTable
-from woninet.utilities.ip_validator import is_ip_list_valid
+from woninet.utilities.ip_validator import is_device_ip_valid
+from woninet.utilities.detect_ip_range import detect_ip_range
 
 core_logger = logging.getLogger("core")
 
@@ -28,7 +29,7 @@ class NetworkMonitorCore:
     def __init__(
         self,
         local_ip: str,
-        candidate_ip_list: list[str],
+        target_ip: str,
         arp_noise_limit: float,
         database_path: str,
         max_thread_workers: int,
@@ -63,15 +64,7 @@ class NetworkMonitorCore:
         self.manual_ip_enumerator = ManualIPEnumerator()
         self.storage = StorageEngine(session_factory=self.session_factory)
 
-        # Check if list is not empty
-        if candidate_ip_list:
-            # Validate IP addresses
-            if not is_ip_list_valid(ip_list=candidate_ip_list):
-                raise ValueError("IP addresses are not valid.")
-            self.candidate_devices = self.manual_ip_enumerator.enumerate(candidate_ip_list)
-        else:
-            # Use default IP addresses within /24 subnet if ip list is empty
-            self.candidate_devices = self.subnet_enumerator.enumerate(self.local_ip)
+        self.candidate_devices = self.enumerate_candidate_devices(target_ip)
 
         self.ping_collector = PingCollector()
 
@@ -230,6 +223,32 @@ class NetworkMonitorCore:
             self.storage.store_device(device=device)
         if isinstance(metric, MetricRecord):
             self.storage.store_metric(metric=metric)
+
+    def enumerate_candidate_devices(self, target_ip: str | None) -> dict[str, Device]:
+        """
+        Control enumeration based on user-provided IP address. Use range enumeration
+        if IP range is detected, otherwise use the single IP address. Enumerate on the
+        /24 subnet if no target IP address is provided.
+
+        Args:
+            target_ip (str|None): Target IP address to create candidate devices on.
+
+        Returns:
+            dict[str,Device]: Candidate devices.
+
+        Raises:
+            ValueError: If IP addresses are not valid.
+        """
+        if target_ip is not None:
+            if detect_ip_range(ip=target_ip):
+                candidate_devices = self.manual_ip_enumerator.enumerate_range(target_ip)
+            else:
+                candidate_devices = {target_ip: Device(ip=target_ip)}
+        else:
+            candidate_devices = self.subnet_enumerator.enumerate(self.local_ip)
+        if not is_device_ip_valid(candidate_devices):
+            raise ValueError("IP address is not valid")
+        return candidate_devices
 
     def uptime(self) -> int:
         """
