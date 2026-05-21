@@ -54,7 +54,14 @@ def get_core_logger(
     log_output: str | None = None, use_color: bool = True
 ) -> logging.Logger:
     """
-    Returns the core logger.
+    Create and modify the core logger.
+
+    Args:
+        log_output (str|None): Output path for storing logs; `None` if not provided.
+        use_color (bool): Whether to enable colored console log output.
+
+    Returns:
+        Logger: The core logger.
     """
     console_format = "%(asctime)s [%(levelname)s] %(message)s"
     file_format = "%(asctime)s [%(levelname)s] %(message)s"
@@ -62,6 +69,7 @@ def get_core_logger(
 
     core_logger = logging.getLogger("core")
 
+    # Prevent duplicated logging
     if not core_logger.handlers:
         console_handler = logging.StreamHandler()
         if use_color:

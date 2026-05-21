@@ -10,6 +10,12 @@ class AlertRule:
     """
     Define a monitoring rule that triggers an alert
     when a metric exceeds a defined threshold.
+
+    Attributes:
+        metric (str): Metric name to be evaluated.
+        threshold (float): The Limit the metric must exceed to trigger the alert
+        consecutive_checks (int): Number of consecutive evaluations required before
+            a state change.
     """
 
     def __init__(self, metric: str, threshold: float, consecutive_checks: int) -> None:
@@ -31,6 +37,10 @@ class AlertEngine:
     """
     Evaluate stored metrics against alert rules
     and generates alerts when conditions are violated.
+
+    Attributes:
+        storage (StorageEngine): Backend interface for alert state persistence.
+        rule (AlertRule): Configuration describing metric threshold and evaluation logic.
     """
 
     def __init__(self, storage: StorageEngine, rule: AlertRule) -> None:
@@ -38,15 +48,15 @@ class AlertEngine:
         Initialize the alert engine.
 
         Args:
-            storage: Storage backend used to manage database sessions.
-            rule: Alert rule evaluated against stored metrics.
+            storage (StorageEngine): Storage backend used to manage database sessions.
+            rule (AlertRule): Alert rule evaluated against stored metrics.
         """
         self.storage: StorageEngine = storage
         self.rule: AlertRule = rule
 
     def is_metric_violated(self, metric: str, value: float) -> bool:
         """
-        Check if a metric value violates a specific rule.
+        Return True if the given metric exceeds the configured threshold.
         """
         return metric == self.rule.metric and value > self.rule.threshold
 
@@ -54,9 +64,23 @@ class AlertEngine:
         self, ip: str, metric: str, value: float, default_consecutive_checks: int
     ) -> None:
         """
-        Update an alert state and create an alert event if a specific rule
-        is violated and the status of a device is changed (e.g., from "ok"
-        to "warning" or vice versa).
+        Evaluate a new metric sample against the active alert rule.
+
+        If the metric crosses its threshold for a consecutive number of checks,
+        trigger or resolve an alert accordingly. Persists state transitions
+        and logs any alert changes.
+
+        Args:
+            ip (str): IP address to evaluate.
+            metric (str): Metric name (e.g. `latency_ms`).
+            value (float): Value of the current metric.
+            default_consecutive_checks (int): Number of consecutive evaluations
+                required to confirm a state transition.
+
+        Side Effects:
+            - Persists alert state in the database via `StorageEngine`.
+            - Emits log events.
+            - Creates `AlertEventTable` records on trigger and recover.
         """
         state = self.storage.get_or_create_alert_state(
             ip=ip, metric=metric, consecutive_checks=default_consecutive_checks
@@ -64,7 +88,7 @@ class AlertEngine:
         violated = self.is_metric_violated(metric=metric, value=value)
         if violated:
             if state.state == "ok":
-                # Confirm remaining consecutive checks for before a state change
+                # Confirm remaining consecutive checks before a state transition
                 if state.consecutive_checks > 0:
                     state.consecutive_checks = state.consecutive_checks - 1
                     self.storage.update_alert_state(state)
@@ -88,7 +112,7 @@ class AlertEngine:
                 self.storage.update_alert_state(state)
         else:
             if state.state == "warning":
-                # Confirm remaining consecutive checks for before a state change
+                # Confirm remaining consecutive checks before a state transition
                 if state.consecutive_checks > 0:
                     state.consecutive_checks = state.consecutive_checks - 1
                     self.storage.update_alert_state(state)

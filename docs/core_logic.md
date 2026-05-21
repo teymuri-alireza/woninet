@@ -1,6 +1,7 @@
 # Core Logic
 
-This section explains the full sequence of operations *woninet* performs to scan and monitor the local network.
+This section explains the full sequence of operations *woninet* performs to scan and
+monitor the local network.
 
 ## 1. Determining the Source IP
 
@@ -40,7 +41,8 @@ It is the central controller of the system.
 
 ## 3. Subnet Enumeration (/24 Range)
 
-*woninet* uses the SubnetEnumerator class to generate a dictionary of candidate devices within the local `/24` subnet.
+*woninet* uses the SubnetEnumerator class to generate a dictionary of candidate devices
+within the local `/24` subnet.
 
 For a source IP such as:
 
@@ -54,7 +56,8 @@ It builds the full CIDR block:
 192.168.1.1 - 192.168.1.254
 ```
 
-This step doesn't determine if devices exist or respond — it only constructs the list of potential addresses.
+This step doesn't determine if devices exist or respond — it only constructs the list of
+potential addresses.
 
 The output is a dictionary:
 
@@ -84,7 +87,8 @@ If ARP fails, the device is marked as:
 exists = False
 ```
 
-If ICMP scan returns a valid result for the following IP address, another ARP scan is performed to prevent stale ARP cache.
+If ICMP scan returns a valid result for the following IP address, another ARP scan is
+performed to prevent stale ARP cache.
 
 ### Stage B — ICMP Ping
 
@@ -95,7 +99,8 @@ Latency is interpreted carefully:
 - latency < arp-noise-limit → valid response
 - latency ≥ arp-noise-limit → considered "ARP delay noise," treated as unreachable
 
-**Note:** The `--arp-noise-limit` parameter is passed via CLI argument and has the default value of 300.0.
+**Note:** The `--arp-noise-limit` parameter is passed via CLI argument and has the
+default value of 300.0.
 
 ## 5. History Storage
 
@@ -156,8 +161,9 @@ Each alert evaluation event is stored as an `AlertEventTable`, containing:
 
 Captured device metrics are passed to the `AlertEngine` in real-time for evaluation.
 
-During the `evaluate()` process, the current alert state of the `(device_ip, metric)` pair  is retrieved from the database,
-The engine then determines whether the incoming metric value violates the configured threshold rule.
+During the `evaluate()` process, the current alert state of the `(device_ip, metric)`
+pair  is retrieved from the database, The engine then determines whether the incoming
+metric value violates the configured threshold rule.
 
 If a state transition occurs, two actions are performed:
 
@@ -174,17 +180,20 @@ State transitions occur in two situations:
 
     The metric value has returned to a healthy range
 
-Alert events are generated only when a state transition occurs, preventing repeated alerts while a metric remains in the same condition.
+Alert events are generated only when a state transition occurs, preventing repeated
+alerts while a metric remains in the same condition.
 
 When a trigger or recovery occurs, the event is logged and stored in the alert history.
 
-**Note:** The `AlertEngine` evaluation logic verify required consecutive checks before a state change.
+**Note:** The `AlertEngine` evaluation logic verify required consecutive checks before
+a state change.
 
 ## 7. Looping and Scheduling
 
 Looping behavior depends on the execution mode:
 
-In **CLI interface**, the main loop is implemented in `engine.py`, where the monitoring cycle runs continuously.
+In **CLI interface**, the main loop is implemented in `engine.py`, where the monitoring
+cycle runs continuously.
 
 In the **web-based dashboard**, the looping logic is coordinated through FastAPI in `app.py` (backend)
 and periodic updates handled by `app.js` on the frontend.

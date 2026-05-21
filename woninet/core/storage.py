@@ -13,6 +13,10 @@ class StorageEngine:
 
     Also manage database sessions and delegate persistence
     operations to repository classes.
+
+    Attributes:
+        session_factory (SessionLocal): Factory responsible for
+            creating SQLAlchemy sessions.
     """
 
     def __init__(self, session_factory) -> None:

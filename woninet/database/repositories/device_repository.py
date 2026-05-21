@@ -10,6 +10,10 @@ class DeviceRepository:
 
     Eencapsulate ORM operations on `DeviceTable` and expose a
     simple API in terms of the domain model `Device`.
+
+    Attributes:
+        session (Session): SQLAlchemy session used for
+            database operations
     """
 
     def __init__(self, session: Session) -> None:

@@ -1,7 +1,7 @@
 def detect_ip_range(ip: str) -> bool:
     """
     Detect if an IP address is provided as a range.
-    (e.g., 192.168.10.10-20)
+    (e.g., `192.168.10.10-20`)
 
     Args:
         ip (str): IP address to detect.
@@ -11,7 +11,7 @@ def detect_ip_range(ip: str) -> bool:
 
     Raises:
         ValueError: If the range notation is used in any of the first three octets.\n
-            (e.g., 192.168.1-10.10 - 192.168-188.1.10 - 192.180.168.1.10)
+            (e.g., `192.168.1-10.10` - `192.168-188.1.10` - `192.180.168.1.10`)
     """
     base, last_octet = ip.rsplit(".", maxsplit=1)
     if "-" in base:
