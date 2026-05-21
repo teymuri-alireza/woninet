@@ -22,8 +22,29 @@ core_logger = logging.getLogger("core")
 
 class NetworkMonitorCore:
     """
-    Central controller coordinating database initialization,
-    collectors, storage, and alert processing.
+    Central controller coordinating database initialization, telemetry 
+    collection, persistence, and heuristic alert processing.
+
+    This class acts as the orchestrator for the network monitoring lifecycle,
+    managing thread pools for asynchronous ICMP polling and interfacing with 
+    the SQLite persistence layer via SQLAlchemy.
+
+    Attributes:
+        local_ip (str): The source interface IP used for packet origination.
+        arp_noise_limit (float): Statistical threshold for filtering jitter 
+            in ARP resolution timings.
+        max_thread_workers (int): The concurrency limit for the 
+            `ThreadPoolExecutor` handling ICMP probes.
+        database_engine (DatabaseEngine): The high-level wrapper for 
+            SQLAlchemy engine configuration.
+        storage (StorageEngine): The Data Access Object (DAO) layer for 
+            CRUD operations on network metrics.
+        alert_engine (AlertEngine): Logic processor for evaluating 
+            latency-based threshold breaches.
+        candidate_devices (list): A list of IP addresses identified during 
+            the initial enumeration phase.
+        _stop_event (threading.Event): Primitive used to signal graceful 
+            shutdown to the background worker thread.
     """
 
     def __init__(

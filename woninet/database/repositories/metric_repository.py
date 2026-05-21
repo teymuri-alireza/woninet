@@ -10,6 +10,10 @@ class MetricRepository:
 
     Encapsulate OEM operations on `MetricTable` and expose a
     simple API in terms of the domain model `MetricRecord`.
+
+    Attributes:
+        session (Session): SQLAlchemy session used for
+            database operations
     """
 
     def __init__(self, session: Session) -> None:

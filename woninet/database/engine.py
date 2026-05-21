@@ -6,6 +6,9 @@ from woninet.database.base import Base
 class DatabaseEngine:
     """
     Encapsulate database engine creation and initialization logic.
+
+    Attributes:
+        database_path (str): Path to the SQLite database file.
     """
 
     def __init__(self, database_path: str) -> None:

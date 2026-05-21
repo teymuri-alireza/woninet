@@ -10,6 +10,12 @@ class AlertRule:
     """
     Define a monitoring rule that triggers an alert
     when a metric exceeds a defined threshold.
+
+    Attributes:
+        metric (str): Metric name to be evaluated.
+        threshold (float): The Limit the metric must exceed to trigger the alert
+        consecutive_checks (int): Number of consecutive evaluations required before
+            a state change.
     """
 
     def __init__(self, metric: str, threshold: float, consecutive_checks: int) -> None:
@@ -31,6 +37,10 @@ class AlertEngine:
     """
     Evaluate stored metrics against alert rules
     and generates alerts when conditions are violated.
+
+    Attributes:
+        storage (StorageEngine): Backend interface for alert state persistence.
+        rule (AlertRule): Configuration describing metric threshold and evaluation logic.
     """
 
     def __init__(self, storage: StorageEngine, rule: AlertRule) -> None:

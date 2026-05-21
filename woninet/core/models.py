@@ -3,8 +3,16 @@ from datetime import datetime
 
 class Device:
     """
-    Represent a discovered network device.
-    Store identity information and device state.
+    Represents a discovered network device and stores identity information
+    and device state.
+
+    Attributes:
+        ip (str): IP address of the host.
+        last_seen (datetime|None): Last time device responded to ICMP request; Otherwise `None`.
+        exists (bool): If device responded to the last ARP scan.
+        reachable (bool): If device responded to the last ICMP scan.
+        mac (str): MAC address if known; Otherwise `None`.
+        latency (float): The last latency of host if reachable; Otherwise zero.
     """
 
     def __init__(self, ip: str) -> None:
@@ -30,8 +38,15 @@ class Device:
 
 class MetricRecord:
     """
-    Represent a single collected metric measurement
+    Represents a single collected metric measurement
     for a specific device at a specific time.
+
+    Attributes:
+        device_ip (str): IP address of the host.
+        metric (str): Name of the metric.
+        value (float): Recorded value of the metric.
+        timestamp (datetime|None): Timestamp when the metric was captured.
+            If `None`, defaults to the current time.
     """
 
     def __init__(
@@ -55,7 +70,14 @@ class MetricRecord:
 
 class HostStatus:
     """
-    Represent a Combined ARP + ICMP status for a given IP.
+    Represents a Combined ARP + ICMP status for a given IP.
+
+    Attributes:
+        ip (str): IP address of the host.
+        exists (bool): If device responded to the ARP scan
+        reachable (bool): If device responded to the ICMP scan
+        latency (float): The latency of host if reachable; Otherwise zero.
+        mac (str): MAC address if known; Otherwise `None`.
     """
 
     def __init__(

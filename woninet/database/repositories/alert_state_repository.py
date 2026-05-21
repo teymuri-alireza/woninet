@@ -7,6 +7,10 @@ class AlertStateRepository:
     Repository for presisting and updating Alert State entries.
 
     Encapsulate ORM operations on `AlertStateTable`.
+
+    Attributes:
+        session (Session): SQLAlchemy session used for
+            database operations
     """
 
     def __init__(self, session: Session) -> None:

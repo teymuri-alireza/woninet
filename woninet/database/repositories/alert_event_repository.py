@@ -7,6 +7,10 @@ class AlertEventRepository:
     Repository for presisting Alert Event entries.
 
     Encapsulate ORM operations on `AlertEventTable`.
+
+    Attributes:
+        session (Session): SQLAlchemy session used for
+            database operations
     """
 
     def __init__(self, session: Session) -> None:
