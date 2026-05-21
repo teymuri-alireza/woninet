@@ -35,12 +35,15 @@ class NetworkMonitorCore:
         max_thread_workers: int,
     ) -> None:
         """
-        Initialize the monitor core.
+        Initialize the monitor core and prepare the persistence layer.
 
         Args:
-            local_ip: Source IP address used to send packets.
-            arp_noise_limit: Threshold above which ARP fluctuations are treated as noise.
-            database_path: Path to SQLite database.
+            local_ip (str): Source IP address used to send packets.
+            target_ip (str): User-provided IP address or range to scan.
+            arp_noise_limit (float): Threshold in milliseconds above which ARP
+                fluctuations are treated as noise.
+            database_path (str): Path to SQLite database.
+            max_thread_workers (int): Maximum number of thread workers used to send ICMP pings.
         """
         self._running: bool = False
         self._thread: threading.Thread | None = None

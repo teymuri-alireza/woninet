@@ -16,7 +16,8 @@ monitor = None
 
 def detect_local_ip(logger: logging.Logger) -> str:
     """
-    Determine the local IP address by opening a dummy UDP connection.
+    Determine the local IP address by opening a dummy UDP connection
+    to `8.8.8.8:80`.
 
     Args:
         logger (Logger): Logger used for recording logs.
@@ -65,7 +66,7 @@ def load_logging_yaml(log_output: str | None) -> dict:
 
 def configure_logger(arguments: Namespace) -> logging.Logger:
     """
-    Initialize the core logger and adjust verbosity
+    Initialize the core logger and adjust verbosity.
     """
     log_output = arguments.output
     use_color = arguments.color != "false"
@@ -99,6 +100,8 @@ def create_monitor(
         target_ip (str): A single or range of user-provided IP addresses to scan.
         database_path (str): Path to SQLite database.
         arp_noise_limit (float): Threshold above which ARP fluctuations are treated as noise.
+        max_thread_workers (int): The concurrency limit for the 
+            `ThreadPoolExecutor` handling ICMP probes
         logger (Logger): Logger used for recording logs
 
     Returns:

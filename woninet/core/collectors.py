@@ -54,7 +54,7 @@ def detect_host(
     target_ip: str,
     source_ip: str,
     timeout: float = 1.0,
-    stop_event=None,
+    stop_event = None,
     arp_noise_limit: float = 300.0,
     arp_table: dict[str, str] = None,
 ) -> HostStatus | None:
@@ -73,6 +73,8 @@ def detect_host(
         timeout: Timeout for ICMP scan.
         stop_event: Event used to control the monitoring life cycle.
         arp_noise_limit: Threshold above which ARP fluctuations are treated as noise.
+        arp_table: Dictionary of ARP table contaning IP addressses and the related
+            MAC addresses.
 
     Returns:
         HostStatus|None: A `HostStatus` instance if the stop event is not triggered; otherwise, None.
