@@ -12,7 +12,8 @@ The simplest way to run *woninet* in CLI is:
 woninet
 ```
 
-In this method, logging runs at the `INFO` level. Output is minimal, but warnings will still appear if a metric exceeds a rule in the `AlertEngine`.
+In this method, logging runs at the `INFO` level. Output is minimal, but warnings will
+still appear if a metric exceeds a rule in the `AlertEngine`.
 
 You can enable more verbose output using:
 
@@ -73,7 +74,8 @@ woninet --output logs.log
 ## ARP Noise Limit
 
 The default value for the `--arp-noise-limit` paramter is 300.0 ms.
-Devices with latency equal to or higher than this value are considered ARP noise and will not be stored in the database.
+Devices with latency equal to or higher than this value are considered ARP noise and
+will not be stored in the database.
 If you are on a weak or unstable network, you may want to adjust this threshold.
 
 **Examples:**
@@ -118,4 +120,5 @@ woninet -p 9090
 
 ---
 
-If you encounter additional issues, feel free to open an issue on the [woninet](https://github.com/teymuri-alireza/woninet) GitHub repository
+If you encounter additional issues, feel free to open an issue on the
+[woninet](https://github.com/teymuri-alireza/woninet) GitHub repository.
