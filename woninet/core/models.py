@@ -50,7 +50,11 @@ class MetricRecord:
     """
 
     def __init__(
-        self, device_ip: str, metric: str, value: float, timestamp: datetime | None = None
+        self,
+        device_ip: str,
+        metric: str,
+        value: float,
+        timestamp: datetime | None = None,
     ) -> None:
         """
         Initialize a metric record.

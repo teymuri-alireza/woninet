@@ -100,7 +100,7 @@ def create_monitor(
         target_ip (str): A single or range of user-provided IP addresses to scan.
         database_path (str): Path to SQLite database.
         arp_noise_limit (float): Threshold above which ARP fluctuations are treated as noise.
-        max_thread_workers (int): The concurrency limit for the 
+        max_thread_workers (int): The concurrency limit for the
             `ThreadPoolExecutor` handling ICMP probes
         logger (Logger): Logger used for recording logs
 

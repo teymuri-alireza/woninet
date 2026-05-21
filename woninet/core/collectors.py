@@ -54,7 +54,7 @@ def detect_host(
     target_ip: str,
     source_ip: str,
     timeout: float = 1.0,
-    stop_event = None,
+    stop_event=None,
     arp_noise_limit: float = 300.0,
     arp_table: dict[str, str] = None,
 ) -> HostStatus | None:
