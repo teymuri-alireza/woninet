@@ -109,6 +109,15 @@ to a different network to ensure data integrity. You can do this using:
 woninet --db path_to_new_database
 ```
 
+### Accessing a Specific Database
+
+If you are using a database file other than the default, you must specify it when using positional arguments. Always include the `--db` flag before the command:
+
+```shell
+woninet --db network.db device list
+woninet --db network.db device show 192.168.1.10
+```
+
 ## Address Already in Use
 
 The default port for server mode is `8080`. If *woninet* exits with an `Address already
