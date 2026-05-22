@@ -4,7 +4,11 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-[Unreleased]
+## [Unreleased]
+
+---
+
+## [1.5.0] - 2026-05-22
 ### Added
 - Introduced a `--color` CLI argument to enable or disable colored console log output.
 - Implemented `device` positional argument for easier access to the database from the CLI.
