@@ -5,6 +5,8 @@ All notable changes to this project will be documented in this file.
 ---
 
 ## [Unreleased]
+### Added
+- Implemented error handler for `OperationalError` for when database file can not be opened.
 
 ---
 
