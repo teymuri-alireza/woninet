@@ -4,6 +4,7 @@ import uvicorn
 from pathlib import Path
 from yaml import safe_load
 from argparse import Namespace
+from sqlalchemy.exc import OperationalError
 from woninet.core.engine import NetworkMonitorCore
 from woninet.utilities.arguments import args
 from woninet.utilities.logger import get_core_logger, TRACE_LEVEL
@@ -200,6 +201,8 @@ def main() -> None:
         core_logger.info("Keyboard interrupted. Wait for shut down...")
     except ValueError as e:
         core_logger.error(f"{e} Quitting.")
+    except OperationalError as e:
+        core_logger.error(e)
     finally:
         if hasattr(monitor, "stop"):
             monitor.stop()
