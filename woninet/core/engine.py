@@ -239,14 +239,15 @@ class NetworkMonitorCore:
         """
         return self.storage.count_devices_and_metrics()
 
-    def submit_to_history(self, device: str, metric: str) -> None:
+    def submit_to_history(self, device: str, metrics: list[MetricRecord]) -> None:
         """
         Handle storing new devices and metrics in history.
         """
         if isinstance(device, Device):
             self.storage.store_device(device=device)
-        if isinstance(metric, MetricRecord):
-            self.storage.store_metric(metric=metric)
+        for metric in metrics:
+            if isinstance(metric, MetricRecord):
+                self.storage.store_metric(metric=metric)
 
     def enumerate_candidate_devices(self, target_ip: str | None) -> dict[str, Device]:
         """
