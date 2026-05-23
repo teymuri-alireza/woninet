@@ -149,15 +149,14 @@ class NetworkMonitorCore:
                     max_thread_workers=self.max_thread_workers,
                 ):
                     try:
-                        result_device, result_latency_metric, result_packet_loss_metric = result
+                        device, latency_metric, packet_loss_metric = result
                         self.submit_to_history(
-                            device=result_device, metrics=[result_latency_metric, result_packet_loss_metric]
+                            device=device, metrics=[latency_metric, packet_loss_metric]
                         )
-                        if result_device is not None and result_latency_metric is not None:
+                        if device is not None and latency_metric is not None:
                             self.alert_engine.evaluate(
-                                ip=result_device.ip,
-                                metric=result_latency_metric.metric,
-                                value=result_latency_metric.value,
+                                ip=device.ip,
+                                metrics_list=[latency_metric, packet_loss_metric],
                                 default_consecutive_checks=self.consecutive_checks,
                             )
                     except ValueError:
