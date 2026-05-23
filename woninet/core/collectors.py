@@ -275,8 +275,14 @@ class PingCollector(BaseCollector):
                     core_logger.error(f"Error in PingCollector for {ip}: {e}")
                     continue
                 else:
-                    if future_metric.value != 0:
-                        results.append(future_metric)
+                    latency_metric, packet_loss_metric = future_metric
+                    if latency_metric.value != 0:
+                        results.append(latency_metric)
+                    else:
+                        results.append(None)
+                    # Store packet loss for known devices
+                    if future_device is not None:
+                        results.append(packet_loss_metric)
                     else:
                         results.append(None)
                 finally:
