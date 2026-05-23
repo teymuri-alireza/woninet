@@ -196,7 +196,7 @@ class PingCollector(BaseCollector):
 
         def worker(
             ip: str, dev: Device
-        ) -> tuple[Device, MetricRecord] | tuple[None, MetricRecord]:
+        ) -> tuple[Device, list[MetricRecord]] | tuple[None, list[MetricRecord]]:
             try:
                 status = detect_host(
                     target_ip=ip,
@@ -241,10 +241,15 @@ class PingCollector(BaseCollector):
                     f"Device {ip}: \tABSENT,\t MAC={dev.mac}, latency=OFFLINE"
                 )
 
+            recorded_metrics = [
+                MetricRecord(ip, "latency_ms", dev.latency),
+                MetricRecord(ip, "packet_loss", dev.packet_loss)
+            ]
+
             if dev.reachable or is_known:
-                return (dev, MetricRecord(ip, "latency_ms", dev.latency))
+                return (dev, recorded_metrics)
             else:
-                return (None, MetricRecord(ip, "latency_ms", dev.latency))
+                return (None, recorded_metrics)
 
         with ThreadPoolExecutor(max_workers=max_thread_workers) as executor:
             future_to_ip = {
