@@ -153,7 +153,7 @@ class NetworkMonitorCore:
                         self.submit_to_history(
                             device=device, metrics=[latency_metric, packet_loss_metric]
                         )
-                        if device is not None and latency_metric is not None:
+                        if device is not None:
                             self.alert_engine.evaluate(
                                 ip=device.ip,
                                 metrics_list=[latency_metric, packet_loss_metric],
