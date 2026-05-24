@@ -40,19 +40,19 @@ class AlertEngine:
 
     Attributes:
         storage (StorageEngine): Backend interface for alert state persistence.
-        rule (AlertRule): Configuration describing metric threshold and evaluation logic.
+        rules (list[AlertRule]): Configuration describing metric threshold and evaluation logic.
     """
 
-    def __init__(self, storage: StorageEngine, rule: AlertRule) -> None:
+    def __init__(self, storage: StorageEngine, rules: list[AlertRule]) -> None:
         """
         Initialize the alert engine.
 
         Args:
             storage (StorageEngine): Storage backend used to manage database sessions.
-            rule (AlertRule): Alert rule evaluated against stored metrics.
+            rules (list[AlertRule]): Alert rules evaluated against stored metrics.
         """
         self.storage: StorageEngine = storage
-        self.rule: AlertRule = rule
+        self.rules: list[AlertRule] = rules
 
     def is_metric_violated(self, metric: str, value: float) -> bool:
         """
