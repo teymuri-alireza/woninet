@@ -58,7 +58,11 @@ class AlertEngine:
         """
         Return True if the given metric exceeds the configured threshold.
         """
-        return metric == self.rule.metric and value > self.rule.threshold
+        for rule in self.rules:
+            if metric == rule.metric:
+                return value > rule.threshold
+        # Fallback - No metric matched the configured rule.
+        return False
 
     def evaluate(
         self, ip: str, metric: str, value: float, default_consecutive_checks: int
