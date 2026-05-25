@@ -280,8 +280,8 @@ class PingCollector(BaseCollector):
                         results.append(latency_metric)
                     else:
                         results.append(None)
-                    # Store packet loss for known devices
-                    if future_device is not None:
+                    # Store packet loss for online known devices
+                    if future_device is not None and latency_metric.value != 0:
                         results.append(packet_loss_metric)
                     else:
                         results.append(None)
