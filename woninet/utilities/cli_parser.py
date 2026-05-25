@@ -31,7 +31,7 @@ def show_device_info(args):
     6. Last 10 alert events of device.
     """
     monitor: NetworkMonitorCore = args.monitor
-    device, device_state, recent_device_alert_events = monitor.get_device_info(args.ip)
+    device, devices_state, recent_device_alert_events = monitor.get_device_info(args.ip)
     if device is None:
         print(f"Device {args.ip} was not found.")
     else:
@@ -41,7 +41,7 @@ def show_device_info(args):
         print(
             f"Found device {device.ip}: MAC={device.mac}, Last latency: {latency}, Last seen={device.last_seen}"
         )
-        for metric, state in device_state.items():
+        for metric, state in devices_state.items():
             print(f"Current alert state for {metric}: state={state}")
         print("Recent alert events:")
         for event in recent_device_alert_events:
