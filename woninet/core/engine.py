@@ -74,7 +74,10 @@ class NetworkMonitorCore:
         self.local_ip: str = local_ip
         self.arp_noise_limit: float = arp_noise_limit
         self.max_thread_workers: int = max_thread_workers
-        self.consecutive_checks: int = 2
+        self.consecutive_checks: dict[str, int] = {
+            "latency_ms": 2,
+            "packet_loss": 0,
+        }
 
         # Initialize database
         self.database_engine = DatabaseEngine(database_path=database_path)
