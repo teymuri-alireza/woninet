@@ -62,7 +62,7 @@ class AlertStateRepository:
         """
         self.session.add(state)
 
-    def fetch_alert_state(self, ip: str) -> tuple[str, str] | None:
+    def fetch_alert_state(self, ip: str) -> dict[str, str] | None:
         """
         Return current alert state for a given IP address.
 
@@ -70,11 +70,14 @@ class AlertStateRepository:
             ip (str): IP address to search for.
 
         Returns:
-            tuple[str,str]: A tuple containing `metric` and `state`.
+            dict[str,str]|None: A Dictionary containing `metric` and `state`.
         """
         device_state = (
-            self.session.query(AlertStateTable).filter_by(device_ip=ip).one_or_none()
+            self.session.query(AlertStateTable).filter_by(device_ip=ip).all()
         )
         if device_state is None:
             return None
-        return (device_state.metric, device_state.state)
+        result = {}
+        for state in device_state:
+            result[state.metric] = state.state
+        return result

@@ -37,8 +37,8 @@ def show_device_info(args):
         print(
             f"Found device {device.ip}: MAC={device.mac}, Last latency: {latency}, Last seen={device.last_seen}"
         )
-        metric, state = device_state
-        print(f"Current alert state for {metric}: state={state}")
+        for metric, state in device_state.items():
+            print(f"Current alert state for {metric}: state={state}")
         print("Recent alert events:")
         for event in recent_device_alert_events:
             content = f"ID: {event.id} - Metric: {event.metric},\t Value={event.value},"
