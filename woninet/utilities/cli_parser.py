@@ -10,9 +10,13 @@ def list_devices(args):
     3. Device last seen timestamp.
     """
     monitor: NetworkMonitorCore = args.monitor
-    for device in monitor.get_device_history():
-        row = f"Device {device.ip}: MAC={device.mac}, Last seen={device.last_seen}"
-        print(row)
+    devices = monitor.get_device_history()
+    if len(devices) == 0:
+        print("No recorded device was found.")
+    else:
+        for device in devices:
+            row = f"Device {device.ip}: MAC={device.mac}, Last seen={device.last_seen}"
+            print(row)
     exit(0)
 
 
