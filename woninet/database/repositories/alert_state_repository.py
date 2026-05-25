@@ -72,9 +72,7 @@ class AlertStateRepository:
         Returns:
             dict[str,str]|None: A Dictionary containing `metric` and `state`.
         """
-        device_state = (
-            self.session.query(AlertStateTable).filter_by(device_ip=ip).all()
-        )
+        device_state = self.session.query(AlertStateTable).filter_by(device_ip=ip).all()
         if device_state is None:
             return None
         result = {}
