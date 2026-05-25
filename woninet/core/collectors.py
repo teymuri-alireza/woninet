@@ -243,7 +243,7 @@ class PingCollector(BaseCollector):
 
             recorded_metrics = [
                 MetricRecord(ip, "latency_ms", dev.latency),
-                MetricRecord(ip, "packet_loss", dev.packet_loss)
+                MetricRecord(ip, "packet_loss", dev.packet_loss),
             ]
 
             if dev.reachable or is_known:

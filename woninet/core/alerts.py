@@ -66,7 +66,10 @@ class AlertEngine:
         return False
 
     def evaluate(
-        self, ip: str, metrics_list: list[MetricRecord], default_consecutive_checks: dict[str, int]
+        self,
+        ip: str,
+        metrics_list: list[MetricRecord],
+        default_consecutive_checks: dict[str, int],
     ) -> None:
         """
         The central dispatcher.
@@ -83,11 +86,27 @@ class AlertEngine:
         for metric in metrics_list:
             if metric is not None:
                 if metric.metric == "latency_ms":
-                    self._evaluate_latency(ip=ip, metric="latency_ms", value=metric.value, default_consecutive_checks=default_consecutive_checks["latency_ms"])
+                    self._evaluate_latency(
+                        ip=ip,
+                        metric="latency_ms",
+                        value=metric.value,
+                        default_consecutive_checks=default_consecutive_checks[
+                            "latency_ms"
+                        ],
+                    )
                 elif metric.metric == "packet_loss":
-                    self._evaluate_packet_loss(ip=ip, metric="packet_loss", value=metric.value, default_consecutive_checks=default_consecutive_checks["packet_loss"])
+                    self._evaluate_packet_loss(
+                        ip=ip,
+                        metric="packet_loss",
+                        value=metric.value,
+                        default_consecutive_checks=default_consecutive_checks[
+                            "packet_loss"
+                        ],
+                    )
 
-    def _evaluate_latency(self, ip: str, metric: str, value: float, default_consecutive_checks: int):
+    def _evaluate_latency(
+        self, ip: str, metric: str, value: float, default_consecutive_checks: int
+    ):
         """
         Evaluate a latency metric against the related alert rule.
 
@@ -160,7 +179,9 @@ class AlertEngine:
                 state.consecutive_checks = default_consecutive_checks
                 self.storage.update_alert_state(state)
 
-    def _evaluate_packet_loss(self, ip: str, metric: str, value: float, default_consecutive_checks: int):
+    def _evaluate_packet_loss(
+        self, ip: str, metric: str, value: float, default_consecutive_checks: int
+    ):
         """
         Evaluate a packet loss metric against the related alert rule.
 
@@ -180,7 +201,7 @@ class AlertEngine:
             - Emits log events.
             - Creates `AlertEventTable` records on trigger and recover.
         """
-        state= self.storage.get_or_create_alert_state(
+        state = self.storage.get_or_create_alert_state(
             ip=ip, metric=metric, consecutive_checks=default_consecutive_checks
         )
         violated = self.is_metric_violated(metric=metric, value=value)
@@ -196,11 +217,11 @@ class AlertEngine:
                 state.triggered_at = datetime.now()
                 self.storage.update_alert_state(state)
                 event = AlertEventTable(
-                        device_ip=ip, metric=metric, value=value, event_type="trigger"
-                    )
+                    device_ip=ip, metric=metric, value=value, event_type="trigger"
+                )
                 self.storage.store_alert_event(event=event)
                 core_logger.warning(
-                    f"ALERT TRIGGERED | {ip}, metric={metric}, value={value*100} %"
+                    f"ALERT TRIGGERED | {ip}, metric={metric}, value={value * 100} %"
                 )
             else:
                 # Reset consecutive checks to its default value
@@ -218,11 +239,11 @@ class AlertEngine:
                 state.triggered_at = datetime.now()
                 self.storage.update_alert_state(state)
                 event = AlertEventTable(
-                        device_ip=ip, metric=metric, value=value, event_type="recover"
-                    )
+                    device_ip=ip, metric=metric, value=value, event_type="recover"
+                )
                 self.storage.store_alert_event(event=event)
                 core_logger.warning(
-                    f"ALERT RECOVERED | {ip}, metric={metric}, value={value*100} %"
+                    f"ALERT RECOVERED | {ip}, metric={metric}, value={value * 100} %"
                 )
             else:
                 # Reset consecutive checks to its default value

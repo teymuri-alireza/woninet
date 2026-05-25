@@ -100,7 +100,7 @@ class NetworkMonitorCore:
             rules=[
                 AlertRule("latency_ms", 100, self.consecutive_checks["latency_ms"]),
                 AlertRule("packet_loss", 0.0, self.consecutive_checks["packet_loss"]),
-                ]
+            ],
         )
 
     def start(self) -> None:
@@ -165,7 +165,9 @@ class NetworkMonitorCore:
                                 metrics_list=[latency_metric, packet_loss_metric],
                                 default_consecutive_checks={
                                     "latency_ms": self.consecutive_checks["latency_ms"],
-                                    "packet_loss": self.consecutive_checks["packet_loss"],
+                                    "packet_loss": self.consecutive_checks[
+                                        "packet_loss"
+                                    ],
                                 },
                             )
                     except ValueError:
