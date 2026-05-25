@@ -87,6 +87,7 @@ def detect_host(
         status.reachable = False
         status.mac = None
         status.latency = 0.0
+        status.packet_loss = 1.0
         return status
 
     if stop_event and stop_event.is_set():
@@ -121,6 +122,7 @@ def detect_host(
         response = 0
 
     status.latency = response.avg_rtt
+    status.packet_loss = response.packet_loss * 100
     latency: float = status.latency
 
     # Classification logic
@@ -194,7 +196,7 @@ class PingCollector(BaseCollector):
 
         def worker(
             ip: str, dev: Device
-        ) -> tuple[Device, MetricRecord] | tuple[None, MetricRecord]:
+        ) -> tuple[Device, list[MetricRecord]] | tuple[None, list[MetricRecord]]:
             try:
                 status = detect_host(
                     target_ip=ip,
@@ -215,6 +217,7 @@ class PingCollector(BaseCollector):
             if status.mac is not None:
                 dev.mac = status.mac
             dev.latency = status.latency
+            dev.packet_loss = status.packet_loss
 
             if dev.reachable:
                 # Only consider reachable hosts as recently seen
@@ -238,10 +241,15 @@ class PingCollector(BaseCollector):
                     f"Device {ip}: \tABSENT,\t MAC={dev.mac}, latency=OFFLINE"
                 )
 
+            recorded_metrics = [
+                MetricRecord(ip, "latency_ms", dev.latency),
+                MetricRecord(ip, "packet_loss", dev.packet_loss),
+            ]
+
             if dev.reachable or is_known:
-                return (dev, MetricRecord(ip, "latency_ms", dev.latency))
+                return (dev, recorded_metrics)
             else:
-                return (None, MetricRecord(ip, "latency_ms", dev.latency))
+                return (None, recorded_metrics)
 
         with ThreadPoolExecutor(max_workers=max_thread_workers) as executor:
             future_to_ip = {
@@ -267,8 +275,14 @@ class PingCollector(BaseCollector):
                     core_logger.error(f"Error in PingCollector for {ip}: {e}")
                     continue
                 else:
-                    if future_metric.value != 0:
-                        results.append(future_metric)
+                    latency_metric, packet_loss_metric = future_metric
+                    if latency_metric.value != 0:
+                        results.append(latency_metric)
+                    else:
+                        results.append(None)
+                    # Store packet loss for online known devices
+                    if future_device is not None and latency_metric.value != 0:
+                        results.append(packet_loss_metric)
                     else:
                         results.append(None)
                 finally:

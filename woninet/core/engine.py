@@ -74,7 +74,10 @@ class NetworkMonitorCore:
         self.local_ip: str = local_ip
         self.arp_noise_limit: float = arp_noise_limit
         self.max_thread_workers: int = max_thread_workers
-        self.consecutive_checks: int = 2
+        self.consecutive_checks: dict[str, int] = {
+            "latency_ms": 2,
+            "packet_loss": 0,
+        }
 
         # Initialize database
         self.database_engine = DatabaseEngine(database_path=database_path)
@@ -94,7 +97,10 @@ class NetworkMonitorCore:
 
         self.alert_engine = AlertEngine(
             storage=self.storage,
-            rule=AlertRule("latency_ms", 100, self.consecutive_checks),
+            rules=[
+                AlertRule("latency_ms", 100, self.consecutive_checks["latency_ms"]),
+                AlertRule("packet_loss", 0.0, self.consecutive_checks["packet_loss"]),
+            ],
         )
 
     def start(self) -> None:
@@ -149,16 +155,20 @@ class NetworkMonitorCore:
                     max_thread_workers=self.max_thread_workers,
                 ):
                     try:
-                        result_device, result_metric = result
+                        device, latency_metric, packet_loss_metric = result
                         self.submit_to_history(
-                            device=result_device, metric=result_metric
+                            device=device, metrics=[latency_metric, packet_loss_metric]
                         )
-                        if result_device is not None and result_metric is not None:
+                        if device is not None:
                             self.alert_engine.evaluate(
-                                ip=result_device.ip,
-                                metric=result_metric.metric,
-                                value=result_metric.value,
-                                default_consecutive_checks=self.consecutive_checks,
+                                ip=device.ip,
+                                metrics_list=[latency_metric, packet_loss_metric],
+                                default_consecutive_checks={
+                                    "latency_ms": self.consecutive_checks["latency_ms"],
+                                    "packet_loss": self.consecutive_checks[
+                                        "packet_loss"
+                                    ],
+                                },
                             )
                     except ValueError:
                         # If the tuple doesn't have enough values to unpack
@@ -194,7 +204,7 @@ class NetworkMonitorCore:
 
     def get_device_info(
         self, ip: str
-    ) -> tuple[Device | None, tuple[str, str] | None, list[AlertEventTable]]:
+    ) -> tuple[Device | None, dict[str, str] | None, list[AlertEventTable]]:
         """
         Retrieve device information and related alert data for a given IP address.
 
@@ -202,7 +212,7 @@ class NetworkMonitorCore:
             ip (str): IP address of the device to search for.
 
         Returns:
-            tuple[Device|None,tuple[str,str]|None,list[AlertEventTable]]:
+            tuple[Device|None,dict[str,str]|None,list[AlertEventTable]]:
                 A tuple containing
 
                 1. The found device, or `None` if no device exists for the given IP.
@@ -239,14 +249,15 @@ class NetworkMonitorCore:
         """
         return self.storage.count_devices_and_metrics()
 
-    def submit_to_history(self, device: str, metric: str) -> None:
+    def submit_to_history(self, device: str, metrics: list[MetricRecord]) -> None:
         """
         Handle storing new devices and metrics in history.
         """
         if isinstance(device, Device):
             self.storage.store_device(device=device)
-        if isinstance(metric, MetricRecord):
-            self.storage.store_metric(metric=metric)
+        for metric in metrics:
+            if isinstance(metric, MetricRecord):
+                self.storage.store_metric(metric=metric)
 
     def enumerate_candidate_devices(self, target_ip: str | None) -> dict[str, Device]:
         """

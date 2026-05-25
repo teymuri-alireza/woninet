@@ -126,7 +126,7 @@ class StorageEngine:
             repo.update(state=state)
             session.commit()
 
-    def get_device_alert_state(self, ip: str) -> tuple[str, str] | None:
+    def get_device_alert_state(self, ip: str) -> dict[str, str] | None:
         """
         Return alert state of a device for a given IP address.
         """
