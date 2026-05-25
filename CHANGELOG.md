@@ -7,6 +7,8 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 ### Added
 - Implemented error handler for `OperationalError` for when database file can not be opened.
+- Implemented `packet_loss` metric.
+- Implemented `_evaluate_latency()` and `_evaluate_packet_loss()` in `alerts.py` to handle metric evaluations.
 
 ---
 
