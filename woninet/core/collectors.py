@@ -122,7 +122,7 @@ def detect_host(
         response = 0
 
     status.latency = response.avg_rtt
-    status.packet_loss = response.packet_loss
+    status.packet_loss = response.packet_loss * 100
     latency: float = status.latency
 
     # Classification logic

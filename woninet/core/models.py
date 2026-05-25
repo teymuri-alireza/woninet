@@ -13,8 +13,8 @@ class Device:
         reachable (bool): If device responded to the last ICMP scan.
         mac (str): MAC address if known; Otherwise `None`.
         latency (float): The last latency of host if reachable; Otherwise zero.
-        packet_loss (float): Most recent packet-loss ratio in the range [0.0, 1.0].
-            A value of 1.0 indicates 100% packet loss or that the device is unreachable.
+        packet_loss (float): Most recent packet-loss ratio in the range [0.0, 100.0].
+            A value of 100.0 indicates 100% packet loss or that the device is unreachable.
     """
 
     def __init__(self, ip: str) -> None:
@@ -30,7 +30,7 @@ class Device:
         self.reachable: bool = False
         self.mac: str | None = None
         self.latency: float = 0
-        self.packet_loss: float = 1
+        self.packet_loss: float = 100
 
     def update_seen(self) -> None:
         """
@@ -84,8 +84,8 @@ class HostStatus:
         exists (bool): If device responded to the ARP scan
         reachable (bool): If device responded to the ICMP scan
         latency (float): The latency of host if reachable; Otherwise zero.
-        packet_loss (float): Most recent packet-loss ratio in the range [0.0, 1.0].
-            A value of 1.0 indicates 100% packet loss or that the device is unreachable.
+        packet_loss (float): Most recent packet-loss ratio in the range [0.0, 100.0].
+            A value of 100.0 indicates 100% packet loss or that the device is unreachable.
         mac (str): MAC address if known; Otherwise `None`.
     """
 
@@ -95,6 +95,7 @@ class HostStatus:
         exists: bool = False,
         reachable: bool = False,
         latency: float = 0.0,
+        packet_loss: float = 100.0,
         mac: str | None = None,
     ) -> None:
         """
@@ -111,5 +112,5 @@ class HostStatus:
         self.exists: bool = exists
         self.reachable: bool = reachable
         self.latency: float = latency
-        self.packet_loss: float = 1
+        self.packet_loss: float = 100
         self.mac: str | None = mac

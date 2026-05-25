@@ -221,7 +221,7 @@ class AlertEngine:
                 )
                 self.storage.store_alert_event(event=event)
                 core_logger.warning(
-                    f"ALERT TRIGGERED | {ip}, metric={metric}, value={value * 100} %"
+                    f"ALERT TRIGGERED | {ip}, metric={metric}, value={value} %"
                 )
             else:
                 # Reset consecutive checks to its default value
@@ -243,7 +243,7 @@ class AlertEngine:
                 )
                 self.storage.store_alert_event(event=event)
                 core_logger.warning(
-                    f"ALERT RECOVERED | {ip}, metric={metric}, value={value * 100} %"
+                    f"ALERT RECOVERED | {ip}, metric={metric}, value={value} %"
                 )
             else:
                 # Reset consecutive checks to its default value
