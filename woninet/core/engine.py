@@ -204,7 +204,7 @@ class NetworkMonitorCore:
 
     def get_device_info(
         self, ip: str
-    ) -> tuple[Device | None, tuple[str, str] | None, list[AlertEventTable]]:
+    ) -> tuple[Device | None, dict[str, str] | None, list[AlertEventTable]]:
         """
         Retrieve device information and related alert data for a given IP address.
 
@@ -212,7 +212,7 @@ class NetworkMonitorCore:
             ip (str): IP address of the device to search for.
 
         Returns:
-            tuple[Device|None,tuple[str,str]|None,list[AlertEventTable]]:
+            tuple[Device|None,dict[str,str]|None,list[AlertEventTable]]:
                 A tuple containing
 
                 1. The found device, or `None` if no device exists for the given IP.
