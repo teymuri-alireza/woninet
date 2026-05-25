@@ -97,7 +97,10 @@ class NetworkMonitorCore:
 
         self.alert_engine = AlertEngine(
             storage=self.storage,
-            rule=AlertRule("latency_ms", 100, self.consecutive_checks),
+            rules=[
+                AlertRule("latency_ms", 100, self.consecutive_checks["latency_ms"]),
+                AlertRule("packet_loss", 0.0, self.consecutive_checks["packet_loss"]),
+                ]
         )
 
     def start(self) -> None:
