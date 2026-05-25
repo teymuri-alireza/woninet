@@ -163,7 +163,10 @@ class NetworkMonitorCore:
                             self.alert_engine.evaluate(
                                 ip=device.ip,
                                 metrics_list=[latency_metric, packet_loss_metric],
-                                default_consecutive_checks=self.consecutive_checks,
+                                default_consecutive_checks={
+                                    "latency_ms": self.consecutive_checks["latency_ms"],
+                                    "packet_loss": self.consecutive_checks["packet_loss"],
+                                },
                             )
                     except ValueError:
                         # If the tuple doesn't have enough values to unpack
