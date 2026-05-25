@@ -233,7 +233,7 @@ class PingCollector(BaseCollector):
                     f"Device {ip}: \tUP,\t MAC={dev.mac}, latency={dev.latency:.2f} ms"
                 )
             elif is_known:
-                core_logger.debug(
+                core_logger.trace(
                     f"Device {ip}: \tDOWN,\t MAC={dev.mac}, latency=OFFLINE"
                 )
             else:
