@@ -10,6 +10,9 @@ All notable changes to this project will be documented in this file.
 - Implemented `packet_loss` metric.
 - Implemented `_evaluate_latency()` and `_evaluate_packet_loss()` in `alerts.py` to handle metric evaluations.
 
+### Changed
+- Removed `nullable` field from `datetime` in `AlertStateTable` and `AlertEventTable` to store state transition time from `warning` to `ok`.
+
 ---
 
 ## [1.5.0] - 2026-05-22

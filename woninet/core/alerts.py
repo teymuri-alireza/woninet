@@ -163,7 +163,7 @@ class AlertEngine:
                     return
                 # Update "warning" to "ok"
                 state.state = "ok"
-                state.triggered_at = None
+                state.triggered_at = datetime.now()
                 state.consecutive_checks = default_consecutive_checks
                 self.storage.update_alert_state(state)
 
