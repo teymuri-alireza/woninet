@@ -64,7 +64,7 @@ class AlertStateTable(Base):
     state: Mapped[str] = mapped_column(String, default="ok", index=True)
     consecutive_checks: Mapped[int] = mapped_column(Integer, index=True, nullable=False)
     triggered_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=False), index=True, nullable=True
+        DateTime(timezone=False), default=lambda: datetime.now(), index=True
     )
 
 
@@ -84,5 +84,5 @@ class AlertEventTable(Base):
     value: Mapped[float] = mapped_column(Float)
     event_type: Mapped[str] = mapped_column(String, index=True)
     timestamp: Mapped[datetime] = mapped_column(
-        DateTime, default=datetime.now, index=True, nullable=True
+        DateTime(timezone=False), default=lambda: datetime.now(), index=True
     )
