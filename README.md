@@ -26,6 +26,11 @@ reachability, and latency. Metrics are collected continuously and processed thro
 - Add ARP table caching to further reduce Wi‑Fi latency noise.
 - Accept MAC addresses as command‑line arguments.
 - Fetch MAC address from database for offline devices.
+- Enhance web dashboard UI:
+    1. Add overall latency and overall status.
+    2. Define device-specific routes for each device.
+    3. Add the packet loss metric.
+    4. Add charts for overall status.
 
 ## Known Issues
 
