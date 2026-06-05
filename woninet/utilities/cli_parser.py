@@ -1,3 +1,5 @@
+import json
+from typing import Any
 from woninet.main import NetworkMonitorCore
 
 
@@ -50,4 +52,42 @@ def show_device_info(args):
                 f"\t Event type={event.event_type},\t Timestamp={event.timestamp}"
             )
             print(content)
+    exit(0)
+
+def report_stats(args) -> None:
+    """
+    Output statistics report into given file.
+    following statistics are provided:
+    1. devices count.
+    2. devices list.
+    3. recent alert events.
+    """
+    try:
+        monitor: NetworkMonitorCore = args.monitor
+        devices_count = monitor.count_resources()[0]
+        devices = monitor.get_device_history()
+        output: str = args.output
+        result: dict[str, Any] = {}
+
+        result["devices_count"] = devices_count
+        result["devices"] = [
+            {
+                "ip": dev.ip,
+                "mac": dev.mac,
+                "last_seen": dev.last_seen.isoformat(),
+                "alert_state": monitor.storage.get_device_alert_state(ip=dev.ip)
+            }
+            for dev in devices
+        ]
+
+        result["recent_alert_events"] = monitor.classify_recent_alert_events()
+
+        with open(output, "w") as stats:
+            json.dump(result, stats, indent=2)
+
+        print(f"Statistics report saved to {output}")
+
+    except Exception as e:
+        print(e)
+
     exit(0)
