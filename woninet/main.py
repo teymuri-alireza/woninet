@@ -69,7 +69,7 @@ def configure_logger(arguments: Namespace) -> logging.Logger:
     """
     Initialize the core logger and adjust verbosity.
     """
-    log_output = arguments.output
+    log_output = arguments.logs
     use_color = arguments.color != "false"
 
     core_logger = get_core_logger(log_output, use_color)

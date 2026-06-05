@@ -1,5 +1,5 @@
 import argparse
-from woninet.utilities.cli_parser import list_devices, show_device_info
+from woninet.utilities.cli_parser import list_devices, show_device_info, report_stats
 
 
 def args() -> argparse.Namespace:
@@ -39,6 +39,17 @@ are collected continuously and processed through an alert engine."""
     )
     device_show.add_argument("ip", help="Device IP address")
     device_show.set_defaults(func=show_device_info)
+
+    stats_parser = subparsers.add_parser(
+        "stats", help="Output a JSON report for the woninet statistics."
+    )
+
+    stats_parser.add_argument(
+        "--output",
+        default="stats.json",
+        help="Output path for the JSON report for the woninet statistics (default: %(default)s).",
+    )
+    stats_parser.set_defaults(func=report_stats)
 
     parser.add_argument(
         "-i", "--ip", type=str, help="A single or range of target IP addresses to scan."
@@ -82,8 +93,7 @@ are collected continuously and processed through an alert engine."""
     )
 
     parser.add_argument(
-        "-o",
-        "--output",
+        "--logs",
         type=str,
         help="Output path for storing logs.",
     )

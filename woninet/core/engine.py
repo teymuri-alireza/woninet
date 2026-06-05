@@ -238,7 +238,7 @@ class NetworkMonitorCore:
                     "metric": event.metric,
                     "event_type": event.event_type,
                     "value": event.value,
-                    "timestamp": event.timestamp,
+                    "timestamp": event.timestamp.isoformat(),
                 }
             )
         return result

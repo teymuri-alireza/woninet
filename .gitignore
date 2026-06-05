@@ -14,6 +14,9 @@ env/
 logs.txt
 *.logs
 
+# Statistics output
+stats.json
+
 # build
 dist/
 build/
