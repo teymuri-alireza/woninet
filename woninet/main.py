@@ -171,7 +171,7 @@ def main() -> None:
     max_thread_workers = arguments.max_workers
 
     core_logger = configure_logger(arguments=arguments)
-    log_yaml = load_logging_yaml(log_output=arguments.output)
+    log_yaml = load_logging_yaml(log_output=arguments.logs)
 
     local_ip = detect_local_ip(logger=core_logger)
 
