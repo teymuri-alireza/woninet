@@ -54,6 +54,7 @@ def show_device_info(args):
             print(content)
     exit(0)
 
+
 def report_stats(args) -> None:
     """
     Output statistics report into given file.
@@ -75,7 +76,7 @@ def report_stats(args) -> None:
                 "ip": dev.ip,
                 "mac": dev.mac,
                 "last_seen": dev.last_seen.isoformat(),
-                "alert_state": monitor.storage.get_device_alert_state(ip=dev.ip)
+                "alert_state": monitor.storage.get_device_alert_state(ip=dev.ip),
             }
             for dev in devices
         ]

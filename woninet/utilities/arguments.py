@@ -45,7 +45,9 @@ are collected continuously and processed through an alert engine."""
     )
 
     stats_parser.add_argument(
-        "--output", default="stats.json", help="Output path for the JSON report for the woninet statistics (default: %(default)s).",
+        "--output",
+        default="stats.json",
+        help="Output path for the JSON report for the woninet statistics (default: %(default)s).",
     )
     stats_parser.set_defaults(func=report_stats)
 
