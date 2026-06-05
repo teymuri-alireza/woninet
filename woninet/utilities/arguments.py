@@ -82,8 +82,7 @@ are collected continuously and processed through an alert engine."""
     )
 
     parser.add_argument(
-        "-o",
-        "--output",
+        "--logs",
         type=str,
         help="Output path for storing logs.",
     )
