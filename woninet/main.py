@@ -191,6 +191,7 @@ def main() -> None:
         if hasattr(arguments, "func"):
             arguments.monitor = monitor
             arguments.func(arguments)
+            return
 
         if arguments.serve:
             run_server(ip=local_ip, port=port, log_yaml=log_yaml)

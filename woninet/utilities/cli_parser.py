@@ -19,7 +19,6 @@ def list_devices(args):
         for device in devices:
             row = f"Device {device.ip}: MAC={device.mac}, Last seen={device.last_seen}"
             print(row)
-    exit(0)
 
 
 def show_device_info(args):
@@ -52,7 +51,6 @@ def show_device_info(args):
                 f"\t Event type={event.event_type},\t Timestamp={event.timestamp}"
             )
             print(content)
-    exit(0)
 
 
 def report_stats(args) -> None:
@@ -90,5 +88,3 @@ def report_stats(args) -> None:
 
     except Exception as e:
         print(e)
-
-    exit(0)
