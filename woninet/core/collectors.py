@@ -26,8 +26,11 @@ def read_arp_table() -> dict[str, str]:
     except Exception:
         return table
 
+    regex = r"\((.*?)\)\s+at\s+([0-9a-fA-F:]+)"
+    if os_name == "Windows":
+        regex = r"([0-9.]+)\s+([0-9a-fA-F-]+)"
     for line in output.splitlines():
-        match = re.search(r"\((.*?)\)\s+at\s+([0-9a-fA-F:]+)", line)
+        match = re.search(regex, line)
         if match:
             table[match.group(1)] = match.group(2)
     return table
@@ -46,7 +49,9 @@ def get_arp_mac(ip: str) -> str | None:
         core_logger.error(f"Failed to read ARP table: {e}")
         return None
 
-    regex = rf"\({re.escape(ip)}\)\s+at\s+([0-9a-fA-F:]+)\s"
+    regex = r"\((.*?)\)\s+at\s+([0-9a-fA-F:]+)"
+    if os_name == "Windows":
+        regex = rf"{re.escape(ip)}\s+([0-9a-fA-F-]+)"
     match = re.search(regex, output)
     if match:
         return match.group(1)
