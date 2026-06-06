@@ -31,13 +31,21 @@ cd woninet
 **Note:** Create the virtual environment outside the project directory to avoid
 `Multiple top-level packages discovered in a flat-layout` errors.
 
-**Note 2:** The `--copies` flag forces Python to copy the interpreter instead of using a symbolic link.
-
+**Unix/Linux note:** The `--copies` flag forces Python to copy the interpreter instead of using a symbolic link.
 This is required because you will apply Linux capabilities directly to the Python binary in the virtual environment.
+
+#### Linux/macOS
 
 ```shell
 python3 -m venv --copies ../venv
 source ../venv/bin/activate
+```
+
+#### Windows (PowerShell)
+
+```shell
+py -m venv ..\venv
+..\venv\Scripts\Activate.ps1
 ```
 
 ### 3. Install *woninet* locally in editable mode:
