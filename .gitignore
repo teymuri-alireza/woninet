@@ -16,6 +16,7 @@ logs.txt
 
 # Statistics output
 stats.json
+*.json
 
 # build
 dist/
