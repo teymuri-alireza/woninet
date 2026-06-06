@@ -98,7 +98,6 @@ This [guide](./docs/usage.md) explains common ways to run *woninet* and how to r
 
 ## Requirements
 
-- Unix-based operating systems
 - Python >= 3.12
 - Root privileges
 

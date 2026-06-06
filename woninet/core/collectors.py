@@ -1,5 +1,6 @@
 import re
 import logging
+import platform
 import subprocess
 from typing import Generator, Any
 from icmplib import ping, SocketPermissionError, SocketAddressError
@@ -18,14 +19,18 @@ def read_arp_table() -> dict[str, str]:
     """
     table = {}
     try:
+        os_name = platform.system()
+        command = ["arp", "-an"] if os_name != "Windows" else ["arp", "-a"]
         # Suppress strerr to avoid clutter when ARP table is empty or limited
-        output = subprocess.check_output(["arp", "-an"], stderr=subprocess.DEVNULL)
-        output = output.decode()
+        output = subprocess.check_output(command, stderr=subprocess.DEVNULL, text=True)
     except Exception:
         return table
 
+    regex = r"\((.*?)\)\s+at\s+([0-9a-fA-F:]+)"
+    if os_name == "Windows":
+        regex = r"([0-9.]+)\s+([0-9a-fA-F-]+)"
     for line in output.splitlines():
-        match = re.search(r"\((.*?)\)\s+at\s+([0-9a-fA-F:]+)", line)
+        match = re.search(regex, line)
         if match:
             table[match.group(1)] = match.group(2)
     return table
@@ -36,14 +41,17 @@ def get_arp_mac(ip: str) -> str | None:
     Return MAC address from ARP table for the given IP, or None if not present.
     """
     try:
+        os_name = platform.system()
+        command = ["arp", "-an"] if os_name != "Windows" else ["arp", "-a"]
         # Suppress strerr to avoid clutter when ARP table is empty or limited
-        output = subprocess.check_output(["arp", "-an"], stderr=subprocess.DEVNULL)
-        output = output.decode()
+        output = subprocess.check_output(command, stderr=subprocess.DEVNULL, text=True)
     except Exception as e:
         core_logger.error(f"Failed to read ARP table: {e}")
         return None
 
-    regex = rf"\({re.escape(ip)}\)\s+at\s+([0-9a-fA-F:]+)\s"
+    regex = r"\((.*?)\)\s+at\s+([0-9a-fA-F:]+)"
+    if os_name == "Windows":
+        regex = rf"{re.escape(ip)}\s+([0-9a-fA-F-]+)"
     match = re.search(regex, output)
     if match:
         return match.group(1)

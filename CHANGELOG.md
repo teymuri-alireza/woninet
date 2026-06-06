@@ -15,6 +15,9 @@ All notable changes to this project will be documented in this file.
 - Removed `nullable` field from `datetime` in `AlertStateTable` and `AlertEventTable` to store state transition time from `warning` to `ok`.
 - Changed log output argument from `--output` to `--logs` to prevent conflict with stats' `--output` argument.
 
+### Fixed
+- Added specific ARP command and regex to parse the ARP output for both Windows and Unix-based operating systems in `collectors.py`.
+
 ---
 
 ## [1.5.0] - 2026-05-22
