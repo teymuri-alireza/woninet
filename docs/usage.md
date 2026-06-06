@@ -55,6 +55,15 @@ including its current alert state and recent alert events:
 woninet device show 192.168.1.10
 ```
 
+## Statistics report
+
+Saves information about devices and recent alert events into a JSON file.
+
+```shell
+woninet stats # default path is stats.json
+woninet stats --output stats.json
+```
+
 ---
 
 # 3. Logging
