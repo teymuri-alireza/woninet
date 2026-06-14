@@ -1,142 +1,298 @@
-let found_devices = new Map()
+let found_devices = new Map();
+let events = [];
 
-function getLatencyClass(latency) {
-    if (latency == 0) return "latency-offline";
-    if (latency <= 50) return "latency-good";
-    if (latency <= 150) return "latency-warn";
-    return "latency-bad";
+function addEvent(message) {
+
+    const timestamp = new Date().toLocaleTimeString();
+
+    events.unshift(`${timestamp} - ${message}`);
+
+    if(events.length > 15)
+        events.pop();
+
+    document.getElementById("events").innerHTML =
+        events.map(e => `<div class="event">${e}</div>`).join("");
 }
 
-function escapeHtml(value) {
-    return String(value)
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
+function getDeviceState(device) {
+
+    const latency = device.latency ?? 0;
+    const loss = device.packet_loss ?? 0;
+
+    if(latency === 0)
+        return "offline";
+
+    if(latency > 100 || loss > 2)
+        return "degraded";
+
+    return "online";
 }
 
-function checkLatency(latency) {
-    if (latency == 0) return "OFFLINE"
-    return latency
-}
+function createDeviceCard(device){
 
-function createDeviceCard(device) {
-    const ip = escapeHtml(device.ip ?? "Unknown");
-    const mac = escapeHtml(device.mac ?? "Unknown");
-    const latency = checkLatency(device.latency ?? "N/A");
-    const lastSeen = escapeHtml(device.last_seen ?? "Unknown");
-    const latencyClass = latency == "OFFLINE" ? getLatencyClass(0) : getLatencyClass(latency);
-    const article = document.createElement("article");
-    article.className = "device-card";
-    article.dataset.ip = device.ip || ""; // store raw IP for lookup
+    const state = getDeviceState(device);
 
-    article.innerHTML = `
-        <div class="device-ip">${ip}</div>
-        <div class="device-meta">
-            <div class="meta-row">
-                <span class="meta-label">Latency</span>
-                <span class="latency-pill ${latencyClass}">
-                    ${typeof (latency) === "number" ? `${latency} ms` : latency}
-                </span>
+    return `
+        <article class="device-card device-${state}">
+
+            <div class="device-header">
+
+                <div class="device-ip">
+                    ${device.ip}
+                </div>
+
+                <div class="device-status">
+                    ${state.toUpperCase()}
+                </div>
+
             </div>
-            <div class="meta-row">
-                <span class="meta-label">MAC address</span>
-                <span class="mac">${mac}</span>
+
+            <div class="metrics">
+
+                <div class="metric">
+                    <div class="metric-label">Latency</div>
+                    <div class="metric-value">
+                        ${device.latency || "OFFLINE"} ms
+                    </div>
+                </div>
+
+                <div class="metric">
+                    <div class="metric-label">Packet Loss</div>
+                    <div class="metric-value">
+                        ${(device.packet_loss ?? 0).toFixed(1)}%
+                    </div>
+                </div>
+
+                <div class="metric">
+                    <div class="metric-label">MAC</div>
+                    <div class="metric-value">
+                        ${device.mac}
+                    </div>
+                </div>
+
+                <div class="metric">
+                    <div class="metric-label">Last Seen</div>
+                    <div class="metric-value">
+                        ${device.last_seen}
+                    </div>
+                </div>
+
             </div>
-            <div class="meta-row">
-                <span class="meta-label">Last seen</span>
-                <span class="last-seen">${lastSeen}</span>
-            </div>
-        </div>
+
+        </article>
     `;
-
-    return article;
 }
 
-function updateDeviceCard(card, device) {
-    const latency = checkLatency(device.latency ?? "N/A");
-    const mac = device.mac ?? "Unknown";
-    const lastSeen = escapeHtml(device.last_seen ?? "Unknown");
-    const latencyClass = latency == "OFFLINE" ? getLatencyClass(0) : getLatencyClass(latency);
+function updateOverview(devices){
 
-    const latencySpan = card.querySelector(".latency-pill");
-    const lastSeenSpan = card.querySelector(".last-seen");
-    const macSpan = card.querySelector(".mac");
+    const total = devices.length;
 
-    if (latencySpan) {
-        latencySpan.textContent = typeof (latency) === "number" ? `${latency} ms` : latency;
-        latencySpan.className = `latency-pill ${latencyClass}`;
-    }
-    if (lastSeenSpan) {
-        lastSeenSpan.textContent = lastSeen;
-    }
-    if (macSpan) {
-        // Only update if backend returned an actual MAC address
-        const validMac = mac && mac != "Unknown";
-        if (validMac && macSpan.textContent != mac) {
-            macSpan.textContent = mac;
-        }
+    const online =
+        devices.filter(d => (d.latency ?? 0) > 0).length;
+
+    const latencyDevices =
+        devices.filter(d => (d.latency ?? 0) > 0);
+
+    const avgLatency =
+        latencyDevices.length
+        ? Math.round(
+            latencyDevices.reduce(
+                (a,b)=>a+b.latency,0
+            ) / latencyDevices.length
+        )
+        : 0;
+
+    const avgLoss =
+        devices.length
+        ? (
+            devices.reduce(
+                (a,b)=>a+(b.packet_loss ?? 0),
+                0
+            ) / devices.length
+        ).toFixed(1)
+        : 0;
+
+    document.getElementById(
+        "total_devices"
+    ).textContent = total;
+
+    document.getElementById(
+        "online_devices"
+    ).textContent = online;
+
+    document.getElementById(
+        "avg_latency"
+    ).textContent = `${avgLatency} ms`;
+
+    document.getElementById(
+        "avg_packet_loss"
+    ).textContent = `${avgLoss}%`;
+
+    const health =
+        Math.max(
+            0,
+            Math.round(
+                (online / Math.max(total,1))*100 -
+                avgLoss*5
+            )
+        );
+
+    document.getElementById(
+        "health_score"
+    ).textContent = `${health}%`;
+
+    document.getElementById(
+        "health_text"
+    ).textContent =
+        health > 90
+        ? "Excellent"
+        : health > 70
+        ? "Good"
+        : "Degraded";
+}
+
+function renderDevices(data){
+
+    const devices = data.devices || [];
+
+    updateOverview(devices);
+
+    const search =
+        document.getElementById("search")
+        .value
+        .toLowerCase();
+
+    const filter =
+        document.getElementById("filter_status")
+        .value;
+
+    const filtered =
+        devices.filter(device => {
+
+            const state =
+                getDeviceState(device);
+
+            const matchesSearch =
+                device.ip.toLowerCase().includes(search) ||
+                (device.mac || "")
+                .toLowerCase()
+                .includes(search);
+
+            const matchesFilter =
+                filter === "all" ||
+                state === filter;
+
+            return matchesSearch &&
+                   matchesFilter;
+        });
+
+    document.getElementById(
+        "devices"
+    ).innerHTML =
+        filtered.map(createDeviceCard).join("");
+}
+
+async function loadDevices(){
+
+    const statusDot =
+        document.getElementById("status_dot");
+
+    try{
+
+        const response =
+            await fetch("/devices/");
+
+        const data =
+            await response.json();
+
+        renderDevices(data);
+
+        statusDot.style.background =
+            "#22c55e";
+
+    }catch(error){
+
+        statusDot.style.background =
+            "#ef4444";
+
+        console.error(error);
     }
 }
 
-function renderDevices(devicesResponse) {
-    const loader = document.getElementById("loader");
-    const emptyMsg = document.getElementById("empty_state_msg");
-    const container = document.getElementById("devices");
+document
+.getElementById("search")
+?.addEventListener(
+    "input",
+    loadDevices
+);
 
-    const devices = devicesResponse?.devices;
-    if (!devices || devices.length === 0) {
-        found_devices.clear();
-        emptyMsg.textContent = "No devices found.";
-        emptyMsg.style.display = "block";
-        return;
-    }
-    
-    loader.style.display = "none";
-    emptyMsg.style.display = "none";
+document
+.getElementById("filter_status")
+?.addEventListener(
+    "change",
+    loadDevices
+);
 
-    // Update existing cards or add new ones
-    devices.forEach(device => {
-        if (!device.ip) return;
-        const existing = found_devices.get(device.ip);
-        if (existing) {
-            updateDeviceCard(existing.element, device);
-            existing.device = device;
-        } else {
-            const card = createDeviceCard(device);
-            container.appendChild(card);
-            found_devices.set(device.ip, { device, element: card });
-        }
-    });
-}
+// async function loadAlertEvents() {
+//     try {
+//         const response = await fetch("/stats/");
+//         const data = await response.json();
 
-async function loadDevices() {
-    const container = document.getElementById("devices");
-    const statusDot = document.getElementById("status_dot");
+//         const alertEvents = data.recent_alert_events || [];
 
+//         const alert_events = alertEvents.map(event => {
+//             const time = new Date(event.timestamp)
+//                 .toLocaleString();
+
+//             return `
+//                 <div class="event">
+//                     <strong>${event.event_type.toUpperCase()}</strong><br>
+//                     ${event.device_ip} | ${event.metric}: ${event.value.toFixed(2)} ms
+//                     <small>(${time})</small>
+//                 </div>
+//             `;
+//         }).slice(0, 15);
+
+//         document.getElementById("events").innerHTML =
+//             alert_events.join("");
+
+//     } catch (error) {
+//         console.error("Error loading alert events:", error);
+//     }
+// }
+
+async function loadAlertEvents() {
     try {
-        const response = await fetch("/devices/");
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const response = await fetch("/stats/");
+        const data = await response.json();
 
-        statusDot.style.background = "#22c55e";
-        statusDot.style.boxShadow = "0 0 16px rgba(34, 197, 94, 0.75)";
+        const alertEvents = data.recent_alert_events || [];
 
-        const devices = await response.json();
-        renderDevices(devices);
+        const alert_events = alertEvents.map(event => {
+            const time = new Date(event.timestamp)
+                .toLocaleString();
+            
+            const eventClass = event.event_type === "trigger" ? "event-trigger" : "event-recover";
+
+            return `
+                <div class="event ${eventClass}">
+                    <strong>${event.event_type.toUpperCase()}</strong><br>
+                    ${event.device_ip} | ${event.metric}: ${event.value.toFixed(2)} ms
+                    <small>(${time})</small>
+                </div>
+            `;
+        }).slice(0, 15);
+
+        document.getElementById("events").innerHTML =
+            alert_events.join("");
+
     } catch (error) {
-        statusDot.style.background = "#ef4444";
-        statusDot.style.boxShadow = "0 0 16px rgba(239, 68, 68, 0.75)";
-
-        // Only show error if we have nothing rendered yet
-        if (found_devices.size === 0 && !container.hasChildNodes()) {
-            const emptyMsg = document.getElementById("empty_state_msg");
-            emptyMsg.style.display = "block";
-            emptyMsg.textContent = "Failed to load devices.";
-        }
-        console.error("Failed to load devices:", error);
+        console.error("Error loading alert events:", error);
     }
 }
 
-loadDevices()
+loadDevices();
+loadAlertEvents();
+
 setInterval(loadDevices, 5000);
+setInterval(loadAlertEvents, 5000);
