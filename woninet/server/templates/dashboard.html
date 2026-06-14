@@ -14,20 +14,67 @@
                 <h1>woninet Dashboard</h1>
                 <p class="subtitle">Live device visibility and latency overview</p>
             </div>
+            <div class="api-status">
+                <span id="status_dot" class="status-dot"></span>
+                <span id="status_text">Connected</span>
+            </div>
         </header>
 
-        <main class="content">
+        <section class="overview-grid">
+            <div class="kpi-card">
+                <span>Total Devices</span>
+                <h2 id="total_devices">0</h2>
+            </div>
+            <div class="kpi-card">
+                <span>Online</span>
+                <h2 id="online_devices">0</h2>
+            </div>
+            <div class="kpi-card">
+                <span>Avg Latency</span>
+                <h2 id="avg_latency">0 ms</h2>
+            </div>
+            <div class="kpi-card">
+                <span>Packet Loss</span>
+                <h2 id="avg_packet_loss">0%</h2>
+            </div>
+        </section>
+
+        <section class="health-panel">
+            <div>
+                <p class="health-label">Network Health</p>
+                <h2 id="health_score">100%</h2>
+            </div>
+            <div class="health-indicator">
+                <span id="health_text">Excellent</span>
+            </div>
+        </section>
+
+        <section class="toolbar">
+            <input id="search" type="text" placeholder="Search IP, MAC...">
+            <select id="filter_status">
+                <option value="all">All Devices</option>
+                <option value="online">Online</option>
+                <option value="degraded">degraded</option>
+                <option value="offline">Offline</option>
+            </select>
+        </section>
+
+        <main class="main-layout">
             <section class="panel">
                 <div class="panel-header">
-                    <h2>Found Devices</h2>
-                    <span id="status_dot" class="status-dot"></span>
+                    <h2>Devices</h2>
                 </div>
                 <div id="devices" class="device-grid">
                     <div id="empty_state_msg" class="empty-state"></div>
                     <div id="loader" class="loader"></div>
                 </div>
             </section>
+            <aside class="events-panel">
+                <h3>Recent Events</h3>
+                <div id="events"></div>
+            </aside>
         </main>
+
     </div>
 
     <script src="/static/js/app.js"></script>
