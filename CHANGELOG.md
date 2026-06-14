@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 ---
 
 ## [Unreleased]
+
+---
+
+## [1.6.0] - 2026-06-14
 ### Added
 - Implemented error handler for `OperationalError` for when database file can not be opened.
 - Implemented `packet_loss` metric.
