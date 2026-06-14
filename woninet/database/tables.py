@@ -21,6 +21,7 @@ class DeviceTable(Base):
         String, unique=True, index=True, nullable=True
     )
     latency: Mapped[float] = mapped_column(Float)
+    packet_loss: Mapped[int] = mapped_column(Integer)
     last_seen: Mapped[datetime] = mapped_column(
         DateTime(timezone=False), default=lambda: datetime.now(), index=True
     )
