@@ -29,10 +29,14 @@ reachability, and latency. Metrics are collected continuously and processed thro
 - Enhance web dashboard UI:
     1. Define device-specific routes for each device.
     2. Add charts for overall status.
+- Use ARP noise limit as device state for styling in front-end.
 
 ## Known Issues
 
 - Monitoring Scope Limited to /24 Subnet
+- The "ms" unit in latency field in front-end is shown for offline devices too.
+- The average packet loss in front-end is being calculated based on offline devices too.
+- Packet loss is set to 100% even when device is offline.
 
 ## How To Run
 
