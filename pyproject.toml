@@ -1,6 +1,6 @@
 [project]
 name = "woninet"
-version = "1.6.0"
+version = "1.6.1"
 description = "A Python-based ARP+ICMP network monitoring tool"
 readme = "README.md"
 requires-python = ">=3.12"
