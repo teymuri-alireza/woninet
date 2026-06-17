@@ -196,6 +196,7 @@ async function loadDevices(){
 
     const statusDot =
         document.getElementById("status_dot");
+    const statusText = document.getElementById("status_text");
 
     try{
 
@@ -209,11 +210,13 @@ async function loadDevices(){
 
         statusDot.style.background =
             "#22c55e";
+        statusText.textContent = "Connected";
 
     }catch(error){
 
         statusDot.style.background =
             "#ef4444";
+        statusText.textContent = "Disconnected";
 
         console.error(error);
     }
