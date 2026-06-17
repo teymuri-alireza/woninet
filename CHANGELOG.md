@@ -5,6 +5,9 @@ All notable changes to this project will be documented in this file.
 ---
 
 ## [Unreleased]
+## Fixed
+- Added Parentheses in Windows regex for ARP scan, to return 2 patterns like (ip) and (mac) addresses.
+- return second found pattern in ARP scan to return MAC instead of IP.
 
 ---
 
