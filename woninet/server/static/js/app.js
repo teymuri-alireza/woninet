@@ -102,13 +102,11 @@ function updateOverview(devices){
         )
         : 0;
 
-    const avgLoss =
-        devices.length
+    const validDevices = devices.filter(device => device.latency !== 0);
+    const avgLoss = validDevices.length
         ? (
-            devices.reduce(
-                (a,b)=>a+(b.packet_loss ?? 0),
-                0
-            ) / devices.length
+            validDevices.reduce(
+                (sum, device) => sum + (device.packet_loss ?? 0), 0) / validDevices.length
         ).toFixed(1)
         : 0;
 
