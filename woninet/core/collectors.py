@@ -54,7 +54,7 @@ def get_arp_mac(ip: str) -> str | None:
         regex = rf"({re.escape(ip)})\s+([0-9a-fA-F-]+)"
     match = re.search(regex, output)
     if match:
-        return match.group(1)
+        return match.group(2)
     return None
 
 
