@@ -236,34 +236,6 @@ document
     loadDevices
 );
 
-// async function loadAlertEvents() {
-//     try {
-//         const response = await fetch("/stats/");
-//         const data = await response.json();
-
-//         const alertEvents = data.recent_alert_events || [];
-
-//         const alert_events = alertEvents.map(event => {
-//             const time = new Date(event.timestamp)
-//                 .toLocaleString();
-
-//             return `
-//                 <div class="event">
-//                     <strong>${event.event_type.toUpperCase()}</strong><br>
-//                     ${event.device_ip} | ${event.metric}: ${event.value.toFixed(2)} ms
-//                     <small>(${time})</small>
-//                 </div>
-//             `;
-//         }).slice(0, 15);
-
-//         document.getElementById("events").innerHTML =
-//             alert_events.join("");
-
-//     } catch (error) {
-//         console.error("Error loading alert events:", error);
-//     }
-// }
-
 async function loadAlertEvents() {
     try {
         const response = await fetch("/stats/");
