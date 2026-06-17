@@ -51,7 +51,7 @@ def get_arp_mac(ip: str) -> str | None:
 
     regex = r"\((.*?)\)\s+at\s+([0-9a-fA-F:]+)"
     if os_name == "Windows":
-        regex = rf"{re.escape(ip)}\s+([0-9a-fA-F-]+)"
+        regex = rf"({re.escape(ip)})\s+([0-9a-fA-F-]+)"
     match = re.search(regex, output)
     if match:
         return match.group(1)
