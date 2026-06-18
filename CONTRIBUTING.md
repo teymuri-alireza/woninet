@@ -108,35 +108,18 @@ ruff check .
 ruff format .
 ```
 
-## 5. Commit Message Guidelines
-
-Use Conventional Commits:
-
-- `feat:` – new feature
-- `fix:` – bug fix
-- `docs:` – documentation changes
-- `refactor:` – code improvements without behavior change
-- `perf:` – performance optimizations
-- `chore:` – maintenance, version bumps, CI tweaks
-
-## 6. Branching Model
+## 5. Branching Model
 
 Use a lightwaight workflow:
 
 - **main** – Stable releases. This branch should always contain production‑ready code
 - **dev** – Active development and integration branch
 
-Contributors should create branches from dev using the following naming conventions:
-
-- **feature/*** – New features (e.g., `feature/add-search`)
-- **fix/*** – Bug fixes (e.g., `fix/login-error`)
-- **perf/*** – Performance improvements (e.g., `perf/cache-optimization`)
-
-When your work is complete, open a Pull Request targeting the dev branch.
+Contributors should create branches from dev, and when your work is complete, open a Pull Request targeting the dev branch.
 
 Changes are reviewed and tested before being merged.
 
-## 7. Pull Request Guidelines
+## 6. Pull Request Guidelines
 
 When opening a PR:
 
@@ -150,4 +133,4 @@ When opening a PR:
 Thank you for making *woninet* better!
 Maintainers and contributors appreciate your work.
 
-**Update: 2026-04-30**
+**Update: 2026-06-18**
