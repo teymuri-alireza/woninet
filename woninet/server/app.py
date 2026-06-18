@@ -1,5 +1,4 @@
 import asyncio
-from pathlib import Path
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
@@ -7,12 +6,12 @@ from fastapi.templating import Jinja2Templates
 from fastapi.openapi.docs import get_swagger_ui_html
 from contextlib import asynccontextmanager
 from woninet.server.routes import devices, stats
+from woninet.server.dependencies import get_static_path
 from woninet.main import get_monitor
 from woninet.__init__ import __version__
 
 # Global variables
-STATIC_DIR = Path(__file__).parent / "static"
-TEMPLATES_DIR = Path(__file__).parent / "templates"
+TEMPLATES_DIR, STATIC_DIR = get_static_path()
 
 monitor = None
 
