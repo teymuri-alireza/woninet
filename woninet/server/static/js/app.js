@@ -31,6 +31,7 @@ function getDeviceState(device) {
 function createDeviceCard(device){
 
     const state = getDeviceState(device);
+    const deviceLatency = device.latency != 0 ? `${device.latency} ms` : "OFFLINE";
 
     return `
         <article class="device-card device-${state}">
@@ -52,7 +53,7 @@ function createDeviceCard(device){
                 <div class="metric">
                     <div class="metric-label">Latency</div>
                     <div class="metric-value">
-                        ${device.latency || "OFFLINE"} ms
+                        ${deviceLatency}
                     </div>
                 </div>
 
