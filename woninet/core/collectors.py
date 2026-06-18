@@ -95,7 +95,7 @@ def detect_host(
         status.reachable = False
         status.mac = None
         status.latency = 0.0
-        status.packet_loss = 1.0
+        status.packet_loss = 100.0
         return status
 
     if stop_event and stop_event.is_set():
@@ -132,6 +132,10 @@ def detect_host(
     status.latency = response.avg_rtt
     status.packet_loss = response.packet_loss * 100
     latency: float = status.latency
+    if latency == 0:
+        # Latency 0 means device is offline.
+        # Packet loss shoulnd't be determined for offline devices.
+        status.packet_loss = 0.0
 
     # Classification logic
     if not mac and latency == 0:
