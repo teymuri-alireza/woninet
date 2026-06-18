@@ -78,6 +78,13 @@ function createDeviceCard(device){
                     </div>
                 </div>
 
+                <div class="metric">
+                    <div class="metric-label">Device information</div>
+                    <div class="metric-value">
+                        <a class="device-link" href="/devices/${device.ip}">Go to device page</a>
+                    </div>
+                </div>
+
             </div>
 
         </article>

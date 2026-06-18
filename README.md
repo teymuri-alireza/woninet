@@ -27,8 +27,7 @@ reachability, and latency. Metrics are collected continuously and processed thro
 - Accept MAC addresses as command‑line arguments.
 - Fetch MAC address from database for offline devices.
 - Enhance web dashboard UI:
-    1. Define device-specific routes for each device.
-    2. Add charts for overall status.
+    1. Add charts for overall status.
 - Use ARP noise limit as device state for styling in front-end.
 
 ## Known Issues

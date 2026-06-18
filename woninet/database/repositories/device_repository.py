@@ -93,6 +93,7 @@ class DeviceRepository:
             device.mac = row.mac
             device.latency = row.latency
             device.last_seen = row.last_seen
+            device.packet_loss = row.packet_loss
             return device
         return None
 
