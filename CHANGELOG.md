@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [Unreleased]
+## Changed
+- Changed the source IP pakcet loss value from **0.0** to **100.0** to match the `packet loss` percentage format.
+
+## Fixed
+- Set filter to calculate average `packet loss` based on online devices in server dashbaord.
+- Set `packet loss` to zero for offline devices.
+
+---
+
 ## [1.6.1] - 2026-06-17
 ## Fixed
 - Added Parentheses in Windows regex for ARP scan, to return 2 patterns like (ip) and (mac) addresses.
