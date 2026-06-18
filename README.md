@@ -29,6 +29,7 @@ reachability, and latency. Metrics are collected continuously and processed thro
 - Enhance web dashboard UI:
     1. Add charts for overall status.
 - Use ARP noise limit as device state for styling in front-end.
+- Add CLI argument to accept target IP addresses from a file.
 
 ## Known Issues
 
