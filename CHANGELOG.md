@@ -5,8 +5,13 @@ All notable changes to this project will be documented in this file.
 ---
 
 ## [Unreleased]
+## Added
+- Added `/devices/{ip}` endpoint with `GET` method to serve specific page for devices.
+- Added `min-height` field in `style.css` to balance background color.
+
 ## Changed
 - Changed the source IP pakcet loss value from **0.0** to **100.0** to match the `packet loss` percentage format.
+- Moved templates and static path to `dependencies.py` to prevent circular import error.
 
 ## Fixed
 - Set filter to calculate average `packet loss` based on online devices in server dashbaord.
