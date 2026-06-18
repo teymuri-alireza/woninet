@@ -34,7 +34,6 @@ reachability, and latency. Metrics are collected continuously and processed thro
 ## Known Issues
 
 - Monitoring Scope Limited to /24 Subnet
-- The "ms" unit in latency field in front-end is shown for offline devices too.
 
 ## How To Run
 
