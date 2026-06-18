@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Device Info - {{ device.ip }}</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="dashboard">
+        <header class="topbar">
+            <div>
+                <p class="eyebrow">Device Details</p>
+                <h1>{{ device.ip }}</h1>
+                <p class="subtitle">Latest monitoring and alert history</p>
+            </div>
+        </header>
+
+        <section class="overview-grid">
+            <div class="kpi-card">
+                <span>IP Address</span>
+                <h2>{{ device.ip }}</h2>
+            </div>
+            <div class="kpi-card">
+                <span>MAC Address</span>
+                <h2 style="font-size: 1rem;">{{ device.mac }}</h2>
+            </div>
+            <div class="kpi-card">
+                <span>Latency</span>
+                <h2>{% if device.latency == 0%}OFFLINE{% else %}{{ device.latency }} ms{% endif %}</h2>
+            </div>
+            <div class="kpi-card">
+                <span>Packet Loss</span>
+                <h2>{{ device.packet_loss }}%</h2>
+            </div>
+        </section>
+
+        <main class="main-layout">
+            <section class="panel">
+                <div class="panel-header">
+                    <h2>Device Details</h2>
+                </div>
+                <div class="device-grid">
+                    <article class="device-card device-{% if device.latency == 0 %}offline{% elif device.latency > 100 %}degraded{% else %}online{% endif %}">
+                        <div class="device-header">
+                            <div class="device-status">
+                                {% if device.latency == 0 %}OFFLINE{% else %}ONLINE{% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="metrics">
+                            <div class="metric">
+                                <div class="metric-label">Last Seen</div>
+                                <div class="metric-value">{{ device.last_seen }}</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-label">Latency State</div>
+                                <div class="metric-value">{{ device_alert_state.latency_ms }}</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-label">Packet Loss State</div>
+                                <div class="metric-value">{{ device_alert_state.packet_loss }}</div>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </section>
+
+            <aside class="events-panel">
+                <h3>Alert Events</h3>
+                <div id="events">
+                    {% if device_recent_alert_events %}
+                        {% for event in device_recent_alert_events %}
+                            <div class="event {% if event.event_type == 'recover' %}event-recover{% else %}event-trigger{% endif %}">
+                                <strong>{{ event.event_type|upper }}</strong><br>
+                                {{ event.metric }}: {{ event.value|round(2) }}
+                                <small>({{ event.timestamp }})</small>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="no-alerts">No alerts</p>
+                    {% endif %}
+                </div>
+            </aside>
+        </main>
+
+        <div style="margin-top: 20px;">
+            <a href="/" class="back-link">Back to Dashboard</a>
+        </div>
+    </div>
+</body>
+</html>
