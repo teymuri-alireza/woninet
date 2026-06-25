@@ -254,11 +254,12 @@ async function loadAlertEvents() {
                 .toLocaleString();
             
             const eventClass = event.event_type === "trigger" ? "event-trigger" : "event-recover";
+            const metricUnit = event.metric === "latency_ms" ? "ms" : "%";
 
             return `
                 <div class="event ${eventClass}">
                     <strong>${event.event_type.toUpperCase()}</strong><br>
-                    ${event.device_ip} | ${event.metric}: ${event.value.toFixed(2)} ms
+                    ${event.device_ip} | ${event.metric}: ${event.value.toFixed(2)} ${metricUnit}
                     <small>(${time})</small>
                 </div>
             `;
