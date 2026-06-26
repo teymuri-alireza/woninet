@@ -28,66 +28,50 @@ function getDeviceState(device) {
     return "online";
 }
 
-function createDeviceCard(device){
+function createDeviceRow(device){
 
     const state = getDeviceState(device);
-    const deviceLatency = device.latency != 0 ? `${device.latency} ms` : "OFFLINE";
+
+    const latency =
+        device.latency !== 0
+            ? `${device.latency} ms`
+            : "--";
 
     return `
-        <article class="device-card device-${state}">
+    <tr>
 
-            <div class="device-header">
+        <td>
 
-                <div class="device-ip">
-                    ${device.ip}
-                </div>
+            <span class="status-badge ${state}">
+                ${state}
+            </span>
 
-                <div class="device-status">
-                    ${state.toUpperCase()}
-                </div>
+        </td>
 
-            </div>
+        <td>
 
-            <div class="metrics">
+            <strong>${device.ip}</strong>
 
-                <div class="metric">
-                    <div class="metric-label">Latency</div>
-                    <div class="metric-value">
-                        ${deviceLatency}
-                    </div>
-                </div>
+        </td>
 
-                <div class="metric">
-                    <div class="metric-label">Packet Loss</div>
-                    <div class="metric-value">
-                        ${(device.packet_loss ?? 0).toFixed(1)}%
-                    </div>
-                </div>
+        <td>${latency}</td>
 
-                <div class="metric">
-                    <div class="metric-label">MAC</div>
-                    <div class="metric-value">
-                        ${device.mac}
-                    </div>
-                </div>
+        <td>${(device.packet_loss ?? 0).toFixed(1)}%</td>
 
-                <div class="metric">
-                    <div class="metric-label">Last Seen</div>
-                    <div class="metric-value">
-                        ${device.last_seen}
-                    </div>
-                </div>
+        <td>${device.mac}</td>
 
-                <div class="metric">
-                    <div class="metric-label">Device information</div>
-                    <div class="metric-value">
-                        <a class="device-link" href="/devices/${device.ip}">Go to device page</a>
-                    </div>
-                </div>
+        <td>${device.last_seen}</td>
 
-            </div>
+        <td>
 
-        </article>
+            <a class="device-link"
+               href="/devices/${device.ip}">
+                <i class="fa fa-ellipsis-v"></i>
+            </a>
+
+        </td>
+
+    </tr>
     `;
 }
 
@@ -133,28 +117,6 @@ function updateOverview(devices){
     document.getElementById(
         "avg_packet_loss"
     ).textContent = `${avgLoss}%`;
-
-    // const health =
-    //     Math.max(
-    //         0,
-    //         Math.round(
-    //             (online / Math.max(total,1))*100 -
-    //             avgLoss*5
-    //         )
-    //     );
-
-    // document.getElementById(
-    //     "health_score"
-    // ).textContent = `${health}%`;
-
-    // document.getElementById(
-    //     "health_text"
-    // ).textContent =
-    //     health > 90
-    //     ? "Excellent"
-    //     : health > 70
-    //     ? "Good"
-    //     : "Degraded";
 }
 
 function renderDevices(data){
@@ -195,7 +157,7 @@ function renderDevices(data){
     document.getElementById(
         "devices"
     ).innerHTML =
-        filtered.map(createDeviceCard).join("");
+        filtered.map(createDeviceRow).join("");
 }
 
 async function loadDevices(){

@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>woninet Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     <link rel="stylesheet" href="/static/css/style.css">
 </head>
 <body>
@@ -20,53 +22,87 @@
             </div>
         </header>
 
+        <!-- KPI CARDS -->
         <section class="overview-grid">
+
             <div class="kpi-card">
-                <span>Total Devices</span>
+                <div class="kpi-icon">
+                    <i class="fa-solid fa-server"></i>
+                    <span>Total Devices</span>
+                </div>
                 <h2 id="total_devices">0</h2>
             </div>
+
             <div class="kpi-card">
-                <span>Online</span>
+                <div class="kpi-icon success">
+                    <i class="fa-solid fa-circle-check"></i>
+                    <span>Online</span>
+                </div>
                 <h2 id="online_devices">0</h2>
             </div>
+
             <div class="kpi-card">
-                <span>Avg Latency</span>
+                <div class="kpi-icon primary">
+                    <i class="fa-solid fa-wave-square"></i>
+                    <span>Average Latency</span>
+                </div>
                 <h2 id="avg_latency">0 ms</h2>
             </div>
+
             <div class="kpi-card">
-                <span>Packet Loss</span>
+                <div class="kpi-icon warning">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    <span>Packet Loss</span>
+                </div>
                 <h2 id="avg_packet_loss">0%</h2>
             </div>
         </section>
 
-        <!-- <section class="health-panel">
-            <div>
-                <p class="health-label">Network Health</p>
-                <h2 id="health_score">100%</h2>
-            </div>
-            <div class="health-indicator">
-                <span id="health_text">Excellent</span>
-            </div>
-        </section> -->
-
         <section class="toolbar">
-            <input id="search" type="text" placeholder="Search IP, MAC...">
-            <select id="filter_status">
-                <option value="all">All Devices</option>
-                <option value="online">Online</option>
-                <option value="degraded">degraded</option>
-                <option value="offline">Offline</option>
-            </select>
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input id="search" type="text" placeholder="Search IP address or MAC address">
+            </div>
+
+            <div>
+                <select id="filter_status">
+                    <option value="all">All Devices</option>
+                    <option value="online">Online</option>
+                    <option value="degraded">Degraded</option>
+                    <option value="offline">Offline</option>
+                </select>
+            </div>
         </section>
 
         <main class="main-layout">
             <section class="panel">
                 <div class="panel-header">
-                    <h2>Devices</h2>
+                    <div>
+                        <h2>Devices</h2>
+                    </div>
                 </div>
-                <div id="devices" class="device-grid">
-                    <div id="empty_state_msg" class="empty-state"></div>
-                    <div id="loader" class="loader"></div>
+                <div class="table-wrapper">
+                    <table class="device-table">
+                        <thead>
+                            <tr>
+                                <th>Status</th>
+                                <th>IP Address</th>
+                                <th>Latency</th>
+                                <th>Packet Loss</th>
+                                <th>MAC Address</th>
+                                <th>Last Seen</th>
+                                <th>Details</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="devices">
+                            <tr>
+                                <td colspan="7">
+                                    <div id="loader" class="loader"></div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </section>
             <aside class="events-panel">
