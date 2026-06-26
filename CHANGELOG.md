@@ -9,11 +9,13 @@ All notable changes to this project will be documented in this file.
 - Added `/devices/{ip}` endpoint with `GET` method to serve specific page for devices.
 - Added `min-height` field in `style.css` to balance background color.
 - Added icons for server UI KPI cards, and search bar.
+- Added `get_monitor_gracefully()` in `dependencies.py`.
 
 ## Changed
 - Changed the source IP pakcet loss value from **0.0** to **100.0** to match the `packet loss` percentage format.
 - Moved templates and static path to `dependencies.py` to prevent circular import error.
 - Replaced card view with table view in server UI.
+- Moved service logic to API route functions for clarity.
 
 ## Fixed
 - Set filter to calculate average `packet loss` based on online devices in server dashbaord.
