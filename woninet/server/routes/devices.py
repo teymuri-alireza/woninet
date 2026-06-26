@@ -1,8 +1,7 @@
 from fastapi import APIRouter, Request, Path
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
-from woninet.server.services.device_service import get_devices
-from woninet.server.dependencies import get_static_path
+from woninet.server.dependencies import get_static_path, get_monitor_gracefully
 
 TEMPLATES_DIR, STATIC_DIR = get_static_path()
 templates = Jinja2Templates(directory=TEMPLATES_DIR)
@@ -12,7 +11,8 @@ router = APIRouter(prefix="/devices", tags=["devices"])
 
 @router.get("/")
 def list_devices():
-    return get_devices()
+    monitor = get_monitor_gracefully()
+    return {"devices": monitor.get_device_history()}
 
 
 @router.get("/{ip}", response_class=HTMLResponse)
