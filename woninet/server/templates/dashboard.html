@@ -77,11 +77,32 @@
         <main class="main-layout">
             <section class="panel">
                 <div class="panel-header">
-                    <h2>Devices</h2>
+                    <div>
+                        <h2>Devices</h2>
+                    </div>
                 </div>
-                <div id="devices" class="device-grid">
-                    <div id="empty_state_msg" class="empty-state"></div>
-                    <div id="loader" class="loader"></div>
+                <div class="table-wrapper">
+                    <table class="device-table">
+                        <thead>
+                            <tr>
+                                <th>Status</th>
+                                <th>IP Address</th>
+                                <th>Latency</th>
+                                <th>Packet Loss</th>
+                                <th>MAC Address</th>
+                                <th>Last Seen</th>
+                                <th>Details</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="devices">
+                            <tr>
+                                <td colspan="7">
+                                    <div id="loader" class="loader"></div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </section>
             <aside class="events-panel">

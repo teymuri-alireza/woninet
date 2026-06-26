@@ -302,3 +302,67 @@ body{
         grid-template-columns:repeat(2,1fr);
     }
 }
+
+/* Table view for devices CSS code */
+.table-wrapper{
+    overflow:auto;
+    border-radius:14px;
+}
+
+.device-table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+.device-table thead{
+    background:#131f34;
+    position:sticky;
+    top:0;
+}
+
+.device-table th{
+    text-align:left;
+    padding:16px;
+    color:var(--muted);
+    font-size:.85rem;
+    font-weight:600;
+    border-bottom:1px solid var(--border);
+}
+
+.device-table td{
+    padding:15px 16px;
+    border-bottom:1px solid rgba(255,255,255,.05);
+}
+
+.device-table tbody tr{
+    transition:.15s;
+}
+
+.device-table tbody tr:hover{
+    background:#172540;
+}
+.status-badge{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    padding:4px 12px;
+    border-radius:999px;
+    font-size:.75rem;
+    font-weight:700;
+    text-transform:uppercase;
+}
+
+.status-badge.online{
+    background:rgba(34,197,94,.15);
+    color:#22c55e;
+}
+
+.status-badge.degraded{
+    background:rgba(245,158,11,.15);
+    color:#f59e0b;
+}
+
+.status-badge.offline{
+    background:rgba(239,68,68,.15);
+    color:#ef4444;
+}
