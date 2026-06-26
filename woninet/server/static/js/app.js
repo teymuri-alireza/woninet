@@ -133,28 +133,6 @@ function updateOverview(devices){
     document.getElementById(
         "avg_packet_loss"
     ).textContent = `${avgLoss}%`;
-
-    // const health =
-    //     Math.max(
-    //         0,
-    //         Math.round(
-    //             (online / Math.max(total,1))*100 -
-    //             avgLoss*5
-    //         )
-    //     );
-
-    // document.getElementById(
-    //     "health_score"
-    // ).textContent = `${health}%`;
-
-    // document.getElementById(
-    //     "health_text"
-    // ).textContent =
-    //     health > 90
-    //     ? "Excellent"
-    //     : health > 70
-    //     ? "Good"
-    //     : "Degraded";
 }
 
 function renderDevices(data){
