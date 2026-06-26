@@ -7,17 +7,6 @@ from woninet.server.dependencies import get_static_path
 TEMPLATES_DIR, STATIC_DIR = get_static_path()
 templates = Jinja2Templates(directory=TEMPLATES_DIR)
 
-
-def get_monitor_gracefully():
-    """
-    Call get_monitor() and return the intance of NetworkMonitorCore class
-    to prevent circular import error.
-    """
-    from woninet.main import get_monitor
-
-    monitor = get_monitor()
-    return monitor
-
 router = APIRouter(prefix="/devices", tags=["devices"])
 
 
