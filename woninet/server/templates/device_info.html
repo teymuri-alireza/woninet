@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Device Info - {{ device.ip }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     <link rel="stylesheet" href="/static/css/style.css">
 </head>
 <body>
@@ -18,15 +20,24 @@
 
         <section class="overview-grid">
             <div class="kpi-card">
-                <span>MAC Address</span>
+                <div class="kpi-icon primary">
+                    <i class="fa-solid fa-network-wired"></i>
+                    <span>MAC Address</span>
+                </div>
                 <h2 style="font-size: 1rem;">{{ device.mac }}</h2>
             </div>
             <div class="kpi-card">
-                <span>Latency</span>
+                <div class="kpi-icon primary">
+                    <i class="fa-solid fa-wave-square"></i>
+                    <span>Latency</span>
+                </div>
                 <h2>{% if device.latency == 0%}OFFLINE{% else %}{{ device.latency }} ms{% endif %}</h2>
             </div>
             <div class="kpi-card">
-                <span>Packet Loss</span>
+                <div class="kpi-icon warning">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    <span>Packet Loss</span>
+                </div>
                 <h2>{{ device.packet_loss }}%</h2>
             </div>
         </section>
