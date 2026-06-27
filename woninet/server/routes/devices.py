@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Request, Path
+from fastapi import APIRouter, Request, Path, HTTPException, status
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
 from woninet.server.dependencies import get_static_path, get_monitor_gracefully
@@ -26,6 +26,10 @@ def device_info(
         max_length=15,
         ),
     ):
+    monitor = get_monitor_gracefully()
+    exists = monitor.device_exists(ip=ip)
+    if not exists:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Not Found")
     return templates.TemplateResponse(request=request, name="device_info.html")
 
 
