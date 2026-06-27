@@ -13,7 +13,7 @@ env/
 
 # logs
 logs.txt
-*.logs
+*.log
 
 # Statistics output
 stats.json
