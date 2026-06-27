@@ -224,6 +224,15 @@ class NetworkMonitorCore:
         recent_device_alert_events = self.storage.get_recent_device_alert_events(ip=ip)
         return (device_info, device_alert_state, recent_device_alert_events)
 
+    def device_exists(self, ip: str) -> bool:
+        """
+        Return boolean indicating if device exists for a given IP address.
+        """
+        exists = self.storage.fetch_device_info(ip=ip)
+        if exists:
+            return True
+        return False
+
     def classify_recent_alert_events(self) -> list[dict[str, Any]]:
         """
         Re-order and organize the recent alert events
