@@ -1,4 +1,5 @@
 import asyncio
+from pathlib import Path
 from fastapi import FastAPI, Request, HTTPException, status
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
@@ -12,6 +13,7 @@ from woninet.__init__ import __version__
 
 # Global variables
 TEMPLATES_DIR, STATIC_DIR = get_static_path()
+CHARTS_DIR = Path(__file__).parent.parent / "charts"
 
 monitor = None
 
@@ -62,6 +64,7 @@ templates = Jinja2Templates(directory=TEMPLATES_DIR)
 
 # Static files
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+app.mount("/charts", StaticFiles(directory=CHARTS_DIR), name="charts")
 
 # Routes
 app.include_router(devices.router)
