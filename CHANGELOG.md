@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 - Added `min-height` field in `style.css` to balance background color.
 - Added icons for server UI KPI cards, and search bar.
 - Added `get_monitor_gracefully()` in `dependencies.py`.
+- Added custom `404` exception in FastAPI app instance.
 - Added `GraphEngine` in `core/` to design and generate device graphs and charts for network device metrics.
 - Added `GraphEngine.design_device_latency_events()` in devices info page.
 
