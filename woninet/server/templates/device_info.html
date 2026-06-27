@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Device Info - {{ device.ip }}</title>
+    <title>Device Info</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     <link rel="stylesheet" href="/static/css/style.css">
@@ -13,8 +13,8 @@
         <header class="topbar">
             <div>
                 <p class="eyebrow">Device Details</p>
-                <h1>{{ device.ip }}</h1>
-                <p class="subtitle">Latest monitoring and alert history</p>
+                <h1 id="device-ip"></h1>
+                <p class="subtitle">Live monitoring and alert history</p>
             </div>
         </header>
 
@@ -24,21 +24,21 @@
                     <i class="fa-solid fa-network-wired"></i>
                     <span>MAC Address</span>
                 </div>
-                <h2 style="font-size: 1rem;">{{ device.mac }}</h2>
+                <h2 style="font-size: 1rem;" id="device-mac"></h2>
             </div>
             <div class="kpi-card">
                 <div class="kpi-icon primary">
                     <i class="fa-solid fa-wave-square"></i>
                     <span>Latency</span>
                 </div>
-                <h2>{% if device.latency == 0%}OFFLINE{% else %}{{ device.latency }} ms{% endif %}</h2>
+                <h2 id="device-latency"></h2>
             </div>
             <div class="kpi-card">
                 <div class="kpi-icon warning">
                     <i class="fa-solid fa-triangle-exclamation"></i>
                     <span>Packet Loss</span>
                 </div>
-                <h2>{{ device.packet_loss }}%</h2>
+                <h2 id="device-packet-loss"></h2>
             </div>
         </section>
 
@@ -48,25 +48,23 @@
                     <h2>Device Details</h2>
                 </div>
                 <div class="device-grid">
-                    <article class="device-card device-{% if device.latency == 0 %}offline{% elif device.latency > 100 %}degraded{% else %}online{% endif %}">
+                    <article class="device-card" id="device-card">
                         <div class="device-header">
-                            <div class="device-status">
-                                {% if device.latency == 0 %}OFFLINE{% else %}ONLINE{% endif %}
-                            </div>
+                            <div class="device-status" id="device-status"></div>
                         </div>
                         
                         <div class="metrics">
                             <div class="metric">
                                 <div class="metric-label">Last Seen</div>
-                                <div class="metric-value">{{ device.last_seen }}</div>
+                                <div class="metric-value" id="device-last-seen"></div>
                             </div>
                             <div class="metric">
                                 <div class="metric-label">Latency State</div>
-                                <div class="metric-value">{{ device_alert_state.latency_ms }}</div>
+                                <div class="metric-value" id="alert-state-latency"></div>
                             </div>
                             <div class="metric">
                                 <div class="metric-label">Packet Loss State</div>
-                                <div class="metric-value">{{ device_alert_state.packet_loss }}</div>
+                                <div class="metric-value" id="alert-state-packet-loss">}</div>
                             </div>
                         </div>
                     </article>
@@ -75,19 +73,7 @@
 
             <aside class="events-panel">
                 <h3>Alert Events</h3>
-                <div id="events">
-                    {% if device_recent_alert_events %}
-                        {% for event in device_recent_alert_events %}
-                            <div class="event {% if event.event_type == 'recover' %}event-recover{% else %}event-trigger{% endif %}">
-                                <strong>{{ event.event_type|upper }}</strong><br>
-                                {{ event.metric }}: {{ event.value|round(2) }}
-                                <small>({{ event.timestamp }})</small>
-                            </div>
-                        {% endfor %}
-                    {% else %}
-                        <p class="no-alerts">No alerts</p>
-                    {% endif %}
-                </div>
+                <div id="events"></div>
             </aside>
         </main>
 
@@ -95,5 +81,7 @@
             <a href="/" class="back-link">Back to Dashboard</a>
         </div>
     </div>
+
+    <script src="/static/js/device_info.js"></script>
 </body>
 </html>

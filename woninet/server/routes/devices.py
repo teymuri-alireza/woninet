@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Request, Path
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
 from woninet.server.dependencies import get_static_path, get_monitor_gracefully
 
@@ -26,17 +26,26 @@ def device_info(
         max_length=15,
         ),
     ):
+    return templates.TemplateResponse(request=request, name="device_info.html")
+
+
+@router.get("/{ip}/api")
+def device_info_api(
+    request: Request,
+    ip: str = Path(
+        ...,
+        title="IP address",
+        description="IP address of the device.",
+        min_length=7,
+        max_length=15,
+        ),
+    ):
     monitor = get_monitor_gracefully()
     device, device_alert_state, device_recent_alert_events = monitor.get_device_info(
         ip=ip
     )
-    return templates.TemplateResponse(
-        request=request,
-        name="device_info.html",
-        context={
-            "request": request,
-            "device": device,
-            "device_alert_state": device_alert_state,
-            "device_recent_alert_events": device_recent_alert_events,
+    return {
+        "device": device,
+        "device_alert_state": device_alert_state,
+        "device_recent_alert_events": device_recent_alert_events,
         }
-    )
