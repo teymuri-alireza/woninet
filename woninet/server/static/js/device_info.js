@@ -77,7 +77,7 @@ async function loadDeviceInfo() {
     device.latency === 0 ? latency.textContent = "OFFLINE" : latency.textContent = `${device.latency} ms`;
     deviceMAC.textContent = device.mac;
     packetLoss.textContent = `${device.packet_loss} %`;
-    device.latency === 0 ? status.textContent = "OFFLINE" : "ONLINE";
+    device.latency === 0 ? status.textContent = "OFFLINE" : status.textContent = "ONLINE";
     lastSeen.textContent = device.last_seen;
 
     alertSatteLatency.textContent = deviceAlertState.latency_ms;
