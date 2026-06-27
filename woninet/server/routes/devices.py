@@ -48,6 +48,10 @@ def device_info_api(
     device, device_alert_state, device_recent_alert_events = monitor.get_device_info(
         ip=ip
     )
+    monitor.graph_engine.design_device_latency_events(
+        ip=ip,
+        recent_device_alert_events=device_recent_alert_events
+    )
     return {
         "device": device,
         "device_alert_state": device_alert_state,
