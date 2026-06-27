@@ -30,3 +30,6 @@ build/
 
 # vs code directory
 .vscode/
+
+# Statistics Charts
+charts/

@@ -8,6 +8,7 @@ const alertSatteLatency = document.getElementById("alert-state-latency");
 const alertStatePacketLoss = document.getElementById("alert-state-packet-loss");
 const alertsContainer = document.getElementById("events");
 const deviceCard = document.getElementById("device-card");
+const lineGraph = document.getElementById("device-recent-events-line-graph");
 
 
 function loadDeviceCardStyle(device_latency) {
@@ -81,6 +82,9 @@ async function loadDeviceInfo() {
 
     alertSatteLatency.textContent = deviceAlertState.latency_ms;
     alertStatePacketLoss.textContent = deviceAlertState.packet_loss;
+
+    // Send current date as query to prevent cache from not loading the new graph image
+    lineGraph.src = `/charts/${ip}.png?v=${Date.now()}`
 
     loadDeviceCardStyle(device.latency);
 
