@@ -169,7 +169,7 @@ async function loadDevices(){
     try{
 
         const response =
-            await fetch("/devices/");
+            await fetch("/api/devices");
 
         const data =
             await response.json();
@@ -206,7 +206,7 @@ document
 
 async function loadAlertEvents() {
     try {
-        const response = await fetch("/stats/");
+        const response = await fetch("/api/stats");
         const data = await response.json();
 
         const alertEvents = data.recent_alert_events || [];

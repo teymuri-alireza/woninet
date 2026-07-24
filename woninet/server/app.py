@@ -6,7 +6,9 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.openapi.docs import get_swagger_ui_html
 from contextlib import asynccontextmanager
-from woninet.server.routes import devices, stats
+from woninet.server.routes.api.devices import router as devices_api
+from woninet.server.routes.api.stats import router as stats_api
+from woninet.server.routes.page.devices import router as devices_page
 from woninet.server.dependencies import get_static_path
 from woninet.main import get_monitor
 from woninet.__init__ import __version__
@@ -67,8 +69,9 @@ app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 app.mount("/charts", StaticFiles(directory=CHARTS_DIR), name="charts")
 
 # Routes
-app.include_router(devices.router)
-app.include_router(stats.router)
+app.include_router(devices_api)
+app.include_router(stats_api)
+app.include_router(devices_page)
 
 
 # The root path

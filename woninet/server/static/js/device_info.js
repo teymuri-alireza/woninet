@@ -68,7 +68,7 @@ async function loadDeviceInfo() {
     const ip = window.location.pathname.split("/").pop();
     deviceIP.textContent = ip;
 
-    const response = await fetch(`/devices/${ip}/api`);
+    const response = await fetch(`/api/devices/${ip}`);
     const data = await response.json();
     const device = data.device || "";
     const deviceAlertState = data.device_alert_state || "";
