@@ -56,9 +56,9 @@ are collected continuously and processed through an alert engine."""
     )
 
     parser.add_argument(
-        "--serve",
+        "--cli",
         action="store_true",
-        help="Starts the server for web-based dashboard.",
+        help="Run woninet in CLI mode.",
     )
 
     parser.add_argument(

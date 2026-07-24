@@ -79,7 +79,7 @@ def configure_logger(arguments: Namespace) -> logging.Logger:
     elif arguments.verbose >= 2:
         core_logger.setLevel(TRACE_LEVEL)
 
-    if arguments.serve:
+    if not arguments.cli:
         core_logger.setLevel(logging.ERROR)
 
     return core_logger
@@ -193,11 +193,11 @@ def main() -> None:
             arguments.func(arguments)
             return
 
-        if arguments.serve:
-            run_server(ip=local_ip, port=port, log_yaml=log_yaml)
-        else:
+        if arguments.cli:
             monitor.start()
             monitor.wait()
+        else:
+            run_server(ip=local_ip, port=port, log_yaml=log_yaml)
     except KeyboardInterrupt:
         core_logger.info("Keyboard interrupted. Wait for shut down...")
     except ValueError as e:
