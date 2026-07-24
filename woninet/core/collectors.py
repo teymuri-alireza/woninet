@@ -194,7 +194,7 @@ class PingCollector(BaseCollector):
         stop_event=None,
         arp_noise_limit: float = 300.0,
         max_thread_workers: int = 4,
-    ) -> Generator[ScanResult]:
+    ) -> Generator[ScanResult, Any, None]:
         """
         For each device:
             - Use ARP + ICMP to determine existence and reachability.
