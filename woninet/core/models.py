@@ -113,7 +113,7 @@ class HostStatus:
         self.exists: bool = exists
         self.reachable: bool = reachable
         self.latency: float = latency
-        self.packet_loss: float = 100
+        self.packet_loss: float = packet_loss
         self.mac: str | None = mac
 
 
