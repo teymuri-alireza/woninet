@@ -286,7 +286,9 @@ class PingCollector(BaseCollector):
                 else:
                     latency_metric, packet_loss_metric = future_metric
 
-                    latency = latency_metric.value if latency_metric.value != 0 else None
+                    latency = (
+                        latency_metric.value if latency_metric.value != 0 else None
+                    )
                     packet_loss_metric = (
                         packet_loss_metric.value
                         if (future_device is not None and latency is not None)
@@ -294,4 +296,8 @@ class PingCollector(BaseCollector):
                     )
 
                 finally:
-                    yield ScanResult(device=future_device, latency=latency_metric, packet_loss=packet_loss_metric)
+                    yield ScanResult(
+                        device=future_device,
+                        latency=latency_metric,
+                        packet_loss=packet_loss_metric,
+                    )

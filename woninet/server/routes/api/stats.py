@@ -30,5 +30,5 @@ def stats():
             },
             "recent_alert_events": monitor.classify_recent_alert_events(),
         },
-        status_code=status.HTTP_200_OK
+        status_code=status.HTTP_200_OK,
     )

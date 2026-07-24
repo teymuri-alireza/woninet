@@ -157,7 +157,8 @@ class NetworkMonitorCore:
                 ):
                     try:
                         self.submit_to_history(
-                            device=result.device, metrics=[result.latency, result.packet_loss]
+                            device=result.device,
+                            metrics=[result.latency, result.packet_loss],
                         )
                         if result.device is not None:
                             self.alert_engine.evaluate(

@@ -18,8 +18,8 @@ def device_info(
         description="IP address of the device.",
         min_length=7,
         max_length=15,
-        ),
-    ):
+    ),
+):
     monitor = get_monitor_gracefully()
 
     if not monitor.device_exists(ip=ip):

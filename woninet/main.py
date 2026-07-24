@@ -132,7 +132,7 @@ def create_monitor(
             arp_noise_limit=arp_noise_limit,
             database_path=database_path,
             max_thread_workers=max_thread_workers,
-            configuration=configuration
+            configuration=configuration,
         )
     return monitor
 

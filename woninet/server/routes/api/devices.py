@@ -10,10 +10,8 @@ router = APIRouter(prefix="/api/devices", tags=["devices"])
 def list_devices(request: Request):
     monitor = get_monitor_gracefully()
     return JSONResponse(
-        content={
-            "devices": jsonable_encoder(monitor.get_device_history())
-        },
-        status_code=status.HTTP_200_OK
+        content={"devices": jsonable_encoder(monitor.get_device_history())},
+        status_code=status.HTTP_200_OK,
     )
 
 
@@ -26,15 +24,14 @@ def device_info_api(
         description="IP address of the device.",
         min_length=7,
         max_length=15,
-        ),
-    ):
+    ),
+):
     monitor = get_monitor_gracefully()
     device, device_alert_state, device_recent_alert_events = monitor.get_device_info(
         ip=ip
     )
     monitor.graph_engine.design_device_latency_events(
-        ip=ip,
-        recent_device_alert_events=device_recent_alert_events
+        ip=ip, recent_device_alert_events=device_recent_alert_events
     )
     return JSONResponse(
         content={
@@ -42,5 +39,5 @@ def device_info_api(
             "device_alert_state": jsonable_encoder(device_alert_state),
             "device_recent_alert_events": jsonable_encoder(device_recent_alert_events),
         },
-        status_code=status.HTTP_200_OK
+        status_code=status.HTTP_200_OK,
     )

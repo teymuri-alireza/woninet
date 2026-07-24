@@ -97,5 +97,5 @@ def custom_not_found_exception(request: Request, exc: HTTPException):
         request=request,
         name="404.html",
         context={"request": request},
-        status_code=status.HTTP_404_NOT_FOUND
+        status_code=status.HTTP_404_NOT_FOUND,
     )

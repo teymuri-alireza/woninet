@@ -10,7 +10,9 @@ class GraphEngine:
     Engine for generating graphs and visualizations of network device metrics.
     """
 
-    def design_device_latency_events(self, ip: str, recent_device_alert_events: list[AlertEventTable]) -> None:
+    def design_device_latency_events(
+        self, ip: str, recent_device_alert_events: list[AlertEventTable]
+    ) -> None:
         """
         Generate and save a latency chart for a device.
 
@@ -43,8 +45,12 @@ class GraphEngine:
 
         ax.plot(times, latency_values, label="Latency")
         ax.axhline(100, linestyle="--", label="Alert Threshold")
-        ax.scatter(trigger_times, trigger_values, marker="^", color="red", label="Trigger")
-        ax.scatter(recover_times, recover_values, marker="v", color="blue", label="Recover")
+        ax.scatter(
+            trigger_times, trigger_values, marker="^", color="red", label="Trigger"
+        )
+        ax.scatter(
+            recover_times, recover_values, marker="v", color="blue", label="Recover"
+        )
 
         ax.set_title(f"{ip} - Latency")
         ax.set_xlabel("Time")

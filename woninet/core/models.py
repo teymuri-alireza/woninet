@@ -116,6 +116,7 @@ class HostStatus:
         self.packet_loss: float = 100
         self.mac: str | None = mac
 
+
 @dataclass(frozen=True)
 class ScanResult:
     device: Device | None
