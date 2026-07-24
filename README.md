@@ -127,8 +127,21 @@ You can define alert rules in a JSON file. Rename the example file at `woninet/c
 
 ### Explanations:
 
-- The threshold of the `packet_loss` metric is in the range [0.0, 100.0]. A value of 100.0 indicates 100% packet loss or that the device is unreachable.
-- `consecutive_checks` is the number of consecutive evaluations required before a state change.
+#### Alert Rules
+- **metric**: The metric name to evaluate (`latency` or `packet_loss`)
+- **threshold**: The value that triggers the alert. For latency, this is in milliseconds. For packet loss, this is a percentage (0.0-100.0).
+- **consecutive_checks**: The number of consecutive evaluations required before the alert state changes. Higher values reduce false positives.
+
+#### Monitoring Settings
+- **arp_noise_limit**: Latency threshold in milliseconds used to filter ARP resolution noise. Set to 0 to disable filtering. Helps eliminate Wi‑Fi latency spikes.
+- **max_workers**: Maximum number of thread workers used to send ICMP pings. Higher values may increase system load and latency.
+
+#### Database
+- **database**: The path to the SQLite database file where metrics and alerts are stored.
+
+#### Notes
+- **Packet Loss**: Values are in the range [0.0, 100.0]. A value of 100.0 indicates 100% packet loss. A value of 0.0 will trigger on any packet loss.
+- **Latency**: All latency thresholds are evaluated in milliseconds.
 
 ## Usage
 
