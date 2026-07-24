@@ -1,6 +1,7 @@
 import socket
 import logging
 import uvicorn
+import json
 from pathlib import Path
 from yaml import safe_load
 from argparse import Namespace
@@ -11,6 +12,7 @@ from woninet.utilities.logger import get_core_logger, TRACE_LEVEL
 
 # Global Variables
 LOGGING_YAML_PATH = Path(__file__).parent / "logging.yaml"
+CONFIG_JSON_PATH = Path(__file__).parent / "config.json"
 REMOTE_PROBE_IP = "8.8.8.8"
 monitor = None
 
@@ -65,6 +67,15 @@ def load_logging_yaml(log_output: str | None) -> dict:
     return config
 
 
+def load_config_json() -> dict:
+    try:
+        with open(CONFIG_JSON_PATH) as file:
+            config = json.load(file)
+        return config
+    except FileNotFoundError:
+        raise
+
+
 def configure_logger(arguments: Namespace) -> logging.Logger:
     """
     Initialize the core logger and adjust verbosity.
@@ -92,6 +103,7 @@ def create_monitor(
     arp_noise_limit: float,
     max_thread_workers: int,
     logger: logging.Logger,
+    configuration: dict,
 ) -> NetworkMonitorCore:
     """
     Create an instance of NetworkMonitoreCore.
@@ -104,6 +116,7 @@ def create_monitor(
         max_thread_workers (int): The concurrency limit for the
             `ThreadPoolExecutor` handling ICMP probes
         logger (Logger): Logger used for recording logs
+        configuration (dict): Configuration loaded from config.json.
 
     Returns:
         NetworkMonitorCore: Instance of NetworkMonitorCore.
@@ -119,6 +132,7 @@ def create_monitor(
             arp_noise_limit=arp_noise_limit,
             database_path=database_path,
             max_thread_workers=max_thread_workers,
+            configuration=configuration
         )
     return monitor
 
@@ -186,6 +200,7 @@ def main() -> None:
             arp_noise_limit=arp_noise_limit,
             max_thread_workers=max_thread_workers,
             logger=core_logger,
+            configuration=load_config_json(),
         )
 
         if hasattr(arguments, "func"):
@@ -202,6 +217,8 @@ def main() -> None:
         core_logger.info("Keyboard interrupted. Wait for shut down...")
     except ValueError as e:
         core_logger.error(f"{e} Quitting.")
+    except FileNotFoundError:
+        core_logger.error("Can not find the config.json file. Quitting.")
     except OperationalError as e:
         core_logger.error(e)
     finally:
