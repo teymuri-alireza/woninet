@@ -1,4 +1,9 @@
 {
+    "monitoring": {
+        "arp_noise_limit": 300.0,
+        "max_workers": 4
+    },
+    "database": "woninet.db",
     "alert_rules":[
         {
             "metric": "latency",

@@ -105,18 +105,23 @@ You can define alert rules in a JSON file. Rename the example file at `woninet/c
 
 ```json
 {
-  "alert_rules": [
-    {
-      "metric": "latency",
-      "threshold": 100,
-      "consecutive_checks": 3
+    "monitoring": {
+        "arp_noise_limit": 300.0,
+        "max_workers": 4
     },
-    {
-      "metric": "packet_loss",
-      "threshold": 0.0,
-      "consecutive_checks": 1
-    }
-  ]
+    "database": "woninet.db",
+    "alert_rules":[
+        {
+            "metric": "latency",
+            "threshold": 100,
+            "consecutive_checks": 3
+        },
+        {
+            "metric": "packet_loss",
+            "threshold": 0.0,
+            "consecutive_checks": 1
+        }
+    ]
 }
 ```
 
