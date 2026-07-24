@@ -55,7 +55,7 @@ class NetworkMonitorCore:
         arp_noise_limit: float,
         database_path: str,
         max_thread_workers: int,
-        configuration: dict,
+        alert_rules: dict,
     ) -> None:
         """
         Initialize the monitor core and prepare the persistence layer.
@@ -67,7 +67,7 @@ class NetworkMonitorCore:
                 fluctuations are treated as noise.
             database_path (str): Path to SQLite database.
             max_thread_workers (int): Maximum number of thread workers used to send ICMP pings.
-            configuration (dict): Configuration loaded from config.json.
+            alert_rules (dict): Provided alert rules, loaded from config.json.
         """
         self._running: bool = False
         self._thread: threading.Thread | None = None
@@ -98,7 +98,7 @@ class NetworkMonitorCore:
             storage=self.storage,
             rules=[
                 AlertRule(item["metric"], item["threshold"], item["consecutive_checks"])
-                for item in configuration["alert_rules"]
+                for item in alert_rules
             ],
         )
 
