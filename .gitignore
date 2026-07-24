@@ -33,3 +33,6 @@ build/
 
 # Statistics Charts
 charts/
+
+# Configuration JSON file
+!config.example.json
