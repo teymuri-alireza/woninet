@@ -158,14 +158,13 @@ class NetworkMonitorCore:
                     max_thread_workers=self.max_thread_workers,
                 ):
                     try:
-                        device, latency_metric, packet_loss_metric = result
                         self.submit_to_history(
-                            device=device, metrics=[latency_metric, packet_loss_metric]
+                            device=result.device, metrics=[result.latency, result.packet_loss]
                         )
-                        if device is not None:
+                        if result.device is not None:
                             self.alert_engine.evaluate(
-                                ip=device.ip,
-                                metrics_list=[latency_metric, packet_loss_metric],
+                                ip=result.device.ip,
+                                metrics_list=[result.latency, result.packet_loss],
                                 default_consecutive_checks={
                                     "latency_ms": self.consecutive_checks["latency_ms"],
                                     "packet_loss": self.consecutive_checks[
@@ -173,7 +172,7 @@ class NetworkMonitorCore:
                                     ],
                                 },
                             )
-                    except ValueError:
+                    except AttributeError:
                         # If the tuple doesn't have enough values to unpack
                         pass
                 time.sleep(1)

@@ -5,7 +5,7 @@ import subprocess
 from typing import Generator, Any
 from icmplib import ping, SocketPermissionError, SocketAddressError
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from woninet.core.models import Device, MetricRecord, HostStatus
+from woninet.core.models import Device, MetricRecord, HostStatus, ScanResult
 
 core_logger = logging.getLogger("core")
 
@@ -194,7 +194,7 @@ class PingCollector(BaseCollector):
         stop_event=None,
         arp_noise_limit: float = 300.0,
         max_thread_workers: int = 4,
-    ) -> Generator[tuple[()] | tuple, Any, None]:
+    ) -> Generator[ScanResult]:
         """
         For each device:
             - Use ARP + ICMP to determine existence and reachability.
@@ -270,14 +270,11 @@ class PingCollector(BaseCollector):
             }
 
             for future in as_completed(future_to_ip):
-                results = []
                 if stop_event and stop_event.is_set():
                     break
-                if stop_event.is_set():
-                    yield ()
+
                 try:
                     future_device, future_metric = future.result()
-                    results.append(future_device)
                 except (PermissionError, SocketPermissionError):
                     raise
                 except SocketAddressError:
@@ -288,16 +285,13 @@ class PingCollector(BaseCollector):
                     continue
                 else:
                     latency_metric, packet_loss_metric = future_metric
-                    if latency_metric.value != 0:
-                        results.append(latency_metric)
-                    else:
-                        results.append(None)
-                    # Store packet loss for online known devices
-                    if future_device is not None and latency_metric.value != 0:
-                        results.append(packet_loss_metric)
-                    else:
-                        results.append(None)
-                finally:
-                    yield tuple(results)
 
-        yield ()
+                    latency = latency_metric.value if latency_metric.value != 0 else None
+                    packet_loss = (
+                        packet_loss_metric.value
+                        if (future_device is not None and latency is not None)
+                        else None
+                    )
+
+                finally:
+                    yield ScanResult(device=future_device, latency=latency_metric, packet_loss=packet_loss_metric)
