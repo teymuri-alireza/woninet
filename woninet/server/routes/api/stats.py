@@ -1,6 +1,5 @@
 from fastapi import APIRouter, status
 from fastapi.responses import JSONResponse
-from fastapi.encoders import jsonable_encoder
 from woninet.server.dependencies import get_monitor_gracefully
 
 router = APIRouter(prefix="/api/stats", tags=["stats"])
