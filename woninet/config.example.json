@@ -1,0 +1,14 @@
+{
+    "alert_rules":[
+        {
+            "metric": "latency",
+            "threshold": 100,
+            "consecutive_checks": 3
+        },
+        {
+            "metric": "packet_loss",
+            "threshold": 0.0,
+            "consecutive_checks": 1
+        }
+    ]
+}

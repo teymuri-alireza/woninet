@@ -97,6 +97,34 @@ python3 -m woninet --version
 sudo ../venv/bin/python3 -m woninet
 ```
 
+## Configuration
+
+You can define alert rules in a JSON file. Rename the example file at `woninet/config.example.json` to `config.json`. The application will load the alert rules from that file at startup.
+
+### Example:
+
+```json
+{
+  "alert_rules": [
+    {
+      "metric": "latency",
+      "threshold": 100,
+      "consecutive_checks": 3
+    },
+    {
+      "metric": "packet_loss",
+      "threshold": 0.0,
+      "consecutive_checks": 1
+    }
+  ]
+}
+```
+
+### Explanations:
+
+- The threshold of the `packet_loss` metric is in the range [0.0, 100.0]. A value of 100.0 indicates 100% packet loss or that the device is unreachable.
+- `consecutive_checks` is the number of consecutive evaluations required before a state change.
+
 ## Usage
 
 This [guide](./docs/usage.md) explains common ways to run *woninet* and how to resolve common issues.
