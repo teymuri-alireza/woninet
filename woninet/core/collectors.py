@@ -287,7 +287,7 @@ class PingCollector(BaseCollector):
                     latency_metric, packet_loss_metric = future_metric
 
                     latency = latency_metric.value if latency_metric.value != 0 else None
-                    packet_loss = (
+                    packet_loss_metric = (
                         packet_loss_metric.value
                         if (future_device is not None and latency is not None)
                         else None
