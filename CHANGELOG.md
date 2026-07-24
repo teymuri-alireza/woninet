@@ -13,12 +13,16 @@ All notable changes to this project will be documented in this file.
 - Added custom `404` exception in FastAPI app instance.
 - Added `GraphEngine` in `core/` to design and generate device graphs and charts for network device metrics.
 - Added `GraphEngine.design_device_latency_events()` in devices info page.
+- Added logic to fetch `AlertRule` fields from `config.json` to centralize rule configuration.
 
 ## Changed
 - Changed the source IP pakcet loss value from **0.0** to **100.0** to match the `packet loss` percentage format.
 - Moved templates and static path to `dependencies.py` to prevent circular import error.
 - Replaced card view with table view in server UI.
 - Moved service logic to API route functions for clarity.
+- Changed the default running mode to start in server mode instead of CLI.
+- Separated APIs and pages for `devices` and `stats` endpoints for clearer routing and responsibilities.
+- Introduced `ScanResult` dataclass for improved readability.
 
 ## Fixed
 - Set filter to calculate average `packet loss` based on online devices in server dashbaord.
