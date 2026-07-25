@@ -4,12 +4,22 @@ This guide explains common ways to run *woninet* and how to resolve common issue
 
 # 1. Running Modes
 
-## CLI mode
+## Web Dashboard
 
-The simplest way to run *woninet* in CLI is:
+The simplest way to run *woninet* is:
 
 ```shell
 woninet
+```
+
+This way you can serve *woninet* dashboard on port 8080. In this mode, core logging is set to ERROR to reduce unnecessary output
+
+## CLI mode
+
+You can run *woninet* in CLI mode with:
+
+```shell
+woninet --cli
 ```
 
 In this method, logging runs at the `INFO` level. Output is minimal, but warnings will
@@ -21,16 +31,6 @@ You can enable more verbose output using:
 woninet -v # DEBUG level
 woninet -vv # TRACE level
 ```
-
-## Web Dashboard
-
-You can serve *woninet* dashboard on port 8080 with:
-
-```shell
-woninet --serve
-```
-
-In this mode, core logging is set to ERROR to reduce unnecessary output.
 
 ---
 
