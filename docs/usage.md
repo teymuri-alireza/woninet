@@ -68,12 +68,11 @@ woninet stats --output stats.json
 
 # 3. Logging
 
-Logs can be written to a file using the `-o` or `--output` parameter.
+Logs can be written to a file using the `--logs` parameter.
 By default, logs are printed only to `stdout`
 
 ```shell
-woninet -o logs.log
-woninet --output logs.log
+woninet --logs logs.log
 ```
 
 ---
