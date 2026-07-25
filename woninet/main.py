@@ -103,7 +103,7 @@ def create_monitor(
     arp_noise_limit: float,
     max_thread_workers: int,
     logger: logging.Logger,
-    configuration: dict,
+    alert_rules: dict,
 ) -> NetworkMonitorCore:
     """
     Create an instance of NetworkMonitoreCore.
@@ -116,7 +116,7 @@ def create_monitor(
         max_thread_workers (int): The concurrency limit for the
             `ThreadPoolExecutor` handling ICMP probes
         logger (Logger): Logger used for recording logs
-        configuration (dict): Configuration loaded from config.json.
+        alert_rules (dict): alert_rules loaded from config.json.
 
     Returns:
         NetworkMonitorCore: Instance of NetworkMonitorCore.
@@ -132,7 +132,7 @@ def create_monitor(
             arp_noise_limit=arp_noise_limit,
             database_path=database_path,
             max_thread_workers=max_thread_workers,
-            configuration=configuration,
+            alert_rules=alert_rules,
         )
     return monitor
 
@@ -178,11 +178,10 @@ def main() -> None:
         print(__version__)
         return
 
+    configuration = load_config_json()
+
     target_ip = arguments.ip
     port = arguments.port
-    database_path = arguments.db
-    arp_noise_limit = arguments.arp_noise_limit
-    max_thread_workers = arguments.max_workers
 
     core_logger = configure_logger(arguments=arguments)
     log_yaml = load_logging_yaml(log_output=arguments.logs)
@@ -196,11 +195,11 @@ def main() -> None:
         monitor = create_monitor(
             local_ip=local_ip,
             target_ip=target_ip,
-            database_path=database_path,
-            arp_noise_limit=arp_noise_limit,
-            max_thread_workers=max_thread_workers,
+            database_path=configuration["database"],
+            arp_noise_limit=configuration["monitoring"]["arp_noise_limit"],
+            max_thread_workers=configuration["monitoring"]["max_workers"],
             logger=core_logger,
-            configuration=load_config_json(),
+            alert_rules=configuration["alert_rules"],
         )
 
         if hasattr(arguments, "func"):

@@ -13,7 +13,7 @@ All notable changes to this project will be documented in this file.
 - Added custom `404` exception in FastAPI app instance.
 - Added `GraphEngine` in `core/` to design and generate device graphs and charts for network device metrics.
 - Added `GraphEngine.design_device_latency_events()` in devices info page.
-- Added logic to fetch `AlertRule` fields from `config.json` to centralize rule configuration.
+- Added logic to fetch some fields from `config.json` to centralize rule configuration (fields such as alert rules, arp noise limit, max workers, and databse path).
 
 ## Changed
 - Changed the source IP pakcet loss value from **0.0** to **100.0** to match the `packet loss` percentage format.
