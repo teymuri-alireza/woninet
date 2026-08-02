@@ -20,7 +20,6 @@ def db_session():
 
 
 class FakeMonitor:
-
     def get_device_history(self):
         return [{"ip": "192.168.1.10", "hostname": "test-host"}]
 
