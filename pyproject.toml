@@ -31,3 +31,9 @@ Documentation = "https://github.com/teymuri-alireza/woninet/project/tree/main/do
 
 [project.scripts]
 woninet = "woninet.main:main"
+
+[project.optional-dependencies]
+test = [
+    "pytest==9.1.1",
+    "httpx==0.28.1",
+]
