@@ -2,6 +2,21 @@ import pytest
 from fastapi.testclient import TestClient
 from woninet.server.app import app
 import woninet.server.routes.api.devices as devices_route
+from woninet.database.engine import DatabaseEngine
+
+
+@pytest.fixture
+def db_session():
+    db_engine = DatabaseEngine(database_path=":memory:")
+    db_engine.init_db()
+
+    session_factory = db_engine.get_session_factory()
+    session = session_factory()
+
+    try:
+        yield session
+    finally:
+        session.close()
 
 
 class FakeMonitor:
