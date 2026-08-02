@@ -74,6 +74,26 @@ python3 -m woninet
 sudo ../venv/bin/python3 -m woninet
 ```
 
+### 6. Install test dependencies
+
+To run the automated tests locally, install the optional test extras:
+
+```shell
+pip install -e ".[test]"
+```
+
+### 7. Run the tests
+
+```shell
+pytest
+```
+
+If you are working on a specific module, you can also run a single test file:
+
+```shell
+pytest tests/test_api.py
+```
+
 ## 3. Project Structure Overview
 
 ```text

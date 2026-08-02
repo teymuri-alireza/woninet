@@ -146,6 +146,22 @@ You can define alert rules in a JSON file. Rename the example file at `woninet/c
 
 This [guide](./docs/usage.md) explains common ways to run *woninet* and how to resolve common issues.
 
+## Testing
+
+If you want to run the test suite locally, install the optional test dependencies:
+
+```shell
+pip install -e ".[test]"
+```
+
+Then run:
+
+```shell
+pytest
+```
+
+The test suite currently focuses on API behavior and core logic, and it uses pytest for automated verification.
+
 ## Requirements
 
 - Python >= 3.12
