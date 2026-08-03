@@ -15,6 +15,7 @@ All notable changes to this project will be documented in this file.
 - Added `GraphEngine.design_device_latency_events()` in devices info page.
 - Added logic to fetch some fields from `config.json` to centralize rule configuration (fields such as alert rules, arp noise limit, max workers, and databse path).
 - Added basic testing using `pytest` for API, storage, and ip validation.
+- Added test for `recovery` and `trigger` events for each `latency` and `packet_loss` metrics.
 
 ## Changed
 - Changed the source IP pakcet loss value from **0.0** to **100.0** to match the `packet loss` percentage format.
