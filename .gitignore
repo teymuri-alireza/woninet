@@ -3,20 +3,17 @@ __pycache__/
 *.py[cod]
 
 # database
-woninet.db
-woninet.db-journal
 *.db
+*.db-journal
 
 # python venv
-*venv*/
-env/
+*env*/
 
 # logs
 logs.txt
 *.log
 
 # Statistics output
-stats.json
 *.json
 
 # build
