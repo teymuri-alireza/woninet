@@ -269,14 +269,16 @@ class NetworkMonitorCore:
             if isinstance(metric, MetricRecord):
                 self.storage.store_metric(metric=metric)
 
-    def enumerate_candidate_devices(self, target_ip: str | None) -> dict[str, Device]:
+    def enumerate_candidate_devices(
+        self, target_ip_list: list[str] | None
+    ) -> dict[str, Device]:
         """
-        Control enumeration based on user-provided IP address. Use range enumeration
+        Control enumeration based on user-provided IP addresses. Use range enumeration
         if IP range is detected, otherwise use the single IP address. Enumerate on the
         /24 subnet if no target IP address is provided.
 
         Args:
-            target_ip (str|None): Target IP address to create candidate devices on.
+            target_ip (list[str]|None): Target IP addresses to create candidate devices on.
 
         Returns:
             dict[str,Device]: Candidate devices.
@@ -284,13 +286,17 @@ class NetworkMonitorCore:
         Raises:
             ValueError: If IP addresses are not valid.
         """
-        if target_ip is not None:
-            if detect_ip_range(ip=target_ip):
-                candidate_devices = self.manual_ip_enumerator.enumerate_range(target_ip)
-            else:
-                candidate_devices = {target_ip: Device(ip=target_ip)}
+        candidate_devices = {}
+        if target_ip_list is not None:
+            for target_ip in target_ip_list:
+                if detect_ip_range(ip=target_ip):
+                    candidate_devices.update(
+                        self.manual_ip_enumerator.enumerate_range(target_ip)
+                    )
+                else:
+                    candidate_devices[target_ip] = Device(ip=target_ip)
         else:
-            candidate_devices = self.subnet_enumerator.enumerate(self.local_ip)
+            candidate_devices.update(self.subnet_enumerator.enumerate(self.local_ip))
         if not is_device_ip_valid(candidate_devices):
             raise ValueError("IP address is not valid")
         return candidate_devices

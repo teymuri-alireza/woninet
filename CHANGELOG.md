@@ -13,7 +13,7 @@ All notable changes to this project will be documented in this file.
 - Added custom `404` exception in FastAPI app instance.
 - Added `GraphEngine` in `core/` to design and generate device graphs and charts for network device metrics.
 - Added `GraphEngine.design_device_latency_events()` in devices info page.
-- Added logic to fetch some fields from `config.json` to centralize rule configuration (fields such as alert rules, arp noise limit, max workers, and databse path).
+- Added logic to fetch some fields from `config.json` to centralize rule configuration (fields such as alert rules, arp noise limit, max workers, databse path, and target IP list).
 - Added basic testing using `pytest` for API, storage, and ip validation.
 - Added test for `recovery` and `trigger` events for each `latency` and `packet_loss` metrics.
 

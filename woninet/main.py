@@ -180,7 +180,7 @@ def main() -> None:
 
     configuration = load_config_json()
 
-    target_ip = arguments.ip
+    target_ip = configuration["target_ip_list"]
     port = arguments.port
 
     core_logger = configure_logger(arguments=arguments)
