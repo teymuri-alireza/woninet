@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 from matplotlib import pyplot as plt
 from woninet.database.tables import AlertEventTable
@@ -9,6 +10,8 @@ class GraphEngine:
     """
     Engine for generating graphs and visualizations of network device metrics.
     """
+    def __init__(self):
+        os.makedirs(name=CHARTS_PATH, exist_ok=True)
 
     def design_device_latency_events(
         self, ip: str, recent_device_alert_events: list[AlertEventTable]
