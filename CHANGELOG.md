@@ -25,11 +25,13 @@ All notable changes to this project will be documented in this file.
 - Changed the default running mode to start in server mode instead of CLI.
 - Separated APIs and pages for `devices` and `stats` endpoints for clearer routing and responsibilities.
 - Introduced `ScanResult` dataclass for improved readability.
+- Rename `latency_ms` metric to `latency` for clarity
 
 ## Fixed
 - Set filter to calculate average `packet loss` based on online devices in server dashbaord.
 - Set `packet loss` to zero for offline devices.
 - Refactored `upsert()` for devices to query the db based on IP first, instead of MAC. This new logic will prevent the `sqlite3.IntegrityError` caused by IP uniqueness.
+- Added `consecutive_checks` dict for `alert.evaluate()`.
 
 ---
 
