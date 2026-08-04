@@ -29,8 +29,8 @@ class DeviceRepository:
         """
         Insert or update a device into the database.
 
-        If `dev.mac` is present, the existing record is looked up by MAC
-        address, otherwise it is looked up by IP address. If the record
+        If `dev.ip` is present, the existing record is looked up by IP
+        address, otherwise it is looked up by MAC address. If the record
         is found, its IP and latency fields are updated. The `last_seen`
         timestamp is set to `dev.last_seen` or the current time, and is only
         updated when device is reachable (`dev.latency > 0`).
@@ -40,12 +40,9 @@ class DeviceRepository:
         Args:
             dev (Device): Domain `Device` instance.
         """
-        query = self.session.query(DeviceTable)
-        if dev.mac:
-            query = query.filter(DeviceTable.mac == dev.mac)
-        else:
-            query = query.filter(DeviceTable.ip == dev.ip)
-        existing = query.first()
+        existing = self.session.query(DeviceTable).filter(DeviceTable.ip == dev.ip).first()
+        if existing is None and dev.mac:
+            existing = self.session.query(DeviceTable).filter(DeviceTable.mac == dev.mac).first()
         now = datetime.now()
 
         if existing:
