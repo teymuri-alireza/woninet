@@ -109,6 +109,11 @@ You can define alert rules in a JSON file. Rename the example file at `woninet/c
         "max_workers": 4
     },
     "database": "woninet.db",
+    "target_ip_list": [
+        "192.168.1.1-100"
+        // or
+        "192.168.1.1", "192.168.1.10", "192.168.1.20"
+    ],
     "alert_rules":[
         {
             "metric": "latency",
@@ -130,6 +135,10 @@ You can define alert rules in a JSON file. Rename the example file at `woninet/c
 - **metric**: The metric name to evaluate (`latency` or `packet_loss`)
 - **threshold**: The value that triggers the alert. For latency, this is in milliseconds. For packet loss, this is a percentage (0.0-100.0).
 - **consecutive_checks**: The number of consecutive evaluations required before the alert state changes. Higher values reduce false positives.
+
+#### IP List
+
+- A single or range of target IP addresses to scan.
 
 #### Monitoring Settings
 - **arp_noise_limit**: Latency threshold in milliseconds used to filter ARP resolution noise. Set to 0 to disable filtering. Helps eliminate Wi‑Fi latency spikes.
