@@ -29,6 +29,7 @@ All notable changes to this project will be documented in this file.
 ## Fixed
 - Set filter to calculate average `packet loss` based on online devices in server dashbaord.
 - Set `packet loss` to zero for offline devices.
+- Refactored `upsert()` for devices to query the db based on IP first, instead of MAC. This new logic will prevent the `sqlite3.IntegrityError` caused by IP uniqueness.
 
 ---
 
