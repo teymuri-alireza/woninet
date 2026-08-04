@@ -1,21 +1,42 @@
+[build-system]
+requires = ["setuptools>=80", "wheel"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "woninet"
 version = "2.0.0"
 description = "A Python-based ARP+ICMP network monitoring tool"
 readme = "README.md"
 requires-python = ">=3.12"
+license = "MIT"
+
 authors = [
     { name = "Alireza Teymuri", email = "teymuri.alireza98@gmail.com" }
 ]
 
+keywords = [
+    "network",
+    "network-monitoring",
+    "icmp",
+    "arp",
+]
+
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: System :: Networking :: Monitoring",
+]
+
 dependencies = [
-    "icmplib==3.0.4",
-    "fastapi==0.136.0",
-    "Jinja2==3.1.6",
-    "uvicorn==0.44.0",
-    "PyYAML==6.0.3",
-    "SQLAlchemy==2.0.46",
-    "matplotlib==3.11.0"
+    "icmplib>=3.0.4,<3.1",
+    "fastapi>=0.136.0,<0.137",
+    "Jinja2>=3.1.6,<3.2",
+    "uvicorn>=0.44.0,<0.45",
+    "PyYAML>=6.0.3,<6.1",
+    "SQLAlchemy>=2.0.46,<2.1",
+    "matplotlib>=3.11.0,<3.12",
 ]
 
 [tool.setuptools.package-data]
@@ -27,13 +48,16 @@ woninet = [
 
 [project.urls]
 Homepage = "https://github.com/teymuri-alireza/woninet"
-Documentation = "https://github.com/teymuri-alireza/woninet/project/tree/main/docs"
+Documentation = "https://github.com/teymuri-alireza/woninet/tree/main/docs"
+Repository = "https://github.com/teymuri-alireza/woninet"
+Issues = "https://github.com/teymuri-alireza/woninet/issues"
+Changelog = "https://github.com/teymuri-alireza/woninet/blob/main/CHANGELOG.md"
 
 [project.scripts]
 woninet = "woninet.main:main"
 
 [project.optional-dependencies]
 test = [
-    "pytest==9.1.1",
-    "httpx==0.28.1",
+    "pytest>=9.1.1,<9.2",
+    "httpx>=0.28.1,<0.29",
 ]

@@ -1,156 +1,138 @@
 # Contributing to woninet
 
-Thank you for considering contributing to *woninet!*
-This project welcomes improvements, bug fixes, documentation updates, and new features.
+Thank you for considering contributing to **woninet**!
 
-To help us maintain code quality, stability, and a predictable release process, please review and follow the guidelines below.
+Whether you're fixing a bug, improving the documentation, or implementing a new feature, your contributions are appreciated.
 
-## 1. How to Contribute
+## Development Setup
 
-You can contribute in several ways:
+### 1. Clone the repository
 
-- Report bugs or request features via GitHub issues
-- Improve documentation
-- Fix bugs
-- Add new monitoring features or collectors
-- Optimize performance, interval handling, or concurrency logic
-
-All contributions small or large are appreciated.
-
-## 2. Development Environment Setup
-
-### 1. Clone the repository:
-
-```shell
+```bash
 git clone https://github.com/teymuri-alireza/woninet
 cd woninet
 ```
 
-### 2. Create and activate a virtual environment:
-
-**Note:** Create the virtual environment outside the project directory to avoid
-`Multiple top-level packages discovered in a flat-layout` errors.
-
-**Unix/Linux note:** The `--copies` flag forces Python to copy the interpreter instead of using a symbolic link.
-This is required because you will apply Linux capabilities directly to the Python binary in the virtual environment.
+### 2. Create a virtual environment
 
 #### Linux/macOS
 
-```shell
+```bash
 python3 -m venv --copies ../venv
 source ../venv/bin/activate
 ```
 
 #### Windows (PowerShell)
 
-```shell
+```powershell
 py -m venv ..\venv
 ..\venv\Scripts\Activate.ps1
 ```
 
-### 3. Install *woninet* locally in editable mode:
+> **Linux:** `--copies` is recommended because Linux capabilities are applied directly to the Python executable.
 
-```shell
-pip install -e .
-```
+### 3. Install woninet for development
 
-### 4. Configure permissions for ICMP (one-time)
-
-Grant the cap_net_raw capability to the Python interpreter inside the virtual environment so you can run woninet without sudo:
-
-```shell
-sudo setcap cap_net_raw=eip ../venv/bin/python3
-```
-
-### 5. Run the package
-
-```shell
-python3 -m woninet
-```
-
-**Alternative (not recommended):** You can run woninet with sudo instead of using setcap, but this is discouraged for security reasons:
-
-```shell
-sudo ../venv/bin/python3 -m woninet
-```
-
-### 6. Install test dependencies
-
-To run the automated tests locally, install the optional test extras:
-
-```shell
+```bash
 pip install -e ".[test]"
 ```
 
-### 7. Run the tests
+This installs the project in editable mode together with the testing dependencies.
 
-```shell
+### 4. Configure ICMP permissions (Linux)
+
+To allow raw ICMP without running as root:
+
+```bash
+sudo setcap cap_net_raw=eip ../venv/bin/python3
+```
+
+Alternatively, you may run the application with `sudo`, although this is not recommended.
+
+### 5. Run woninet
+
+```bash
+woninet
+```
+
+## Running Tests
+
+Run the complete test suite before opening a Pull Request.
+
+```bash
 pytest
 ```
 
-If you are working on a specific module, you can also run a single test file:
+You may also execute individual test files.
 
-```shell
+```bash
 pytest tests/test_api.py
 ```
 
-## 3. Project Structure Overview
+## Code Style
+
+Please ensure that all changes pass formatting and linting.
+
+```bash
+ruff format .
+ruff check .
+```
+
+General guidelines:
+
+- Use type annotations.
+- Prefer absolute imports.
+- Keep functions focused and readable.
+- Document public APIs when appropriate.
+
+## Project Structure
 
 ```text
 woninet/
-├── core/ # Monitoring engine, ARP + ICMP logic, Models
-├── database/ # Database engine, ORM operation handlers, Tables + Repositories
-├── server/ # FastAPI application and routes
-├── utilities/ # Argument handler, Logging
-└── main.py # The woninet entry point
+├── core/
+├── database/
+├── server/
+├── utilities/
+└── main.py
 ```
 
-## 4. Code Style
+## Branching Model
 
-- Write type‑annotated code:
+The project uses a lightweight Git workflow.
 
-```python
-def start(self) -> None:
+- **main** — stable releases
+- **dev** — active development
+
+Create feature branches from **dev**.
+
+Pull Requests should target **dev**.
+
+Releases are prepared using release branches and merged into **main**.
+
+## Commit Messages
+
+Write concise commit messages in the imperative mood.
+
+Examples:
+
+```
+Add alert persistence
+Fix ARP timeout handling
+Refactor database session management
+Update documentation
 ```
 
-- Keep imports absolute, not relative:
+## Pull Requests
 
-```python
-from woninet.core.monitor import NetworkMonitorCore # Correct
+Before submitting a Pull Request:
 
-from .core.monitor import NetworkMonitorCore # Incorrect
-```
-
-- Use **Ruff** for linting and formatting:
-
-```shell
-ruff check .
-ruff format .
-```
-
-## 5. Branching Model
-
-Use a lightwaight workflow:
-
-- **main** – Stable releases. This branch should always contain production‑ready code
-- **dev** – Active development and integration branch
-
-Contributors should create branches from dev, and when your work is complete, open a Pull Request targeting the dev branch.
-
-Changes are reviewed and tested before being merged.
-
-## 6. Pull Request Guidelines
-
-When opening a PR:
-
-1. Describe what the PR does and why the change is needed
-2. Link related issues (e.g., `Closes #42`)
-3. Keep PRs small and focused
-4. Ensure your branch is up‑to‑date with the latest dev branch before submitting
+- Ensure all tests pass.
+- Run Ruff formatting and linting.
+- Update documentation if necessary.
+- Update the CHANGELOG when the change affects users.
+- Keep Pull Requests focused on a single logical change.
+- Link related GitHub issues when applicable.
 
 ---
 
-Thank you for making *woninet* better!
-Maintainers and contributors appreciate your work.
-
-**Update: 2026-06-18**
+Thank you for helping improve **woninet**.

@@ -1,14 +1,18 @@
 # woninet
 
 A local network monitoring system.
-It enumerates all candidate IP addresses in your /24 subnet and performs ARP + ICMP host detection to determine existence,
-reachability, and latency. Metrics are collected continuously and processed through an alert engine.
+
+**woninet** continuously monitors devices on a local network using ARP
+and ICMP probes. It enumerates candidate IP addresses in a /24 subnet,
+determines device availability, measures latency and packet loss, stores
+metrics in SQLite, and evaluates configurable alert rules in real time.
 
 **Note: This script requires sudo privileges.**
 
 ## Features
 
-- **ARP + ICMP Host Detection** (Distinguishes real devices from nonexistent IPs and filters out Wi‑Fi ARP‑delay noise.)
+- **ARP + ICMP Host Detection** (Distinguishes real devices from nonexistent
+IPs and filters out Wi‑Fi ARP‑delay noise.)
 
 - **Alert Engine** (Evaluates real‑time alert rules (e.g., latency thresholds))
 
@@ -34,10 +38,23 @@ reachability, and latency. Metrics are collected continuously and processed thro
 
 ## How To Run
 
-**Note:**
+**Note:** *woninet* is under active development.
 
-- *woninet* is under active development.
-- PyPI releases will be published once the API stabilizes.
+## Installation
+
+Install from PyPI:
+
+```shell
+pip install woninet
+```
+
+Then run:
+
+```shell
+woninet --help
+```
+
+## Installation from Source
 
 ### 1. Clone the repository
 
@@ -51,8 +68,9 @@ cd woninet
 **Note:** Create the virtual environment outside the project directory to avoid
 `Multiple top-level packages discovered in a flat-layout` errors.
 
-**Unix/Linux note:** The `--copies` flag forces Python to copy the interpreter instead of using a symbolic link.
-This is required because you will apply Linux capabilities directly to the Python binary in the virtual environment.
+**Unix/Linux note:** The `--copies` flag forces Python to copy the interpreter
+instead of using a symbolic link. This is required because you will apply Linux
+capabilities directly to the Python binary in the virtual environment.
 
 #### Linux/macOS
 
@@ -70,27 +88,27 @@ py -m venv ..\venv
 
 ### 3. Install woninet locally:
 
-Until the PyPI release is available, install the package from the repository:
-
 ```shell
 pip3 install .
 ```
 
 ### 4. Run woninet
 
-**Unix/Linux only:** To allow raw ICMP without running as root, grant the required capability to the Python interpreter inside the virtual environment:
+**Unix/Linux only:** To allow raw ICMP without running as root, grant the required
+capability to the Python interpreter inside the virtual environment:
 
 ```shell
 sudo setcap cap_net_raw=eip ../venv/bin/python3
 ```
 
-Finally, run  woninet normally:
+Finally, run woninet normally:
 
 ```shell
-python3 -m woninet --version
+woninet --version
 ```
 
-**Alternative (not recommended):** You can run woninet with sudo instead of using setcap, but this is discouraged for security reasons:
+**Alternative (not recommended):** You can run woninet with sudo instead of using
+setcap, but this is discouraged for security reasons:
 
 ```shell
 sudo ../venv/bin/python3 -m woninet
@@ -98,7 +116,9 @@ sudo ../venv/bin/python3 -m woninet
 
 ## Configuration
 
-You can define alert rules in a JSON file. Rename the example file at `woninet/config.example.json` to `config.json`. The application will load the alert rules from that file at startup.
+You can define alert rules in a JSON file. Rename the example file at
+`woninet/config.example.json` to `config.json`. The application will load the alert
+rules from that file at startup.
 
 ### Example:
 
@@ -131,24 +151,33 @@ You can define alert rules in a JSON file. Rename the example file at `woninet/c
 
 ### Explanations:
 
-#### Alert Rules
-- **metric**: The metric name to evaluate (`latency` or `packet_loss`)
-- **threshold**: The value that triggers the alert. For latency, this is in milliseconds. For packet loss, this is a percentage (0.0-100.0).
-- **consecutive_checks**: The number of consecutive evaluations required before the alert state changes. Higher values reduce false positives.
+#### Monitoring Settings
 
-#### IP List
+- **arp_noise_limit**: Latency threshold in milliseconds used to filter ARP
+resolution noise. Set to 0 to disable filtering. Helps eliminate Wi‑Fi latency spikes.
+- **max_workers**: Maximum number of thread workers used to send ICMP pings.
+Higher values may increase system load and latency.
+
+#### Database
+
+- **database**: The path to the SQLite database file where metrics and alerts are stored.
+
+#### Target IP List
 
 - A single or range of target IP addresses to scan.
 
-#### Monitoring Settings
-- **arp_noise_limit**: Latency threshold in milliseconds used to filter ARP resolution noise. Set to 0 to disable filtering. Helps eliminate Wi‑Fi latency spikes.
-- **max_workers**: Maximum number of thread workers used to send ICMP pings. Higher values may increase system load and latency.
+#### Alert Rules
 
-#### Database
-- **database**: The path to the SQLite database file where metrics and alerts are stored.
+- **metric**: The metric name to evaluate (`latency` or `packet_loss`)
+- **threshold**: The value that triggers the alert. For latency, this is in milliseconds.
+For packet loss, this is a percentage (0.0-100.0).
+- **consecutive_checks**: The number of consecutive evaluations required before the alert
+state changes. Higher values reduce false positives.
 
 #### Notes
-- **Packet Loss**: Values are in the range [0.0, 100.0]. A value of 100.0 indicates 100% packet loss. A value of 0.0 will trigger on any packet loss.
+
+- **Packet Loss**: Values are in the range [0.0, 100.0]. A value of 100.0 indicates 100%
+packet loss. A value of 0.0 will trigger on any packet loss.
 - **Latency**: All latency thresholds are evaluated in milliseconds.
 
 ## Usage
@@ -183,4 +212,5 @@ if you have any question or need clarification, check the [documentation](./docs
 ## Contribution
 
 Thanks for considering contributing to *woninet!*
-To help us maintain code quality, stability, and a predictable release process, please review and follow the guidelines in our [Contributing Guide.](./CONTRIBUTING.md)
+To help us maintain code quality, stability, and a predictable release process, please review
+and follow the guidelines in our [Contributing Guide.](./CONTRIBUTING.md)
