@@ -52,10 +52,6 @@ are collected continuously and processed through an alert engine."""
     stats_parser.set_defaults(func=report_stats)
 
     parser.add_argument(
-        "-i", "--ip", type=str, help="A single or range of target IP addresses to scan."
-    )
-
-    parser.add_argument(
         "--cli",
         action="store_true",
         help="Run woninet in CLI mode.",
