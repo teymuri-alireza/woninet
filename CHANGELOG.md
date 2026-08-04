@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [2.0.1] - 2026-08-04
+
+- Prepare **woninet** for PyPI releases.
+
+---
+
 ## [2.0.0] - 2026-08-04
 ## Added
 - Added `/devices/{ip}` endpoint with `GET` method to serve specific page for devices.
