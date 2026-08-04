@@ -269,7 +269,9 @@ class NetworkMonitorCore:
             if isinstance(metric, MetricRecord):
                 self.storage.store_metric(metric=metric)
 
-    def enumerate_candidate_devices(self, target_ip_list: list[str] | None) -> dict[str, Device]:
+    def enumerate_candidate_devices(
+        self, target_ip_list: list[str] | None
+    ) -> dict[str, Device]:
         """
         Control enumeration based on user-provided IP addresses. Use range enumeration
         if IP range is detected, otherwise use the single IP address. Enumerate on the
@@ -288,7 +290,9 @@ class NetworkMonitorCore:
         if target_ip_list is not None:
             for target_ip in target_ip_list:
                 if detect_ip_range(ip=target_ip):
-                    candidate_devices.update(self.manual_ip_enumerator.enumerate_range(target_ip))
+                    candidate_devices.update(
+                        self.manual_ip_enumerator.enumerate_range(target_ip)
+                    )
                 else:
                     candidate_devices[target_ip] = Device(ip=target_ip)
         else:
