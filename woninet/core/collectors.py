@@ -5,7 +5,7 @@ import subprocess
 from typing import Generator, Any
 from icmplib import ping, SocketPermissionError, SocketAddressError
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from woninet.core.models import Device, MetricRecord, HostStatus
+from woninet.core.models import Device, MetricRecord, HostStatus, ScanResult
 
 core_logger = logging.getLogger("core")
 
@@ -95,7 +95,7 @@ def detect_host(
         status.reachable = False
         status.mac = None
         status.latency = 0.0
-        status.packet_loss = 1.0
+        status.packet_loss = 100.0
         return status
 
     if stop_event and stop_event.is_set():
@@ -132,6 +132,10 @@ def detect_host(
     status.latency = response.avg_rtt
     status.packet_loss = response.packet_loss * 100
     latency: float = status.latency
+    if latency == 0:
+        # Latency 0 means device is offline.
+        # Packet loss shoulnd't be determined for offline devices.
+        status.packet_loss = 0.0
 
     # Classification logic
     if not mac and latency == 0:
@@ -190,7 +194,7 @@ class PingCollector(BaseCollector):
         stop_event=None,
         arp_noise_limit: float = 300.0,
         max_thread_workers: int = 4,
-    ) -> Generator[tuple[()] | tuple, Any, None]:
+    ) -> Generator[ScanResult, Any, None]:
         """
         For each device:
             - Use ARP + ICMP to determine existence and reachability.
@@ -250,7 +254,7 @@ class PingCollector(BaseCollector):
                 )
 
             recorded_metrics = [
-                MetricRecord(ip, "latency_ms", dev.latency),
+                MetricRecord(ip, "latency", dev.latency),
                 MetricRecord(ip, "packet_loss", dev.packet_loss),
             ]
 
@@ -266,14 +270,11 @@ class PingCollector(BaseCollector):
             }
 
             for future in as_completed(future_to_ip):
-                results = []
                 if stop_event and stop_event.is_set():
                     break
-                if stop_event.is_set():
-                    yield ()
+
                 try:
                     future_device, future_metric = future.result()
-                    results.append(future_device)
                 except (PermissionError, SocketPermissionError):
                     raise
                 except SocketAddressError:
@@ -284,16 +285,19 @@ class PingCollector(BaseCollector):
                     continue
                 else:
                     latency_metric, packet_loss_metric = future_metric
-                    if latency_metric.value != 0:
-                        results.append(latency_metric)
-                    else:
-                        results.append(None)
-                    # Store packet loss for online known devices
-                    if future_device is not None and latency_metric.value != 0:
-                        results.append(packet_loss_metric)
-                    else:
-                        results.append(None)
-                finally:
-                    yield tuple(results)
 
-        yield ()
+                    latency = (
+                        latency_metric.value if latency_metric.value != 0 else None
+                    )
+                    packet_loss_metric = (
+                        packet_loss_metric.value
+                        if (future_device is not None and latency is not None)
+                        else None
+                    )
+
+                finally:
+                    yield ScanResult(
+                        device=future_device,
+                        latency=latency_metric,
+                        packet_loss=packet_loss_metric,
+                    )

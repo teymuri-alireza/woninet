@@ -1,6 +1,7 @@
 import socket
 import logging
 import uvicorn
+import json
 from pathlib import Path
 from yaml import safe_load
 from argparse import Namespace
@@ -11,6 +12,7 @@ from woninet.utilities.logger import get_core_logger, TRACE_LEVEL
 
 # Global Variables
 LOGGING_YAML_PATH = Path(__file__).parent / "logging.yaml"
+CONFIG_JSON_PATH = Path(__file__).parent / "config.json"
 REMOTE_PROBE_IP = "8.8.8.8"
 monitor = None
 
@@ -65,6 +67,15 @@ def load_logging_yaml(log_output: str | None) -> dict:
     return config
 
 
+def load_config_json() -> dict:
+    try:
+        with open(CONFIG_JSON_PATH) as file:
+            config = json.load(file)
+        return config
+    except FileNotFoundError:
+        raise
+
+
 def configure_logger(arguments: Namespace) -> logging.Logger:
     """
     Initialize the core logger and adjust verbosity.
@@ -79,7 +90,7 @@ def configure_logger(arguments: Namespace) -> logging.Logger:
     elif arguments.verbose >= 2:
         core_logger.setLevel(TRACE_LEVEL)
 
-    if arguments.serve:
+    if not arguments.cli:
         core_logger.setLevel(logging.ERROR)
 
     return core_logger
@@ -92,6 +103,7 @@ def create_monitor(
     arp_noise_limit: float,
     max_thread_workers: int,
     logger: logging.Logger,
+    alert_rules: dict,
 ) -> NetworkMonitorCore:
     """
     Create an instance of NetworkMonitoreCore.
@@ -104,6 +116,7 @@ def create_monitor(
         max_thread_workers (int): The concurrency limit for the
             `ThreadPoolExecutor` handling ICMP probes
         logger (Logger): Logger used for recording logs
+        alert_rules (dict): alert_rules loaded from config.json.
 
     Returns:
         NetworkMonitorCore: Instance of NetworkMonitorCore.
@@ -119,6 +132,7 @@ def create_monitor(
             arp_noise_limit=arp_noise_limit,
             database_path=database_path,
             max_thread_workers=max_thread_workers,
+            alert_rules=alert_rules,
         )
     return monitor
 
@@ -164,11 +178,10 @@ def main() -> None:
         print(__version__)
         return
 
-    target_ip = arguments.ip
+    configuration = load_config_json()
+
+    target_ip = configuration["target_ip_list"]
     port = arguments.port
-    database_path = arguments.db
-    arp_noise_limit = arguments.arp_noise_limit
-    max_thread_workers = arguments.max_workers
 
     core_logger = configure_logger(arguments=arguments)
     log_yaml = load_logging_yaml(log_output=arguments.logs)
@@ -182,10 +195,11 @@ def main() -> None:
         monitor = create_monitor(
             local_ip=local_ip,
             target_ip=target_ip,
-            database_path=database_path,
-            arp_noise_limit=arp_noise_limit,
-            max_thread_workers=max_thread_workers,
+            database_path=configuration["database"],
+            arp_noise_limit=configuration["monitoring"]["arp_noise_limit"],
+            max_thread_workers=configuration["monitoring"]["max_workers"],
             logger=core_logger,
+            alert_rules=configuration["alert_rules"],
         )
 
         if hasattr(arguments, "func"):
@@ -193,15 +207,17 @@ def main() -> None:
             arguments.func(arguments)
             return
 
-        if arguments.serve:
-            run_server(ip=local_ip, port=port, log_yaml=log_yaml)
-        else:
+        if arguments.cli:
             monitor.start()
             monitor.wait()
+        else:
+            run_server(ip=local_ip, port=port, log_yaml=log_yaml)
     except KeyboardInterrupt:
         core_logger.info("Keyboard interrupted. Wait for shut down...")
     except ValueError as e:
         core_logger.error(f"{e} Quitting.")
+    except FileNotFoundError:
+        core_logger.error("Can not find the config.json file. Quitting.")
     except OperationalError as e:
         core_logger.error(e)
     finally:

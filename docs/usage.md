@@ -4,12 +4,22 @@ This guide explains common ways to run *woninet* and how to resolve common issue
 
 # 1. Running Modes
 
-## CLI mode
+## Web Dashboard
 
-The simplest way to run *woninet* in CLI is:
+The simplest way to run *woninet* is:
 
 ```shell
 woninet
+```
+
+This way you can serve *woninet* dashboard on port 8080. In this mode, core logging is set to ERROR to reduce unnecessary output
+
+## CLI mode
+
+You can run *woninet* in CLI mode with:
+
+```shell
+woninet --cli
 ```
 
 In this method, logging runs at the `INFO` level. Output is minimal, but warnings will
@@ -21,16 +31,6 @@ You can enable more verbose output using:
 woninet -v # DEBUG level
 woninet -vv # TRACE level
 ```
-
-## Web Dashboard
-
-You can serve *woninet* dashboard on port 8080 with:
-
-```shell
-woninet --serve
-```
-
-In this mode, core logging is set to ERROR to reduce unnecessary output.
 
 ---
 
@@ -68,12 +68,11 @@ woninet stats --output stats.json
 
 # 3. Logging
 
-Logs can be written to a file using the `-o` or `--output` parameter.
+Logs can be written to a file using the `--logs` parameter.
 By default, logs are printed only to `stdout`
 
 ```shell
-woninet -o logs.log
-woninet --output logs.log
+woninet --logs logs.log
 ```
 
 ---
@@ -82,23 +81,25 @@ woninet --output logs.log
 
 ## ARP Noise Limit
 
-The default value for the `--arp-noise-limit` paramter is 300.0 ms.
-Devices with latency equal to or higher than this value are considered ARP noise and
+<!-- The default value for the `--arp-noise-limit` paramter is 300.0 ms. -->
+Devices with latency equal to or higher than the arp_noise_limit value are considered ARP noise and
 will not be stored in the database.
 If you are on a weak or unstable network, you may want to adjust this threshold.
+
+**Note:** The `arp_noise_limit` value can be changed from the `config.json` file. Check the `Configuration` section in `README.md`.
 
 **Examples:**
 
 Stores all detected devices regardless of latency:
 
-```shell
-woninet --arp-noise-limit 0
+```json
+"arp_noise_limit": 0.0,
 ```
 
 Only considers devices with latency above 800.0 as ARP noise:
 
-```shell
-woninet --arp-noise-limit 800
+```json
+"arp_noise_limit": 300.0
 ```
 
 ## Database and Network Synchronization
@@ -114,18 +115,15 @@ may no longer correctly correlate with the new network topology.
 **Recommendation:** It is highly recommended to initialize a new database file when switching
 to a different network to ensure data integrity. You can do this using:
 
-```shell
-woninet --db path_to_new_database
+```json
+"database": "path_to_new_database"
 ```
+
+**Note:** The `database` value can be changed from the `config.json` file. Check the `Configuration` section in `README.md`.
 
 ### Accessing a Specific Database
 
-If you are using a database file other than the default, you must specify it when using positional arguments. Always include the `--db` flag before the command:
-
-```shell
-woninet --db network.db device list
-woninet --db network.db device show 192.168.1.10
-```
+If you are using a database file other than the default, you must specify it when using positional arguments.
 
 ## Address Already in Use
 

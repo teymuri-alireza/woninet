@@ -52,13 +52,9 @@ are collected continuously and processed through an alert engine."""
     stats_parser.set_defaults(func=report_stats)
 
     parser.add_argument(
-        "-i", "--ip", type=str, help="A single or range of target IP addresses to scan."
-    )
-
-    parser.add_argument(
-        "--serve",
+        "--cli",
         action="store_true",
-        help="Starts the server for web-based dashboard.",
+        help="Run woninet in CLI mode.",
     )
 
     parser.add_argument(
@@ -67,29 +63,6 @@ are collected continuously and processed through an alert engine."""
         type=int,
         default=8080,
         help="Port number to serve the web dashboard (defaut: %(default)s).",
-    )
-
-    parser.add_argument(
-        "--db",
-        type=str,
-        default="woninet.db",
-        help="The Path to the SQLite database file (default: %(default)s).",
-    )
-
-    parser.add_argument(
-        "--arp-noise-limit",
-        type=float,
-        default=300.0,
-        help="Latency threshold in milliseconds used to filter ARP resolution noise "
-        "(default: %(default)s). Set to 0 to disable filtering.",
-    )
-
-    parser.add_argument(
-        "--max-workers",
-        type=int,
-        default=4,
-        help="Maximum number of thread workers used to send ICMP pings. "
-        "Higher values may increase latency (default: %(default)s).",
     )
 
     parser.add_argument(

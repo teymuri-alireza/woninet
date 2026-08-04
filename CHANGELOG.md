@@ -4,6 +4,37 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [2.0.0] - 2026-08-04
+## Added
+- Added `/devices/{ip}` endpoint with `GET` method to serve specific page for devices.
+- Added `min-height` field in `style.css` to balance background color.
+- Added icons for server UI KPI cards, and search bar.
+- Added `get_monitor_gracefully()` in `dependencies.py`.
+- Added custom `404` exception in FastAPI app instance.
+- Added `GraphEngine` in `core/` to design and generate device graphs and charts for network device metrics.
+- Added `GraphEngine.design_device_latency_events()` in devices info page.
+- Added logic to fetch some fields from `config.json` to centralize rule configuration (fields such as alert rules, arp noise limit, max workers, databse path, and target IP list).
+- Added basic testing using `pytest` for API, storage, and ip validation.
+- Added test for `recovery` and `trigger` events for each `latency` and `packet_loss` metrics.
+
+## Changed
+- Changed the source IP pakcet loss value from **0.0** to **100.0** to match the `packet loss` percentage format.
+- Moved templates and static path to `dependencies.py` to prevent circular import error.
+- Replaced card view with table view in server UI.
+- Moved service logic to API route functions for clarity.
+- Changed the default running mode to start in server mode instead of CLI.
+- Separated APIs and pages for `devices` and `stats` endpoints for clearer routing and responsibilities.
+- Introduced `ScanResult` dataclass for improved readability.
+- Rename `latency_ms` metric to `latency` for clarity
+
+## Fixed
+- Set filter to calculate average `packet loss` based on online devices in server dashbaord.
+- Set `packet loss` to zero for offline devices.
+- Refactored `upsert()` for devices to query the db based on IP first, instead of MAC. This new logic will prevent the `sqlite3.IntegrityError` caused by IP uniqueness.
+- Added `consecutive_checks` dict for `alert.evaluate()`.
+
+---
+
 ## [1.6.1] - 2026-06-17
 ## Fixed
 - Added Parentheses in Windows regex for ARP scan, to return 2 patterns like (ip) and (mac) addresses.

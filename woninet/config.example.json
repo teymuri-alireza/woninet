@@ -1,0 +1,22 @@
+{
+    "monitoring": {
+        "arp_noise_limit": 300.0,
+        "max_workers": 4
+    },
+    "database": "woninet.db",
+    "target_ip_list": [
+        "192.168.1.1-100"
+    ],
+    "alert_rules":[
+        {
+            "metric": "latency",
+            "threshold": 100,
+            "consecutive_checks": 3
+        },
+        {
+            "metric": "packet_loss",
+            "threshold": 0.0,
+            "consecutive_checks": 1
+        }
+    ]
+}

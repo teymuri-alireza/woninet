@@ -111,7 +111,7 @@ This endpoint responds with a JSON object that includes the following sections:
     {
       "device_ip": "192.168.120.67",
       "id": 47,
-      "metric": "latency_ms",
+      "metric": "latency",
       "event_type": "recover",
       "value": 41.65,
       "timestamp": "2026-05-14T20:49:52.681306"
@@ -119,7 +119,7 @@ This endpoint responds with a JSON object that includes the following sections:
     {
       "device_ip": "192.168.120.67",
       "id": 46,
-      "metric": "latency_ms",
+      "metric": "latency",
       "event_type": "trigger",
       "value": 259.642,
       "timestamp": "2026-05-14T20:49:52.681306"
@@ -127,7 +127,7 @@ This endpoint responds with a JSON object that includes the following sections:
     {
       "device_ip": "192.168.120.85",
       "id": 45,
-      "metric": "latency_ms",
+      "metric": "latency",
       "event_type": "trigger",
       "value": 259.642,
       "timestamp": "2026-05-14T20:49:52.681306"

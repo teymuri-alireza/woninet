@@ -3,19 +3,17 @@ __pycache__/
 *.py[cod]
 
 # database
-woninet.db
-woninet.db-journal
+*.db
+*.db-journal
 
 # python venv
-*venv*/
-env/
+*env*/
 
 # logs
 logs.txt
-*.logs
+*.log
 
 # Statistics output
-stats.json
 *.json
 
 # build
@@ -29,3 +27,13 @@ build/
 
 # vs code directory
 .vscode/
+
+# Statistics Charts
+charts/
+
+# Configuration JSON file
+!config.example.json
+
+# Pytest
+.pytest_cache/
+

@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from datetime import datetime
 
 
@@ -112,5 +113,12 @@ class HostStatus:
         self.exists: bool = exists
         self.reachable: bool = reachable
         self.latency: float = latency
-        self.packet_loss: float = 100
+        self.packet_loss: float = packet_loss
         self.mac: str | None = mac
+
+
+@dataclass(frozen=True)
+class ScanResult:
+    device: Device | None
+    latency: float | None
+    packet_loss: float | None

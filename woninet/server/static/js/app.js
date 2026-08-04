@@ -28,58 +28,50 @@ function getDeviceState(device) {
     return "online";
 }
 
-function createDeviceCard(device){
+function createDeviceRow(device){
 
     const state = getDeviceState(device);
 
+    const latency =
+        device.latency !== 0
+            ? `${device.latency} ms`
+            : "--";
+
     return `
-        <article class="device-card device-${state}">
+    <tr>
 
-            <div class="device-header">
+        <td>
 
-                <div class="device-ip">
-                    ${device.ip}
-                </div>
+            <span class="status-badge ${state}">
+                ${state}
+            </span>
 
-                <div class="device-status">
-                    ${state.toUpperCase()}
-                </div>
+        </td>
 
-            </div>
+        <td>
 
-            <div class="metrics">
+            <strong>${device.ip}</strong>
 
-                <div class="metric">
-                    <div class="metric-label">Latency</div>
-                    <div class="metric-value">
-                        ${device.latency || "OFFLINE"} ms
-                    </div>
-                </div>
+        </td>
 
-                <div class="metric">
-                    <div class="metric-label">Packet Loss</div>
-                    <div class="metric-value">
-                        ${(device.packet_loss ?? 0).toFixed(1)}%
-                    </div>
-                </div>
+        <td>${latency}</td>
 
-                <div class="metric">
-                    <div class="metric-label">MAC</div>
-                    <div class="metric-value">
-                        ${device.mac}
-                    </div>
-                </div>
+        <td>${(device.packet_loss ?? 0).toFixed(1)}%</td>
 
-                <div class="metric">
-                    <div class="metric-label">Last Seen</div>
-                    <div class="metric-value">
-                        ${device.last_seen}
-                    </div>
-                </div>
+        <td>${device.mac}</td>
 
-            </div>
+        <td>${device.last_seen}</td>
 
-        </article>
+        <td>
+
+            <a class="device-link"
+               href="/devices/${device.ip}">
+                <i class="fa fa-ellipsis-v"></i>
+            </a>
+
+        </td>
+
+    </tr>
     `;
 }
 
@@ -102,13 +94,11 @@ function updateOverview(devices){
         )
         : 0;
 
-    const avgLoss =
-        devices.length
+    const validDevices = devices.filter(device => device.latency !== 0);
+    const avgLoss = validDevices.length
         ? (
-            devices.reduce(
-                (a,b)=>a+(b.packet_loss ?? 0),
-                0
-            ) / devices.length
+            validDevices.reduce(
+                (sum, device) => sum + (device.packet_loss ?? 0), 0) / validDevices.length
         ).toFixed(1)
         : 0;
 
@@ -127,28 +117,6 @@ function updateOverview(devices){
     document.getElementById(
         "avg_packet_loss"
     ).textContent = `${avgLoss}%`;
-
-    const health =
-        Math.max(
-            0,
-            Math.round(
-                (online / Math.max(total,1))*100 -
-                avgLoss*5
-            )
-        );
-
-    document.getElementById(
-        "health_score"
-    ).textContent = `${health}%`;
-
-    document.getElementById(
-        "health_text"
-    ).textContent =
-        health > 90
-        ? "Excellent"
-        : health > 70
-        ? "Good"
-        : "Degraded";
 }
 
 function renderDevices(data){
@@ -189,7 +157,7 @@ function renderDevices(data){
     document.getElementById(
         "devices"
     ).innerHTML =
-        filtered.map(createDeviceCard).join("");
+        filtered.map(createDeviceRow).join("");
 }
 
 async function loadDevices(){
@@ -201,7 +169,7 @@ async function loadDevices(){
     try{
 
         const response =
-            await fetch("/devices/");
+            await fetch("/api/devices");
 
         const data =
             await response.json();
@@ -238,7 +206,7 @@ document
 
 async function loadAlertEvents() {
     try {
-        const response = await fetch("/stats/");
+        const response = await fetch("/api/stats");
         const data = await response.json();
 
         const alertEvents = data.recent_alert_events || [];
@@ -248,11 +216,12 @@ async function loadAlertEvents() {
                 .toLocaleString();
             
             const eventClass = event.event_type === "trigger" ? "event-trigger" : "event-recover";
+            const metricUnit = event.metric === "latency" ? "ms" : "%";
 
             return `
                 <div class="event ${eventClass}">
                     <strong>${event.event_type.toUpperCase()}</strong><br>
-                    ${event.device_ip} | ${event.metric}: ${event.value.toFixed(2)} ms
+                    ${event.device_ip} | ${event.metric}: ${event.value.toFixed(2)} ${metricUnit}
                     <small>(${time})</small>
                 </div>
             `;

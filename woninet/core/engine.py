@@ -12,6 +12,7 @@ from woninet.core.storage import StorageEngine
 from woninet.core.alerts import AlertEngine, AlertRule
 from woninet.core.subnet_enumerator import SubnetEnumerator
 from woninet.core.manual_ip_enumerator import ManualIPEnumerator
+from woninet.core.graph import GraphEngine
 from woninet.database.engine import DatabaseEngine
 from woninet.database.tables import AlertEventTable
 from woninet.utilities.ip_validator import is_device_ip_valid
@@ -54,6 +55,7 @@ class NetworkMonitorCore:
         arp_noise_limit: float,
         database_path: str,
         max_thread_workers: int,
+        alert_rules: dict,
     ) -> None:
         """
         Initialize the monitor core and prepare the persistence layer.
@@ -65,6 +67,7 @@ class NetworkMonitorCore:
                 fluctuations are treated as noise.
             database_path (str): Path to SQLite database.
             max_thread_workers (int): Maximum number of thread workers used to send ICMP pings.
+            alert_rules (dict): Provided alert rules, loaded from config.json.
         """
         self._running: bool = False
         self._thread: threading.Thread | None = None
@@ -74,10 +77,6 @@ class NetworkMonitorCore:
         self.local_ip: str = local_ip
         self.arp_noise_limit: float = arp_noise_limit
         self.max_thread_workers: int = max_thread_workers
-        self.consecutive_checks: dict[str, int] = {
-            "latency_ms": 2,
-            "packet_loss": 0,
-        }
 
         # Initialize database
         self.database_engine = DatabaseEngine(database_path=database_path)
@@ -98,10 +97,17 @@ class NetworkMonitorCore:
         self.alert_engine = AlertEngine(
             storage=self.storage,
             rules=[
-                AlertRule("latency_ms", 100, self.consecutive_checks["latency_ms"]),
-                AlertRule("packet_loss", 0.0, self.consecutive_checks["packet_loss"]),
+                AlertRule(item["metric"], item["threshold"], item["consecutive_checks"])
+                for item in alert_rules
             ],
         )
+
+        self.consecutive_checks = {
+            item["metric"]: item["consecutive_checks"]
+            for item in alert_rules
+        }
+
+        self.graph_engine = GraphEngine()
 
     def start(self) -> None:
         """
@@ -155,22 +161,22 @@ class NetworkMonitorCore:
                     max_thread_workers=self.max_thread_workers,
                 ):
                     try:
-                        device, latency_metric, packet_loss_metric = result
                         self.submit_to_history(
-                            device=device, metrics=[latency_metric, packet_loss_metric]
+                            device=result.device,
+                            metrics=[result.latency, result.packet_loss],
                         )
-                        if device is not None:
+                        if result.device is not None:
                             self.alert_engine.evaluate(
-                                ip=device.ip,
-                                metrics_list=[latency_metric, packet_loss_metric],
+                                ip=result.device.ip,
+                                metrics_list=[result.latency, result.packet_loss],
                                 default_consecutive_checks={
-                                    "latency_ms": self.consecutive_checks["latency_ms"],
+                                    "latency": self.consecutive_checks["latency"],
                                     "packet_loss": self.consecutive_checks[
                                         "packet_loss"
                                     ],
                                 },
                             )
-                    except ValueError:
+                    except AttributeError:
                         # If the tuple doesn't have enough values to unpack
                         pass
                 time.sleep(1)
@@ -224,6 +230,15 @@ class NetworkMonitorCore:
         recent_device_alert_events = self.storage.get_recent_device_alert_events(ip=ip)
         return (device_info, device_alert_state, recent_device_alert_events)
 
+    def device_exists(self, ip: str) -> bool:
+        """
+        Return boolean indicating if device exists for a given IP address.
+        """
+        exists = self.storage.fetch_device_info(ip=ip)
+        if exists:
+            return True
+        return False
+
     def classify_recent_alert_events(self) -> list[dict[str, Any]]:
         """
         Re-order and organize the recent alert events
@@ -259,14 +274,16 @@ class NetworkMonitorCore:
             if isinstance(metric, MetricRecord):
                 self.storage.store_metric(metric=metric)
 
-    def enumerate_candidate_devices(self, target_ip: str | None) -> dict[str, Device]:
+    def enumerate_candidate_devices(
+        self, target_ip_list: list[str] | None
+    ) -> dict[str, Device]:
         """
-        Control enumeration based on user-provided IP address. Use range enumeration
+        Control enumeration based on user-provided IP addresses. Use range enumeration
         if IP range is detected, otherwise use the single IP address. Enumerate on the
         /24 subnet if no target IP address is provided.
 
         Args:
-            target_ip (str|None): Target IP address to create candidate devices on.
+            target_ip (list[str]|None): Target IP addresses to create candidate devices on.
 
         Returns:
             dict[str,Device]: Candidate devices.
@@ -274,13 +291,17 @@ class NetworkMonitorCore:
         Raises:
             ValueError: If IP addresses are not valid.
         """
-        if target_ip is not None:
-            if detect_ip_range(ip=target_ip):
-                candidate_devices = self.manual_ip_enumerator.enumerate_range(target_ip)
-            else:
-                candidate_devices = {target_ip: Device(ip=target_ip)}
+        candidate_devices = {}
+        if target_ip_list is not None:
+            for target_ip in target_ip_list:
+                if detect_ip_range(ip=target_ip):
+                    candidate_devices.update(
+                        self.manual_ip_enumerator.enumerate_range(target_ip)
+                    )
+                else:
+                    candidate_devices[target_ip] = Device(ip=target_ip)
         else:
-            candidate_devices = self.subnet_enumerator.enumerate(self.local_ip)
+            candidate_devices.update(self.subnet_enumerator.enumerate(self.local_ip))
         if not is_device_ip_valid(candidate_devices):
             raise ValueError("IP address is not valid")
         return candidate_devices

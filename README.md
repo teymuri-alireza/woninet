@@ -22,13 +22,11 @@ reachability, and latency. Metrics are collected continuously and processed thro
 
 ## Future Plans
 
-- Pass alert rules as command-line arguments.
 - Add ARP table caching to further reduce Wi‑Fi latency noise.
 - Accept MAC addresses as command‑line arguments.
 - Fetch MAC address from database for offline devices.
-- Enhance web dashboard UI:
-    1. Define device-specific routes for each device.
-    2. Add charts for overall status.
+- Use ARP noise limit as device state for styling in front-end.
+- Add CLI argument to accept target IP addresses from a file.
 
 ## Known Issues
 
@@ -98,9 +96,80 @@ python3 -m woninet --version
 sudo ../venv/bin/python3 -m woninet
 ```
 
+## Configuration
+
+You can define alert rules in a JSON file. Rename the example file at `woninet/config.example.json` to `config.json`. The application will load the alert rules from that file at startup.
+
+### Example:
+
+```json
+{
+    "monitoring": {
+        "arp_noise_limit": 300.0,
+        "max_workers": 4
+    },
+    "database": "woninet.db",
+    "target_ip_list": [
+        "192.168.1.1-100"
+        // or
+        "192.168.1.1", "192.168.1.10", "192.168.1.20"
+    ],
+    "alert_rules":[
+        {
+            "metric": "latency",
+            "threshold": 100,
+            "consecutive_checks": 3
+        },
+        {
+            "metric": "packet_loss",
+            "threshold": 0.0,
+            "consecutive_checks": 1
+        }
+    ]
+}
+```
+
+### Explanations:
+
+#### Alert Rules
+- **metric**: The metric name to evaluate (`latency` or `packet_loss`)
+- **threshold**: The value that triggers the alert. For latency, this is in milliseconds. For packet loss, this is a percentage (0.0-100.0).
+- **consecutive_checks**: The number of consecutive evaluations required before the alert state changes. Higher values reduce false positives.
+
+#### IP List
+
+- A single or range of target IP addresses to scan.
+
+#### Monitoring Settings
+- **arp_noise_limit**: Latency threshold in milliseconds used to filter ARP resolution noise. Set to 0 to disable filtering. Helps eliminate Wi‑Fi latency spikes.
+- **max_workers**: Maximum number of thread workers used to send ICMP pings. Higher values may increase system load and latency.
+
+#### Database
+- **database**: The path to the SQLite database file where metrics and alerts are stored.
+
+#### Notes
+- **Packet Loss**: Values are in the range [0.0, 100.0]. A value of 100.0 indicates 100% packet loss. A value of 0.0 will trigger on any packet loss.
+- **Latency**: All latency thresholds are evaluated in milliseconds.
+
 ## Usage
 
 This [guide](./docs/usage.md) explains common ways to run *woninet* and how to resolve common issues.
+
+## Testing
+
+If you want to run the test suite locally, install the optional test dependencies:
+
+```shell
+pip install -e ".[test]"
+```
+
+Then run:
+
+```shell
+pytest
+```
+
+The test suite currently focuses on API behavior and core logic, and it uses pytest for automated verification.
 
 ## Requirements
 

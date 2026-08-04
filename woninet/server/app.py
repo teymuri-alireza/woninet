@@ -1,18 +1,21 @@
 import asyncio
 from pathlib import Path
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, HTTPException, status
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.openapi.docs import get_swagger_ui_html
 from contextlib import asynccontextmanager
-from woninet.server.routes import devices, stats
+from woninet.server.routes.api.devices import router as devices_api
+from woninet.server.routes.api.stats import router as stats_api
+from woninet.server.routes.page.devices import router as devices_page
+from woninet.server.dependencies import get_static_path
 from woninet.main import get_monitor
 from woninet.__init__ import __version__
 
 # Global variables
-STATIC_DIR = Path(__file__).parent / "static"
-TEMPLATES_DIR = Path(__file__).parent / "templates"
+TEMPLATES_DIR, STATIC_DIR = get_static_path()
+CHARTS_DIR = Path(__file__).parent.parent / "charts"
 
 monitor = None
 
@@ -63,10 +66,12 @@ templates = Jinja2Templates(directory=TEMPLATES_DIR)
 
 # Static files
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+app.mount("/charts", StaticFiles(directory=CHARTS_DIR), name="charts")
 
 # Routes
-app.include_router(devices.router)
-app.include_router(stats.router)
+app.include_router(devices_api)
+app.include_router(stats_api)
+app.include_router(devices_page)
 
 
 # The root path
@@ -83,4 +88,14 @@ def custom_swagger_ui():
         swagger_js_url="/static/swagger-ui/swagger-ui-bundle.js",
         swagger_css_url="/static/swagger-ui/swagger-ui.css",
         swagger_favicon_url="/static/swagger-ui/favicon-32x32.png",
+    )
+
+
+@app.exception_handler(404)
+def custom_not_found_exception(request: Request, exc: HTTPException):
+    return templates.TemplateResponse(
+        request=request,
+        name="404.html",
+        context={"request": request},
+        status_code=status.HTTP_404_NOT_FOUND,
     )
