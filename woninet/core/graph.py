@@ -31,7 +31,7 @@ class GraphEngine:
         recover_values = []
 
         for event in recent_device_alert_events:
-            if event.metric == "latency_ms":
+            if event.metric == "latency":
                 times.append(event.timestamp)
                 latency_values.append(event.value)
                 if event.event_type == "trigger":

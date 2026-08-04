@@ -80,7 +80,7 @@ async function loadDeviceInfo() {
     device.latency === 0 ? status.textContent = "OFFLINE" : status.textContent = "ONLINE";
     lastSeen.textContent = device.last_seen;
 
-    alertSatteLatency.textContent = deviceAlertState.latency_ms;
+    alertSatteLatency.textContent = deviceAlertState.latency;
     alertStatePacketLoss.textContent = deviceAlertState.packet_loss;
 
     // Send current date as query to prevent cache from not loading the new graph image

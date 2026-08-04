@@ -254,7 +254,7 @@ class PingCollector(BaseCollector):
                 )
 
             recorded_metrics = [
-                MetricRecord(ip, "latency_ms", dev.latency),
+                MetricRecord(ip, "latency", dev.latency),
                 MetricRecord(ip, "packet_loss", dev.packet_loss),
             ]
 

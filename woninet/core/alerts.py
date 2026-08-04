@@ -74,24 +74,24 @@ class AlertEngine:
         """
         The central dispatcher.
 
-        Search the metrics list for known metric's names (`latency_ms`, and `packet_loss`)
+        Search the metrics list for known metric's names (`latency`, and `packet_loss`)
         and pass the found metric to the correct evaluation method.
 
         Args:
             ip (str): IP address to evaluate.
-            metrics_name (list[MetricRecord]): List of recorded metrics (e.g. `latency_ms`, `packet_loss`).
+            metrics_name (list[MetricRecord]): List of recorded metrics (e.g. `latency`, `packet_loss`).
             default_consecutive_checks (dict[str,int]): Dictionary of consecutive evaluations
                 required to confirm a state transition for each metric.
         """
         for metric in metrics_list:
             if metric is not None:
-                if metric.metric == "latency_ms":
+                if metric.metric == "latency":
                     self._evaluate_latency(
                         ip=ip,
-                        metric="latency_ms",
+                        metric="latency",
                         value=metric.value,
                         default_consecutive_checks=default_consecutive_checks[
-                            "latency_ms"
+                            "latency"
                         ],
                     )
                 elif metric.metric == "packet_loss":
@@ -116,7 +116,7 @@ class AlertEngine:
 
         Args:
             ip (str): IP address to evaluate.
-            metric (str): Metric name (e.g. `latency_ms`).
+            metric (str): Metric name (e.g. `latency`).
             value (float): Value of the current metric.
             default_consecutive_checks (int): Number of consecutive evaluations
                 required to confirm a state transition.

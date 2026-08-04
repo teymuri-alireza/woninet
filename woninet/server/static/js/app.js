@@ -216,7 +216,7 @@ async function loadAlertEvents() {
                 .toLocaleString();
             
             const eventClass = event.event_type === "trigger" ? "event-trigger" : "event-recover";
-            const metricUnit = event.metric === "latency_ms" ? "ms" : "%";
+            const metricUnit = event.metric === "latency" ? "ms" : "%";
 
             return `
                 <div class="event ${eventClass}">

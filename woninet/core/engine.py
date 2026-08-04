@@ -170,7 +170,7 @@ class NetworkMonitorCore:
                                 ip=result.device.ip,
                                 metrics_list=[result.latency, result.packet_loss],
                                 default_consecutive_checks={
-                                    "latency_ms": self.consecutive_checks["latency_ms"],
+                                    "latency": self.consecutive_checks["latency"],
                                     "packet_loss": self.consecutive_checks[
                                         "packet_loss"
                                     ],
