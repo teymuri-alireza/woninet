@@ -4,6 +4,20 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [unreleased]
+
+### Added
+- Added create_config_json() to create default conf file.
+
+### Changed
+- Documented root priviledges for Linux operating systems.
+
+### Fixed
+- Ensure the `charts` directory exists, using `os.makedirs()`.
+- Added `--config` flag to prevent hardcoded path for conf file.
+
+---
+
 ## [2.0.1] - 2026-08-04
 
 - Prepare **woninet** for PyPI releases.
