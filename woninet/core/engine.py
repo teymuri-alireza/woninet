@@ -292,7 +292,7 @@ class NetworkMonitorCore:
             ValueError: If IP addresses are not valid.
         """
         candidate_devices = {}
-        if target_ip_list is not None:
+        if len(target_ip_list) == 0:
             for target_ip in target_ip_list:
                 if detect_ip_range(ip=target_ip):
                     candidate_devices.update(
