@@ -72,6 +72,13 @@ are collected continuously and processed through an alert engine."""
     )
 
     parser.add_argument(
+        "--config",
+        type=str,
+        default="config.json",
+        help="Path to the config.json file to load (default: %(default)s).",
+    )
+
+    parser.add_argument(
         "--color",
         type=str,
         choices=["true", "false"],
