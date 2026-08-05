@@ -15,6 +15,7 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 - Ensure the `charts` directory exists, using `os.makedirs()`.
 - Added `--config` flag to prevent hardcoded path for conf file.
+- Used `len()` to check `target ip list` parameter's nullability.
 
 ---
 
