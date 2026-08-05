@@ -40,7 +40,36 @@ IPs and filters out Wi‑Fi ARP‑delay noise.)
 
 **Note:** *woninet* is under active development.
 
-## Installation
+## Installation from PyPI
+
+### Unix/Linux
+
+Create and activate a virtual environment:
+
+```shell
+python3 -m venv --copies venv
+source venv/bin/activate
+```
+
+Install woninet from PyPI:
+
+```shell
+pip install woninet
+```
+
+Grant the required capability to the Python interpreter:
+
+```shell
+sudo setcap cap_net_raw=eip venv/bin/python3
+```
+
+Then run:
+
+```shell
+woninet --help
+```
+
+#### macOS/Windows
 
 Install from PyPI:
 

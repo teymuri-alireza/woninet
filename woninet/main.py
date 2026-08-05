@@ -9,10 +9,10 @@ from sqlalchemy.exc import OperationalError
 from woninet.core.engine import NetworkMonitorCore
 from woninet.utilities.arguments import args
 from woninet.utilities.logger import get_core_logger, TRACE_LEVEL
+from woninet.utilities.create_configuration import create_config_json
 
 # Global Variables
 LOGGING_YAML_PATH = Path(__file__).parent / "logging.yaml"
-CONFIG_JSON_PATH = Path(__file__).parent / "config.json"
 REMOTE_PROBE_IP = "8.8.8.8"
 monitor = None
 
@@ -67,13 +67,29 @@ def load_logging_yaml(log_output: str | None) -> dict:
     return config
 
 
-def load_config_json() -> dict:
+def load_config_json(config_json_path: str) -> dict:
+    """
+    Load the application's JSON configuration file.
+
+    If the configuration file does not exist, create a default one and
+    load it again.
+
+    Args:
+        config_json_path (str): Path to the configuration JSON file.
+
+    Returns:
+        dict: Parsed configuration data.
+    """
     try:
-        with open(CONFIG_JSON_PATH) as file:
+        with open(config_json_path) as file:
             config = json.load(file)
         return config
     except FileNotFoundError:
-        raise
+        create_config_json(config_json_path)
+
+        with open(config_json_path) as file:
+            config = json.load(file)
+        return config
 
 
 def configure_logger(arguments: Namespace) -> logging.Logger:
@@ -178,7 +194,8 @@ def main() -> None:
         print(__version__)
         return
 
-    configuration = load_config_json()
+    config_json_path = arguments.config
+    configuration = load_config_json(config_json_path)
 
     target_ip = configuration["target_ip_list"]
     port = arguments.port
