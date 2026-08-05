@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [unreleased]
+
+### Changed
+
+- Disable ruff formatting in `create_configuration.py` module to preserve the `JSON` structure.
+
+---
+
 ## [2.0.3] - 2026-08-05
 
 ### Fixed
