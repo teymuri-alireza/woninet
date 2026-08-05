@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-## [unreleased]
+## [2.0.2] - 2026-08-05
 
 ### Added
 - Added create_config_json() to create default conf file.
