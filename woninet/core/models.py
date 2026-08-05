@@ -122,3 +122,9 @@ class ScanResult:
     device: Device | None
     latency: float | None
     packet_loss: float | None
+
+
+@dataclass(frozen=True)
+class PingResult:
+    avg_rtt: float
+    packet_loss: float
