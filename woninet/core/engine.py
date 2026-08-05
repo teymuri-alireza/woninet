@@ -103,8 +103,7 @@ class NetworkMonitorCore:
         )
 
         self.consecutive_checks = {
-            item["metric"]: item["consecutive_checks"]
-            for item in alert_rules
+            item["metric"]: item["consecutive_checks"] for item in alert_rules
         }
 
         self.graph_engine = GraphEngine()

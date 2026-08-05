@@ -10,6 +10,7 @@ class GraphEngine:
     """
     Engine for generating graphs and visualizations of network device metrics.
     """
+
     def __init__(self):
         os.makedirs(name=CHARTS_PATH, exist_ok=True)
 

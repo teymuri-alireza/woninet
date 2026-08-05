@@ -40,9 +40,15 @@ class DeviceRepository:
         Args:
             dev (Device): Domain `Device` instance.
         """
-        existing = self.session.query(DeviceTable).filter(DeviceTable.ip == dev.ip).first()
+        existing = (
+            self.session.query(DeviceTable).filter(DeviceTable.ip == dev.ip).first()
+        )
         if existing is None and dev.mac:
-            existing = self.session.query(DeviceTable).filter(DeviceTable.mac == dev.mac).first()
+            existing = (
+                self.session.query(DeviceTable)
+                .filter(DeviceTable.mac == dev.mac)
+                .first()
+            )
         now = datetime.now()
 
         if existing:
