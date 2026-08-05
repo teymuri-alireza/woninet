@@ -17,6 +17,7 @@ from woninet.database.engine import DatabaseEngine
 from woninet.database.tables import AlertEventTable
 from woninet.utilities.ip_validator import is_device_ip_valid
 from woninet.utilities.detect_ip_range import detect_ip_range
+from woninet.exc import PingUtilityNotFound
 
 core_logger = logging.getLogger("core")
 
@@ -185,6 +186,10 @@ class NetworkMonitorCore:
             self._stop_event.set()
         except SocketAddressError:
             core_logger.error("Network connection failed. Quitting.")
+            self._running = False
+            self._stop_event.set()
+        except PingUtilityNotFound:
+            core_logger.error("Couldn't find the ping command on PATH. Qutting.")
             self._running = False
             self._stop_event.set()
         except Exception as e:
