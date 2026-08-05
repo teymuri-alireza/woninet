@@ -6,6 +6,7 @@ from typing import Generator, Any
 from icmplib import ping, SocketPermissionError, SocketAddressError
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from woninet.core.models import Device, MetricRecord, HostStatus, ScanResult
+from woninet.utilities.ping import system_ping
 
 core_logger = logging.getLogger("core")
 
@@ -120,7 +121,12 @@ def detect_host(
         if stop_event and stop_event.is_set():
             return None
     except (PermissionError, SocketPermissionError):
-        raise
+        response = system_ping(
+            address=target_ip.strip(),
+            timeout=timeout,
+            count=2,
+            interval=1,
+        )
     except SocketAddressError:
         raise
     except Exception as e:
