@@ -19,7 +19,7 @@ def system_ping(address: str, timeout: float, count: int, interval: int) -> Ping
 
     Returns:
         PingResult: PingResult instance with average round-trip time and packet loss percentage.
-    
+
     Raises:
         PingUtilityNotFound: if the ping command is not found on PATH.
     """
