@@ -44,6 +44,8 @@ IPs and filters out Wi‑Fi ARP‑delay noise.)
 
 ### Unix/Linux
 
+1. **Method 1 (recommended (Uses the `icmplib` module)):**
+
 Create and activate a virtual environment:
 
 ```shell
@@ -61,6 +63,27 @@ Grant the required capability to the Python interpreter:
 
 ```shell
 sudo setcap cap_net_raw=eip venv/bin/python3
+```
+
+Then run:
+
+```shell
+woninet --help
+```
+
+2. **Method 2 (Uses the system's `ping` command as a fallback):**
+
+Create and activate a virtual environment:
+
+```shell
+python3 -m venv venv
+source venv/bin/activate
+```
+
+Install from PyPI:
+
+```shell
+pip install woninet
 ```
 
 Then run:
