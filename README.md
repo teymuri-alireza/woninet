@@ -92,7 +92,7 @@ Then run:
 woninet --help
 ```
 
-#### macOS/Windows
+### macOS/Windows
 
 Install from PyPI:
 
@@ -169,7 +169,7 @@ sudo ../venv/bin/python3 -m woninet
 ## Configuration
 
 You can define alert rules in a JSON file. Rename the example file at
-`woninet/config.example.json` to `config.json`. The application will load the alert
+`config.example.json` to `config.json`. The application will load the alert
 rules from that file at startup.
 
 ### Example:
