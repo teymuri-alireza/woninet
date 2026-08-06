@@ -5,7 +5,7 @@ from datetime import datetime
 from typing import Any
 from sqlalchemy import text, inspect
 from sqlalchemy.exc import SQLAlchemyError
-from icmplib import SocketPermissionError, SocketAddressError
+from icmplib import ping, SocketPermissionError, SocketAddressError
 from woninet.core.models import Device, MetricRecord
 from woninet.core.collectors import PingCollector
 from woninet.core.storage import StorageEngine
@@ -17,6 +17,7 @@ from woninet.database.engine import DatabaseEngine
 from woninet.database.tables import AlertEventTable
 from woninet.utilities.ip_validator import is_device_ip_valid
 from woninet.utilities.detect_ip_range import detect_ip_range
+from woninet.exc import PingUtilityNotFound
 
 core_logger = logging.getLogger("core")
 
@@ -121,6 +122,7 @@ class NetworkMonitorCore:
             target=self.worker_loop, name="woninet-worker", daemon=False
         )
         self._thread.start()
+        self.check_ping_preference()
 
     def stop(self) -> None:
         """
@@ -185,6 +187,10 @@ class NetworkMonitorCore:
             self._stop_event.set()
         except SocketAddressError:
             core_logger.error("Network connection failed. Quitting.")
+            self._running = False
+            self._stop_event.set()
+        except PingUtilityNotFound:
+            core_logger.error("Couldn't find the ping command on PATH. Qutting.")
             self._running = False
             self._stop_event.set()
         except Exception as e:
@@ -350,3 +356,24 @@ class NetworkMonitorCore:
             pass
 
         return result
+
+    def check_ping_preference(self):
+        try:
+            ping(
+                source="127.0.0.1",
+                address="127.0.0.1",
+                timeout=1,
+                count=1,
+                privileged=True,
+                interval=1,
+            )
+        except SocketPermissionError:
+            warning_msg = (
+                "\nWARNING: Privileged ICMP is unavailable.\n"
+                "Falling back to the system 'ping' command.\n"
+                "The fallback typically works without CAP_NET_RAW or root privileges\n"
+                "but is generally slower because it launches an external process.\n"
+                "To restore native ICMP support, grant CAP_NET_RAW to Python:\n"
+                "   sudo setcap cap_net_raw=eip $(which python3)\n"
+            )
+            print(warning_msg)

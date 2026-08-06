@@ -6,8 +6,11 @@ from typing import Generator, Any
 from icmplib import ping, SocketPermissionError, SocketAddressError
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from woninet.core.models import Device, MetricRecord, HostStatus, ScanResult
+from woninet.utilities.ping import system_ping
+from woninet.exc import PingUtilityNotFound
 
 core_logger = logging.getLogger("core")
+ping_method = "icmplib"
 
 
 def read_arp_table() -> dict[str, str]:
@@ -108,19 +111,37 @@ def detect_host(
         status.mac = mac
 
     # ICMP check
+    global ping_method
     try:
-        response = ping(
-            source=source_ip,
-            address=target_ip.strip(),
-            timeout=timeout,
-            count=2,
-            privileged=True,
-            interval=1,
-        )
+        if ping_method == "icmplib":
+            response = ping(
+                source=source_ip,
+                address=target_ip.strip(),
+                timeout=timeout,
+                count=2,
+                privileged=True,
+                interval=1,
+            )
+        else:
+            response = system_ping(
+                address=target_ip.strip(),
+                timeout=timeout,
+                count=2,
+                interval=1,
+            )
         if stop_event and stop_event.is_set():
             return None
     except (PermissionError, SocketPermissionError):
-        raise
+        try:
+            response = system_ping(
+                address=target_ip.strip(),
+                timeout=timeout,
+                count=2,
+                interval=1,
+            )
+            ping_method = "system_ping"
+        except PingUtilityNotFound:
+            raise
     except SocketAddressError:
         raise
     except Exception as e:
@@ -221,6 +242,8 @@ class PingCollector(BaseCollector):
             except (PermissionError, SocketPermissionError):
                 raise
             except SocketAddressError:
+                raise
+            except PingUtilityNotFound:
                 raise
 
             # Update device state from status
