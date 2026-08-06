@@ -5,7 +5,7 @@ from datetime import datetime
 from typing import Any
 from sqlalchemy import text, inspect
 from sqlalchemy.exc import SQLAlchemyError
-from icmplib import SocketPermissionError, SocketAddressError
+from icmplib import ping, SocketPermissionError, SocketAddressError
 from woninet.core.models import Device, MetricRecord
 from woninet.core.collectors import PingCollector
 from woninet.core.storage import StorageEngine
@@ -122,6 +122,7 @@ class NetworkMonitorCore:
             target=self.worker_loop, name="woninet-worker", daemon=False
         )
         self._thread.start()
+        self.check_ping_preference()
 
     def stop(self) -> None:
         """
@@ -355,3 +356,24 @@ class NetworkMonitorCore:
             pass
 
         return result
+
+    def check_ping_preference(self):
+        try:
+            ping(
+                source="127.0.0.1",
+                address="127.0.0.1",
+                timeout=1,
+                count=1,
+                privileged=True,
+                interval=1,
+            )
+        except SocketPermissionError:
+            warning_msg = (
+                "\nWARNING: Privileged ICMP is unavailable.\n"
+                "Falling back to the system 'ping' command.\n"
+                "The fallback typically works without CAP_NET_RAW or root privileges\n"
+                "but is generally slower because it launches an external process.\n"
+                "To restore native ICMP support, grant CAP_NET_RAW to Python:\n"
+                "   sudo setcap cap_net_raw=eip $(which python3)\n"
+            )
+            print(warning_msg)
