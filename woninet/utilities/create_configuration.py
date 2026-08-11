@@ -14,7 +14,7 @@ def create_config_json(config_json_path: str) -> None:
     # fmt: off
     template = {
         "monitoring": {
-            "arp_noise_limit": 300.0,
+            "arp_noise_limit": 0.0,
             "max_workers": 4
         },
         "database": "woninet.db",
