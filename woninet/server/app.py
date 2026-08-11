@@ -17,13 +17,9 @@ from woninet.__init__ import __version__
 TEMPLATES_DIR, STATIC_DIR = get_static_path()
 CHARTS_DIR = Path(__file__).parent.parent / "charts"
 
-monitor = None
-
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    global monitor
-
     # Startup
     monitor = get_monitor()
     monitor.start()
