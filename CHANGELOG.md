@@ -18,6 +18,10 @@ All notable changes to this project will be documented in this file.
 
 - Disable ruff formatting in `create_configuration.py` module to preserve the `JSON` structure.
 
+### Fixed
+
+- Added **404** `HTTPException` for unknown IP addresses in devices info API (`/api/devices/{ip}`).
+
 ---
 
 ## [2.0.3] - 2026-08-05
