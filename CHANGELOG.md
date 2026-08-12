@@ -13,6 +13,8 @@ All notable changes to this project will be documented in this file.
 - Added `ping_method` variable to cache the ping method, to avoid repeated fallback overhead.
 - Added test for parsing `system_ping()`'s output for Linux and Windows operating systems.
 - Added warning message when Privileged ICMP is unavailable, at startup.
+- Extended `FakeMonitor` class in tests.
+- Added remaining API tests.
 
 ### Changed
 
