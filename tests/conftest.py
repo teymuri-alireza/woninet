@@ -3,6 +3,8 @@ from datetime import datetime
 from fastapi.testclient import TestClient
 from woninet.server.app import app
 import woninet.server.routes.api.devices as devices_route
+import woninet.server.routes.page.devices as device_page_route
+import woninet.server.routes.api.stats as stats_route
 from woninet.database.engine import DatabaseEngine
 from woninet.database.tables import DeviceTable
 
@@ -81,6 +83,18 @@ def client(monkeypatch):
 
     monkeypatch.setattr(
         devices_route,
+        "get_monitor_gracefully",
+        fake_get_monitor_gracefully,
+    )
+
+    monkeypatch.setattr(
+        device_page_route,
+        "get_monitor_gracefully",
+        fake_get_monitor_gracefully,
+    )
+
+    monkeypatch.setattr(
+        stats_route,
         "get_monitor_gracefully",
         fake_get_monitor_gracefully,
     )
