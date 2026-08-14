@@ -234,7 +234,7 @@ packet loss. A value of 0.0 will trigger on any packet loss.
 
 ## Usage
 
-This [guide](./docs/usage.md) explains common ways to run *woninet* and how to resolve common issues.
+This [guide](https://github.com/teymuri-alireza/woninet/blob/main/docs/usage.md) explains common ways to run *woninet* and how to resolve common issues.
 
 ## Testing
 
@@ -259,10 +259,10 @@ The test suite currently focuses on API behavior and core logic, and it uses pyt
 
 ## Documentation
 
-if you have any question or need clarification, check the [documentation](./docs/documentation.md) guide.
+if you have any question or need clarification, check the [documentation](.https://github.com/teymuri-alireza/woninet/blob/main/docs/documentation.md) guide.
 
 ## Contribution
 
 Thanks for considering contributing to *woninet!*
 To help us maintain code quality, stability, and a predictable release process, please review
-and follow the guidelines in our [Contributing Guide.](./CONTRIBUTING.md)
+and follow the guidelines in our [Contributing Guide.](https://github.com/teymuri-alireza/woninet/blob/main/CONTRIBUTING.md)
