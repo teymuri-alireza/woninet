@@ -61,4 +61,6 @@ def get_default_gateway() -> str:
         return gateways[0] if gateways else None
 
     else:
-        raise NotImplementedError(f"Other operating systems will be implemented later. Current system: {system}")
+        raise NotImplementedError(
+            f"Other operating systems will be implemented later. Current system: {system}"
+        )
