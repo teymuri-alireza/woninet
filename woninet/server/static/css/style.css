@@ -58,6 +58,23 @@ body{
     gap:10px;
 }
 
+.gateway-info{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin-right:12px;
+}
+
+.gateway-label{
+    color:var(--muted);
+    font-size:.9rem;
+}
+
+.gateway-value{
+    color:var(--text);
+    font-weight:700;
+}
+
 .status-dot{
     width:10px;
     height:10px;

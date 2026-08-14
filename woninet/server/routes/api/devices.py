@@ -10,7 +10,10 @@ router = APIRouter(prefix="/api/devices", tags=["devices"])
 def list_devices(request: Request):
     monitor = get_monitor_gracefully()
     return JSONResponse(
-        content={"devices": jsonable_encoder(monitor.get_device_history())},
+        content={
+            "devices": jsonable_encoder(monitor.get_device_history()),
+            "gateway": monitor.default_gateway,
+        },
         status_code=status.HTTP_200_OK,
     )
 

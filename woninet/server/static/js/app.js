@@ -176,6 +176,9 @@ async function loadDevices(){
 
         renderDevices(data);
 
+        const gatewayEl = document.getElementById("gateway");
+        if (gatewayEl) gatewayEl.textContent = data.gateway || "—";
+
         statusDot.style.background =
             "#22c55e";
         statusText.textContent = "Connected";

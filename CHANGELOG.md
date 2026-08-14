@@ -15,6 +15,9 @@ All notable changes to this project will be documented in this file.
 - Added warning message when Privileged ICMP is unavailable, at startup.
 - Extended `FakeMonitor` class in tests.
 - Added remaining API tests.
+- Added `get_default_gateway()` to detect the system's defualt gateway using the `subprocess` module.
+- Pass the `gateway` key in the `/api/devices` endpoint.
+- Added the required frontend codes (HTML, CSS, JS) to show the default gateway in dashboard.
 
 ### Changed
 
