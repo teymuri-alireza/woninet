@@ -17,6 +17,7 @@ from woninet.database.engine import DatabaseEngine
 from woninet.database.tables import AlertEventTable
 from woninet.utilities.ip_validator import is_device_ip_valid
 from woninet.utilities.detect_ip_range import detect_ip_range
+from woninet.utilities.detect_gateway import get_default_gateway
 from woninet.exc import PingUtilityNotFound
 
 core_logger = logging.getLogger("core")
@@ -76,6 +77,8 @@ class NetworkMonitorCore:
         self._start_uptime = datetime.now()
 
         self.local_ip: str = local_ip
+        self.default_gateway: str = self.set_default_gateway()
+
         self.arp_noise_limit: float = arp_noise_limit
         self.max_thread_workers: int = max_thread_workers
 
@@ -377,3 +380,10 @@ class NetworkMonitorCore:
                 "   sudo setcap cap_net_raw=eip $(which python3)\n"
             )
             print(warning_msg)
+
+    def set_default_gateway(self) -> str:
+        """
+        A wrapper to set the default gateway using the `get_default_gateway()`
+        utility.
+        """
+        return get_default_gateway()
