@@ -41,6 +41,7 @@ class FakeMonitor:
         self.devices = devices
         self.graph_engine = FakeGraphEngine()
         self.local_ip = "192.168.200.100"
+        self.default_gateway = "192.168.200.1"
 
     def get_device_history(self):
         return self.devices
