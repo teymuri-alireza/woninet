@@ -22,6 +22,7 @@ class DeviceTable(Base):
     )
     latency: Mapped[float] = mapped_column(Float)
     packet_loss: Mapped[int] = mapped_column(Integer)
+    jitter: Mapped[float] = mapped_column(Float)
     last_seen: Mapped[datetime] = mapped_column(
         DateTime(timezone=False), default=lambda: datetime.now(), index=True
     )
