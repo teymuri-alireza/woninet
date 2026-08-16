@@ -37,6 +37,11 @@ function createDeviceRow(device){
             ? `${device.latency} ms`
             : "--";
 
+    const jitter =
+        device.latency !== 0
+            ? `${(device.jitter ?? 0).toFixed(1)} ms`
+            : "--";
+
     return `
     <tr>
 
@@ -55,6 +60,8 @@ function createDeviceRow(device){
         </td>
 
         <td>${latency}</td>
+        
+        <td>${jitter}</td>
 
         <td>${(device.packet_loss ?? 0).toFixed(1)}%</td>
 
@@ -219,7 +226,7 @@ async function loadAlertEvents() {
                 .toLocaleString();
             
             const eventClass = event.event_type === "trigger" ? "event-trigger" : "event-recover";
-            const metricUnit = event.metric === "latency" ? "ms" : "%";
+            const metricUnit = (event.metric === "latency" || event.metric === "jitter") ? "ms" : "%";
 
             return `
                 <div class="event ${eventClass}">
