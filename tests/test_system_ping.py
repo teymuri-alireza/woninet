@@ -43,7 +43,10 @@ def _parse_ping_output(output: str, os_name: str):
 
     jitter = 0.0
     if len(per_ping_times) >= 2:
-        diffs = [abs(per_ping_times[i] - per_ping_times[i - 1]) for i in range(1, len(per_ping_times))]
+        diffs = [
+            abs(per_ping_times[i] - per_ping_times[i - 1])
+            for i in range(1, len(per_ping_times))
+        ]
         jitter = round(sum(diffs) / len(diffs), 3)
 
     return avg_rtt, packet_loss, jitter

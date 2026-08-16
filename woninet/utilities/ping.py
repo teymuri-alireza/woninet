@@ -91,7 +91,10 @@ def system_ping(address: str, timeout: float, count: int, interval: int) -> Ping
 
         jitter = 0.0
         if len(per_ping_times) >= 2:
-            diffs = [abs(per_ping_times[i] - per_ping_times[i - 1]) for i in range(1, len(per_ping_times))]
+            diffs = [
+                abs(per_ping_times[i] - per_ping_times[i - 1])
+                for i in range(1, len(per_ping_times))
+            ]
             jitter = round(sum(diffs) / len(diffs), 3)
 
         return PingResult(avg_rtt, packet_loss, jitter)

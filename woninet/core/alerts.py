@@ -108,9 +108,7 @@ class AlertEngine:
                         ip=ip,
                         metric="jitter",
                         value=metric.value,
-                        default_consecutive_checks=default_consecutive_checks[
-                            "jitter"
-                        ],
+                        default_consecutive_checks=default_consecutive_checks["jitter"],
                     )
 
     def _evaluate_latency(
