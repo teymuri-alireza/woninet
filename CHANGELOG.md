@@ -36,6 +36,7 @@ All notable changes to this project will be documented in this file.
 
 - Added **404** `HTTPException` for unknown IP addresses in devices info API (`/api/devices/{ip}`).
 - change packet_loss value instead of packet_loss variable, to prevent packet_loss overwriting.
+- Create charts directory from server to prevent ImportError in pytest
 
 ---
 
