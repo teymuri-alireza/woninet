@@ -23,6 +23,7 @@ All notable changes to this project will be documented in this file.
 - Added `jitter` calculation to the `system_ping()` utility.
 - Fetch and show the `jitter` metric in the dashboard.
 - Added test for the `jitter` metric for the `system_ping()` utility.
+- Added jitter test for the trigger and recover states for alert engine.
 - Passed jitter metric to submit to history and to evaluate
 - Added `_evaluate_jitter()` method in `AlertEngine`.
 - Added `jitter` metric to `alert_rules` key in `config.json`.
