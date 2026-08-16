@@ -281,6 +281,7 @@ class PingCollector(BaseCollector):
             recorded_metrics = [
                 MetricRecord(ip, "latency", dev.latency),
                 MetricRecord(ip, "packet_loss", dev.packet_loss),
+                MetricRecord(ip, "jitter", dev.jitter),
             ]
 
             if dev.reachable or is_known:
@@ -309,7 +310,7 @@ class PingCollector(BaseCollector):
                     core_logger.error(f"Error in PingCollector for {ip}: {e}")
                     continue
                 else:
-                    latency_metric, packet_loss_metric = future_metric
+                    latency_metric, packet_loss_metric, jitter_metric = future_metric
 
                     latency = (
                         latency_metric.value if latency_metric.value != 0 else None
@@ -319,10 +320,16 @@ class PingCollector(BaseCollector):
                         if (future_device is not None and latency is not None)
                         else 0.0
                     )
+                    jitter_metric.value = (
+                        jitter_metric.value
+                        if (future_device is not None and latency is not None)
+                        else 0.0
+                    )
 
                 finally:
                     yield ScanResult(
                         device=future_device,
                         latency=latency_metric,
                         packet_loss=packet_loss_metric,
+                        jitter=jitter_metric,
                     )
