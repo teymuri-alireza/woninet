@@ -151,6 +151,7 @@ def detect_host(
         response = 0
 
     status.latency = response.avg_rtt
+    status.jitter = response.jitter
     status.packet_loss = response.packet_loss * 100
     latency: float = status.latency
     if latency == 0:
@@ -253,6 +254,7 @@ class PingCollector(BaseCollector):
                 dev.mac = status.mac
             dev.latency = status.latency
             dev.packet_loss = status.packet_loss
+            dev.jitter = status.jitter
 
             if dev.reachable:
                 # Only consider reachable hosts as recently seen
