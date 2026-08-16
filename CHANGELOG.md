@@ -19,6 +19,13 @@ All notable changes to this project will be documented in this file.
 - Pass the `gateway` key in the `/api/devices` endpoint.
 - Added the required frontend codes (HTML, CSS, JS) to show the default gateway in dashboard.
 - Added pytest to CI workflow.
+- Added the `jitter` field to Device, HostStatus, PingResult, ScanResult, DeviceTable, and DeviceRepository classes.
+- Added `jitter` calculation to the `system_ping()` utility.
+- Fetch and show the `jitter` metric in the dashboard.
+- Added test for the `jitter` metric for the `system_ping()` utility.
+- Passed jitter metric to submit to history and to evaluate
+- Added `_evaluate_jitter()` method in `AlertEngine`.
+- Added `jitter` metric to `alert_rules` key in `config.json`.
 
 ### Changed
 
@@ -27,6 +34,7 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 
 - Added **404** `HTTPException` for unknown IP addresses in devices info API (`/api/devices/{ip}`).
+- change packet_loss value instead of packet_loss variable, to prevent packet_loss overwriting.
 
 ---
 
