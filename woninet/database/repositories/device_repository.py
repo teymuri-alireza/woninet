@@ -57,12 +57,14 @@ class DeviceRepository:
             if dev.latency > 0:
                 existing.last_seen = dev.last_seen or now
             existing.packet_loss = dev.packet_loss
+            existing.jitter = dev.jitter
         else:
             existing = DeviceTable(
                 ip=dev.ip,
                 mac=dev.mac,
                 latency=dev.latency,
                 packet_loss=dev.packet_loss,
+                jitter=dev.jitter,
                 last_seen=dev.last_seen or now,
             )
             self.session.add(existing)
@@ -81,6 +83,7 @@ class DeviceRepository:
             dev.mac = row.mac
             dev.latency = row.latency
             dev.packet_loss = row.packet_loss
+            dev.jitter = row.jitter
             dev.last_seen = row.last_seen
             result.append(dev)
         return result

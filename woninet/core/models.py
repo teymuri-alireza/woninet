@@ -16,6 +16,7 @@ class Device:
         latency (float): The last latency of host if reachable; Otherwise zero.
         packet_loss (float): Most recent packet-loss ratio in the range [0.0, 100.0].
             A value of 100.0 indicates 100% packet loss or that the device is unreachable.
+        jitter (float): The time delay in the sending of data packets.
     """
 
     def __init__(self, ip: str) -> None:
@@ -32,6 +33,7 @@ class Device:
         self.mac: str | None = None
         self.latency: float = 0
         self.packet_loss: float = 100
+        self.jitter: float = 0.0
 
     def update_seen(self) -> None:
         """
@@ -87,6 +89,7 @@ class HostStatus:
         latency (float): The latency of host if reachable; Otherwise zero.
         packet_loss (float): Most recent packet-loss ratio in the range [0.0, 100.0].
             A value of 100.0 indicates 100% packet loss or that the device is unreachable.
+        jitter (float): The time delay in the sending of data packets.
         mac (str): MAC address if known; Otherwise `None`.
     """
 
@@ -97,6 +100,7 @@ class HostStatus:
         reachable: bool = False,
         latency: float = 0.0,
         packet_loss: float = 100.0,
+        jitter: float = 0.0,
         mac: str | None = None,
     ) -> None:
         """
@@ -107,6 +111,7 @@ class HostStatus:
             exists (bool): If device responded to the ARP scan
             reachable (bool): If device responded to the ICMP scan
             latency (float): The latency of host if reachable; Otherwise zero.
+            jitter (float): The time delay in the sending of data packets.
             mac (str): MAC address if known; Otherwise `None`.
         """
         self.ip: str = ip
@@ -114,6 +119,7 @@ class HostStatus:
         self.reachable: bool = reachable
         self.latency: float = latency
         self.packet_loss: float = packet_loss
+        self.jitter: float = jitter
         self.mac: str | None = mac
 
 
@@ -122,9 +128,11 @@ class ScanResult:
     device: Device | None
     latency: float | None
     packet_loss: float | None
+    jitter: float | None
 
 
 @dataclass(frozen=True)
 class PingResult:
     avg_rtt: float
     packet_loss: float
+    jitter: float

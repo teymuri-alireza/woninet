@@ -6,13 +6,18 @@ def _parse_ping_output(output: str, os_name: str):
         avg_rtt_regex = r"rtt min/avg/max/mdev = [\d\.]+/([\d\.]+)/[\d\.]+/[\d\.]+ ms"
 
         packet_loss_regex = r"([\d\.]+)% packet loss"
+
+        per_ping_time_regex = r"time[=<]([\d\.]+) ?ms"
     else:
         avg_rtt_regex = r"Average = ([\d\.]+)ms"
 
         packet_loss_regex = r"\(([^\)]+)% loss\)"
 
+        per_ping_time_regex = r"time[=<]([\d\.]+)ms"
+
     avg_rtt = 0
     packet_loss = 0.0
+    per_ping_times = []
     for line in output.splitlines():
         m = re.search(avg_rtt_regex, line)
         if m:
@@ -29,7 +34,22 @@ def _parse_ping_output(output: str, os_name: str):
             except ValueError:
                 packet_loss = 0.0
 
-    return avg_rtt, packet_loss
+        m = re.search(per_ping_time_regex, line)
+        if m:
+            try:
+                per_ping_times.append(float(m.group(1)))
+            except ValueError:
+                pass
+
+    jitter = 0.0
+    if len(per_ping_times) >= 2:
+        diffs = [
+            abs(per_ping_times[i] - per_ping_times[i - 1])
+            for i in range(1, len(per_ping_times))
+        ]
+        jitter = round(sum(diffs) / len(diffs), 3)
+
+    return avg_rtt, packet_loss, jitter
 
 
 def test_successful_parse_output_on_linux():
@@ -43,10 +63,11 @@ def test_successful_parse_output_on_linux():
     rtt min/avg/max/mdev = 2.672/4.524/6.376/1.852 ms
     """
 
-    avg_rtt, packet_loss = _parse_ping_output(sample_output, "Linux")
+    avg_rtt, packet_loss, jitter = _parse_ping_output(sample_output, "Linux")
 
     assert avg_rtt == 4.524
     assert packet_loss == 0.0
+    assert jitter == 3.71
 
 
 def test_failed_parse_output_on_linux():
@@ -57,10 +78,11 @@ def test_failed_parse_output_on_linux():
     2 packets transmitted, 0 received, 100% packet loss, time 1044ms
     """
 
-    avg_rtt, packet_loss = _parse_ping_output(sample_output, "Linux")
+    avg_rtt, packet_loss, jitter = _parse_ping_output(sample_output, "Linux")
 
     assert avg_rtt == 0.0
     assert packet_loss == 100.0
+    assert jitter == 0.0
 
 
 def test_successful_parse_output_on_windows():
@@ -75,10 +97,11 @@ def test_successful_parse_output_on_windows():
         Minimum = 2ms, Maximum = 6ms, Average = 4ms
     """
 
-    avg_rtt, packet_loss = _parse_ping_output(sample_output, "Windows")
+    avg_rtt, packet_loss, jitter = _parse_ping_output(sample_output, "Windows")
 
     assert avg_rtt == 4.0
     assert packet_loss == 0.0
+    assert jitter == 4.0
 
 
 def test_failed_parse_output_on_windows():
@@ -91,7 +114,8 @@ def test_failed_parse_output_on_windows():
     Packets: Sent = 2, Received = 0, Lost = 2 (100% loss),
     """
 
-    avg_rtt, packet_loss = _parse_ping_output(sample_output, "Windows")
+    avg_rtt, packet_loss, jitter = _parse_ping_output(sample_output, "Windows")
 
     assert avg_rtt == 0.0
     assert packet_loss == 100.0
+    assert jitter == 0.0

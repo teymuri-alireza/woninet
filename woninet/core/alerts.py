@@ -103,6 +103,13 @@ class AlertEngine:
                             "packet_loss"
                         ],
                     )
+                elif metric.metric == "jitter":
+                    self._evaluate_jitter(
+                        ip=ip,
+                        metric="jitter",
+                        value=metric.value,
+                        default_consecutive_checks=default_consecutive_checks["jitter"],
+                    )
 
     def _evaluate_latency(
         self, ip: str, metric: str, value: float, default_consecutive_checks: int
@@ -244,6 +251,81 @@ class AlertEngine:
                 self.storage.store_alert_event(event=event)
                 core_logger.warning(
                     f"ALERT RECOVERED | {ip}, metric={metric}, value={value} %"
+                )
+            else:
+                # Reset consecutive checks to its default value
+                state.consecutive_checks = default_consecutive_checks
+                self.storage.update_alert_state(state)
+
+    def _evaluate_jitter(
+        self, ip: str, metric: str, value: float, default_consecutive_checks: int
+    ):
+        """
+        Evaluate a jitter metric against the related alert rule.
+
+        If the metric crosses its threshold for a consecutive number of checks,
+        trigger or resolve an alert accordingly. Persists state transitions
+        and logs any alert changes.
+
+        Args:
+            ip (str): IP address to evaluate.
+            metric (str): Metric name (e.g. `jitter`).
+            value (float): Value of the current metric.
+            default_consecutive_checks (int): Number of consecutive evaluations
+                required to confirm a state transition.
+
+        Side Effects:
+            - Persists alert state in the database via `StorageEngine`.
+            - Emits log events.
+            - Creates `AlertEventTable` records on trigger and recover.
+        """
+        state = self.storage.get_or_create_alert_state(
+            ip=ip, metric=metric, consecutive_checks=default_consecutive_checks
+        )
+        violated = self.is_metric_violated(metric=metric, value=value)
+        if violated:
+            if state.state == "ok":
+                # Confirm remaining consecutive checks before a state transition
+                if state.consecutive_checks > 0:
+                    state.consecutive_checks = state.consecutive_checks - 1
+                    self.storage.update_alert_state(state)
+                    return
+                # Update "ok" to "warning"
+                state.state = "warning"
+                state.triggered_at = datetime.now()
+                state.consecutive_checks = default_consecutive_checks
+                self.storage.update_alert_state(state)
+
+                event = AlertEventTable(
+                    device_ip=ip, metric=metric, value=value, event_type="trigger"
+                )
+                self.storage.store_alert_event(event=event)
+                core_logger.warning(
+                    f"ALERT TRIGGERED | {ip}, metric={metric}, value={value} ms"
+                )
+            else:
+                # Reset consecutive checks to its default value
+                state.consecutive_checks = default_consecutive_checks
+                self.storage.update_alert_state(state)
+        else:
+            if state.state == "warning":
+                # Confirm remaining consecutive checks before a state transition
+                if state.consecutive_checks > 0:
+                    state.consecutive_checks = state.consecutive_checks - 1
+                    self.storage.update_alert_state(state)
+                    return
+                # Update "warning" to "ok"
+                state.state = "ok"
+                state.triggered_at = datetime.now()
+                state.consecutive_checks = default_consecutive_checks
+                self.storage.update_alert_state(state)
+
+                event = AlertEventTable(
+                    device_ip=ip, metric=metric, value=value, event_type="recover"
+                )
+                self.storage.store_alert_event(event=event)
+                core_logger.warning(
+                    f"ALERT RECOVERED | {ip}, metric={metric}, value={value} ms"
                 )
             else:
                 # Reset consecutive checks to its default value

@@ -196,6 +196,11 @@ rules from that file at startup.
             "metric": "packet_loss",
             "threshold": 0.0,
             "consecutive_checks": 1
+        },
+        {
+            "metric": "jitter",
+            "threshold": 40.0,
+            "consecutive_checks": 3
         }
     ]
 }
@@ -220,7 +225,7 @@ Higher values may increase system load and latency.
 
 #### Alert Rules
 
-- **metric**: The metric name to evaluate (`latency` or `packet_loss`)
+- **metric**: The metric name to evaluate (`latency`, `packet_loss` or `jitter`)
 - **threshold**: The value that triggers the alert. For latency, this is in milliseconds.
 For packet loss, this is a percentage (0.0-100.0).
 - **consecutive_checks**: The number of consecutive evaluations required before the alert
@@ -231,6 +236,7 @@ state changes. Higher values reduce false positives.
 - **Packet Loss**: Values are in the range [0.0, 100.0]. A value of 100.0 indicates 100%
 packet loss. A value of 0.0 will trigger on any packet loss.
 - **Latency**: All latency thresholds are evaluated in milliseconds.
+- **Jitter**: All jitter thresholds are evaluated in milliseconds.
 
 ## Usage
 

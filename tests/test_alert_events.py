@@ -71,6 +71,40 @@ def test_packet_loss_trigger_alert_event(db_session):
     assert packet_loss.event_type == "trigger"
 
 
+def test_jitter_trigger_alert_event(db_session):
+    storage = StorageEngine(session_factory=lambda: db_session)
+
+    metric = MetricRecord(device_ip="192.168.1.10", metric="jitter", value=60.0)
+    storage.store_metric(metric)
+
+    alert_rule = {"metric": "jitter", "threshold": 40.0, "consecutive_checks": 0}
+
+    alert = AlertEngine(
+        storage=storage,
+        rules=[
+            AlertRule(
+                alert_rule["metric"],
+                alert_rule["threshold"],
+                alert_rule["consecutive_checks"],
+            )
+        ],
+    )
+
+    alert.evaluate(
+        ip="192.168.1.10",
+        metrics_list=[
+            MetricRecord(device_ip="192.168.1.10", metric="jitter", value=60.0),
+        ],
+        default_consecutive_checks={
+            "jitter": 0,
+        },
+    )
+
+    jitter = storage.get_recent_alert_events()[0]
+
+    assert jitter.event_type == "trigger"
+
+
 def test_latency_recover_alert_event(db_session):
     storage = StorageEngine(session_factory=lambda: db_session)
 
@@ -149,3 +183,43 @@ def test_packet_loss_recover_alert_event(db_session):
     packet_loss = storage.get_recent_alert_events()[0]
 
     assert packet_loss.event_type == "recover"
+
+
+def test_jitter_recover_alert_event(db_session):
+    storage = StorageEngine(session_factory=lambda: db_session)
+
+    metric = MetricRecord(device_ip="192.168.1.10", metric="jitter", value=20.0)
+    storage.store_metric(metric)
+
+    state = storage.get_or_create_alert_state(
+        ip="192.168.1.10", metric="jitter", consecutive_checks=0
+    )
+    state.state = "warning"
+    storage.update_alert_state(state)
+
+    alert_rule = {"metric": "jitter", "threshold": 40.0, "consecutive_checks": 0}
+
+    alert = AlertEngine(
+        storage=storage,
+        rules=[
+            AlertRule(
+                alert_rule["metric"],
+                alert_rule["threshold"],
+                alert_rule["consecutive_checks"],
+            )
+        ],
+    )
+
+    alert.evaluate(
+        ip="192.168.1.10",
+        metrics_list=[
+            MetricRecord(device_ip="192.168.1.10", metric="jitter", value=20.0),
+        ],
+        default_consecutive_checks={
+            "jitter": 0,
+        },
+    )
+
+    jitter = storage.get_recent_alert_events()[0]
+
+    assert jitter.event_type == "recover"

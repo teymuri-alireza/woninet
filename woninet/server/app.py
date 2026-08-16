@@ -16,6 +16,7 @@ from woninet.__init__ import __version__
 # Global variables
 TEMPLATES_DIR, STATIC_DIR = get_static_path()
 CHARTS_DIR = Path(__file__).parent.parent / "charts"
+CHARTS_DIR.mkdir(parents=True, exist_ok=True)
 
 
 @asynccontextmanager

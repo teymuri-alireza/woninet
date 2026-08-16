@@ -29,6 +29,11 @@ def create_config_json(config_json_path: str) -> None:
                 "metric": "packet_loss",
                 "threshold": 0.0,
                 "consecutive_checks": 1
+            },
+            {
+                "metric": "jitter",
+                "threshold": 40.0,
+                "consecutive_checks": 3
             }
         ]
     }

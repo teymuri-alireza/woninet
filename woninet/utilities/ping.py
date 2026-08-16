@@ -18,7 +18,8 @@ def system_ping(address: str, timeout: float, count: int, interval: int) -> Ping
             (Only available on Unix systems. Ignored on Windows).
 
     Returns:
-        PingResult: PingResult instance with average round-trip time and packet loss percentage.
+        PingResult: PingResult instance with average round-trip time, packet loss percentage,
+            and jitter value in milliseconds.
 
     Raises:
         PingUtilityNotFound: if the ping command is not found on PATH.
@@ -44,6 +45,11 @@ def system_ping(address: str, timeout: float, count: int, interval: int) -> Ping
 
             # Example packet loss line: 2 packets transmitted, 2 received, 0% packet loss, time 1002ms
             packet_loss_regex = r"([\d\.]+)% packet loss"
+
+            # example per-ping time (for jitter calculation):
+            # 64 bytes from 192.168.1.1: icmp_seq=1 ttl=64 time=33.5 ms
+            # 64 bytes from 192.168.1.1: icmp_seq=2 ttl=64 time=37.3 ms
+            per_ping_time_regex = r"time[=<]([\d\.]+) ?ms"
         else:
             # Example rtt line: Minimum = 2ms, Maximum = 5ms, Average = 3ms
             avg_rtt_regex = r"Average = ([\d\.]+)ms"
@@ -51,8 +57,14 @@ def system_ping(address: str, timeout: float, count: int, interval: int) -> Ping
             # Example packet loss line: Packets: Sent = 2, Received = 2, Lost = 0 (0% loss),
             packet_loss_regex = r"\(([^\)]+)% loss\)"
 
+            # example per-ping time (for jitter calculation):
+            # Reply from 192.168.1.1: bytes=32 time=16ms TTL=64
+            # Reply from 192.168.1.1: bytes=32 time=19ms TTL=64
+            per_ping_time_regex = r"time[=<]([\d\.]+)ms"
+
         avg_rtt = 0
         packet_loss = 0.0
+        per_ping_times = []
         for line in output.splitlines():
             m = re.search(avg_rtt_regex, line)
             if m:
@@ -69,7 +81,23 @@ def system_ping(address: str, timeout: float, count: int, interval: int) -> Ping
                 except ValueError:
                     packet_loss = 0.0
 
-        return PingResult(avg_rtt, packet_loss)
+            # collect per-ping times for jitter calculation (if available)
+            m = re.search(per_ping_time_regex, line)
+            if m:
+                try:
+                    per_ping_times.append(float(m.group(1)))
+                except ValueError:
+                    pass
+
+        jitter = 0.0
+        if len(per_ping_times) >= 2:
+            diffs = [
+                abs(per_ping_times[i] - per_ping_times[i - 1])
+                for i in range(1, len(per_ping_times))
+            ]
+            jitter = round(sum(diffs) / len(diffs), 3)
+
+        return PingResult(avg_rtt, packet_loss, jitter)
 
     except Exception:
-        return PingResult(0, 0.0)
+        return PingResult(0, 0.0, 0.0)

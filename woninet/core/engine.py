@@ -167,17 +167,22 @@ class NetworkMonitorCore:
                     try:
                         self.submit_to_history(
                             device=result.device,
-                            metrics=[result.latency, result.packet_loss],
+                            metrics=[result.latency, result.packet_loss, result.jitter],
                         )
                         if result.device is not None:
                             self.alert_engine.evaluate(
                                 ip=result.device.ip,
-                                metrics_list=[result.latency, result.packet_loss],
+                                metrics_list=[
+                                    result.latency,
+                                    result.packet_loss,
+                                    result.jitter,
+                                ],
                                 default_consecutive_checks={
                                     "latency": self.consecutive_checks["latency"],
                                     "packet_loss": self.consecutive_checks[
                                         "packet_loss"
                                     ],
+                                    "jitter": self.consecutive_checks["jitter"],
                                 },
                             )
                     except AttributeError:
