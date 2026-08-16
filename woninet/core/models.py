@@ -128,6 +128,7 @@ class ScanResult:
     device: Device | None
     latency: float | None
     packet_loss: float | None
+    jitter: float | None
 
 
 @dataclass(frozen=True)
