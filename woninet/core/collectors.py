@@ -18,13 +18,13 @@ def read_arp_table() -> dict[str, str]:
     Return all valid MAC addresses from the ARP table.
 
     Returns:
-        dict[str,str]: Dictionary contaning IP addressses and the related MAC addresses.
+        dict[str,str]: Dictionary containing IP addresses and the related MAC addresses.
     """
     table = {}
     try:
         os_name = platform.system()
         command = ["arp", "-an"] if os_name != "Windows" else ["arp", "-a"]
-        # Suppress strerr to avoid clutter when ARP table is empty or limited
+        # Suppress stderr to avoid clutter when ARP table is empty or limited
         output = subprocess.check_output(command, stderr=subprocess.DEVNULL, text=True)
     except Exception:
         return table
@@ -46,7 +46,7 @@ def get_arp_mac(ip: str) -> str | None:
     try:
         os_name = platform.system()
         command = ["arp", "-an"] if os_name != "Windows" else ["arp", "-a"]
-        # Suppress strerr to avoid clutter when ARP table is empty or limited
+        # Suppress stderr to avoid clutter when ARP table is empty or limited
         output = subprocess.check_output(command, stderr=subprocess.DEVNULL, text=True)
     except Exception as e:
         core_logger.error(f"Failed to read ARP table: {e}")
@@ -84,7 +84,7 @@ def detect_host(
         timeout: Timeout for ICMP scan.
         stop_event: Event used to control the monitoring life cycle.
         arp_noise_limit: Threshold above which ARP fluctuations are treated as noise.
-        arp_table: Dictionary of ARP table contaning IP addressses and the related
+        arp_table: Dictionary of ARP table containing IP addresses and the related
             MAC addresses.
 
     Returns:
@@ -156,7 +156,7 @@ def detect_host(
     latency: float = status.latency
     if latency == 0:
         # Latency 0 means device is offline.
-        # Packet loss shoulnd't be determined for offline devices.
+        # Packet loss shouldn't be determined for offline devices.
         status.packet_loss = 0.0
 
     # Classification logic

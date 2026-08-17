@@ -85,7 +85,7 @@ class NetworkMonitorCore:
         # Initialize database
         self.database_engine = DatabaseEngine(database_path=database_path)
         self.database_engine.init_db()
-        self._engine = self.database_engine.get_database_enigne()
+        self._engine = self.database_engine.get_database_engine()
         self.session_factory = self.database_engine.get_session_factory()
 
         core_logger.info(f"Initializing network monitor for {self.local_ip}")
@@ -198,7 +198,7 @@ class NetworkMonitorCore:
             self._running = False
             self._stop_event.set()
         except PingUtilityNotFound:
-            core_logger.error("Couldn't find the ping command on PATH. Qutting.")
+            core_logger.error("Couldn't find the ping command on PATH. Quitting.")
             self._running = False
             self._stop_event.set()
         except Exception as e:

@@ -9,13 +9,13 @@ All notable changes to this project will be documented in this file.
 ### Added
 - Added custom `PingUtilityNotFound` exception for when the `ping` command is not found on the `PATH`.
 - Added the `PingResult` dataclass to preserve `system_ping()`'s output
-- Added `system_ping()` as fallback for `icmplib.ping()`, when `icmplib.ping()` raises `SocketPermissionError`, which happends for root privileges issues.
+- Added `system_ping()` as fallback for `icmplib.ping()`, when `icmplib.ping()` raises `SocketPermissionError`, which happens for root privileges issues.
 - Added `ping_method` variable to cache the ping method, to avoid repeated fallback overhead.
 - Added test for parsing `system_ping()`'s output for Linux and Windows operating systems.
 - Added warning message when Privileged ICMP is unavailable, at startup.
 - Extended `FakeMonitor` class in tests.
 - Added remaining API tests.
-- Added `get_default_gateway()` to detect the system's defualt gateway using the `subprocess` module.
+- Added `get_default_gateway()` to detect the system's default gateway using the `subprocess` module.
 - Pass the `gateway` key in the `/api/devices` endpoint.
 - Added the required frontend codes (HTML, CSS, JS) to show the default gateway in dashboard.
 - Added pytest to CI workflow.
@@ -53,7 +53,7 @@ All notable changes to this project will be documented in this file.
 - Added create_config_json() to create default conf file.
 
 ### Changed
-- Documented root priviledges for Linux operating systems.
+- Documented root privileges for Linux operating systems.
 
 ### Fixed
 - Ensure the `charts` directory exists, using `os.makedirs()`.
@@ -77,12 +77,12 @@ All notable changes to this project will be documented in this file.
 - Added custom `404` exception in FastAPI app instance.
 - Added `GraphEngine` in `core/` to design and generate device graphs and charts for network device metrics.
 - Added `GraphEngine.design_device_latency_events()` in devices info page.
-- Added logic to fetch some fields from `config.json` to centralize rule configuration (fields such as alert rules, arp noise limit, max workers, databse path, and target IP list).
+- Added logic to fetch some fields from `config.json` to centralize rule configuration (fields such as alert rules, arp noise limit, max workers, database path, and target IP list).
 - Added basic testing using `pytest` for API, storage, and ip validation.
 - Added test for `recovery` and `trigger` events for each `latency` and `packet_loss` metrics.
 
 ## Changed
-- Changed the source IP pakcet loss value from **0.0** to **100.0** to match the `packet loss` percentage format.
+- Changed the source IP packet loss value from **0.0** to **100.0** to match the `packet loss` percentage format.
 - Moved templates and static path to `dependencies.py` to prevent circular import error.
 - Replaced card view with table view in server UI.
 - Moved service logic to API route functions for clarity.
@@ -92,7 +92,7 @@ All notable changes to this project will be documented in this file.
 - Rename `latency_ms` metric to `latency` for clarity
 
 ## Fixed
-- Set filter to calculate average `packet loss` based on online devices in server dashbaord.
+- Set filter to calculate average `packet loss` based on online devices in server dashboard.
 - Set `packet loss` to zero for offline devices.
 - Refactored `upsert()` for devices to query the db based on IP first, instead of MAC. This new logic will prevent the `sqlite3.IntegrityError` caused by IP uniqueness.
 - Added `consecutive_checks` dict for `alert.evaluate()`.
@@ -148,7 +148,7 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 - Moved `submit_to_history()` before type check condition in `main.py` to update latency for offline devices to 0.0.
 - Prevented `AttributeError` by adding condition for checking monitor's attribution for the global monitor variable.
-- Add exception handler for `ValueError` to handle the error gracfully.
+- Add exception handler for `ValueError` to handle the error gracefully.
 
 ---
 
@@ -159,7 +159,7 @@ All notable changes to this project will be documented in this file.
 - Implemented `count_resources()` method in `NetworkMonitorCore` class to retrieve number of stored items in the database.
 - Completed the `/stats` API route.
 - Prevented metrics from being removed after alert evaluation by defining the new `AlertStateTable` and `AlertEventTable` logic.
-- Introduced the new `-p`, `--port` CLI argument to change the port number for web dashbaord.
+- Introduced the new `-p`, `--port` CLI argument to change the port number for web dashboard.
 - Introduced the new `--db` CLI argument to use a different path for the SQLite database.
 
 ### Changed

@@ -4,7 +4,7 @@ from woninet.database.tables import AlertEventTable
 
 class AlertEventRepository:
     """
-    Repository for presisting Alert Event entries.
+    Repository for persisting Alert Event entries.
 
     Encapsulate ORM operations on `AlertEventTable`.
 

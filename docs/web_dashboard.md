@@ -53,7 +53,7 @@ Internally:
 
 - The `device_service` module uses `get_monitor_gracefully()` to obtain an instance of
 `NetworkMonitorCore` while avoiding circular import issues.
-- The `monitor`'s `get_device_history()` method is invocked to collect a list of discovered devices.
+- The `monitor`'s `get_device_history()` method is invoked to collect a list of discovered devices.
 - Discovered devices are returned as a structured JSON list to the dashboard.
 
 This endpoint dynamically reflects real-time network topology.
@@ -76,7 +76,7 @@ This endpoint responds with a JSON object that includes the following sections:
 - database_connectivity: Status of the database connection (e.g., "ok" or "error").
 - database_schema: Status of the database schema (e.g., "ok", "error", "unknown").
 
-**Note:** The `databse_schema` returns "unknown" if `database_connectivity` fails.
+**Note:** The `database_schema` returns "unknown" if `database_connectivity` fails.
 
 3. **stats:** Metrics of the network monitoring system.
 

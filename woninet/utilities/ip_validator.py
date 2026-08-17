@@ -25,7 +25,7 @@ def is_device_ip_valid(devices: dict[str, Device]) -> bool:
     Validate the dictionary of candidate devices.
 
     Args:
-        devices (dict[str,Device]): Dictrionary of IP addresses and Device model
+        devices (dict[str,Device]): Dictionary of IP addresses and Device model
             instances to validate.
 
     Returns:

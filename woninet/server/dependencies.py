@@ -16,7 +16,7 @@ def get_static_path() -> tuple[Path, Path]:
 
 def get_monitor_gracefully():
     """
-    Call get_monitor() and return the intance of NetworkMonitorCore class
+    Call get_monitor() and return the instance of NetworkMonitorCore class
     to prevent circular import error.
     """
     from woninet.main import get_monitor

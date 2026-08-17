@@ -122,7 +122,7 @@ def create_monitor(
     alert_rules: dict,
 ) -> NetworkMonitorCore:
     """
-    Create an instance of NetworkMonitoreCore.
+    Create an instance of NetworkMonitorCore.
 
     Args:
         local_ip (str): IP address of device.

@@ -72,7 +72,7 @@ class AlertStateTable(Base):
 
 class AlertEventTable(Base):
     """
-    ORM model representing an alert event occured.
+    ORM model representing an alert event occurred.
 
     Each row stores the alert event of a device, including device IP address,
     metric name, captured value of metric, event type, and timestamp.

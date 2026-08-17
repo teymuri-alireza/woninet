@@ -81,7 +81,7 @@ woninet --logs logs.log
 
 ## ARP Noise Limit
 
-<!-- The default value for the `--arp-noise-limit` paramter is 300.0 ms. -->
+<!-- The default value for the `--arp-noise-limit` parameter is 300.0 ms. -->
 Devices with latency equal to or higher than the arp_noise_limit value are considered ARP noise and
 will not be stored in the database.
 If you are on a weak or unstable network, you may want to adjust this threshold.
@@ -109,7 +109,7 @@ If you move *woninet* to a different network, the IP subnet will likely change (
 from `192.168.1.x` to `192.168.2.x`).
 
 Using the same database across different subnets can lead to data inconsistency. Stale
-records for devices that are not currently online may presist, and historical alert events
+records for devices that are not currently online may persist, and historical alert events
 may no longer correctly correlate with the new network topology.
 
 **Recommendation:** It is highly recommended to initialize a new database file when switching

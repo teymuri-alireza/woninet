@@ -4,7 +4,7 @@ from woninet.database.tables import AlertStateTable
 
 class AlertStateRepository:
     """
-    Repository for presisting and updating Alert State entries.
+    Repository for persisting and updating Alert State entries.
 
     Encapsulate ORM operations on `AlertStateTable`.
 
@@ -26,12 +26,12 @@ class AlertStateRepository:
         self, ip: str, metric: str, consecutive_checks: int
     ) -> AlertStateTable:
         """
-        Return an alert state for a specfic IP address and metric; Create a new one
+        Return an alert state for a specific IP address and metric; Create a new one
         if it already doesn't exist.
 
         Args:
             ip (str): IP address of host.
-            metric (str): Name of the metric beaing monitored.
+            metric (str): Name of the metric being monitored.
             consecutive_checks (int): Number of consecutive evaluations required
                 before a state change.
 

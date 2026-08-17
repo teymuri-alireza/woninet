@@ -8,7 +8,7 @@ class DeviceRepository:
     """
     Repository for persisting and retrieving Device entities.
 
-    Eencapsulate ORM operations on `DeviceTable` and expose a
+    Encapsulate ORM operations on `DeviceTable` and expose a
     simple API in terms of the domain model `Device`.
 
     Attributes:
@@ -35,7 +35,7 @@ class DeviceRepository:
         timestamp is set to `dev.last_seen` or the current time, and is only
         updated when device is reachable (`dev.latency > 0`).
 
-        All changes are committed immediatly.
+        All changes are committed immediately.
 
         Args:
             dev (Device): Domain `Device` instance.
