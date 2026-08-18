@@ -85,31 +85,34 @@ class AlertEngine:
         """
         for metric in metrics_list:
             if metric is not None:
-                if metric.metric == "latency":
-                    self._evaluate_latency(
-                        ip=ip,
-                        metric="latency",
-                        value=metric.value,
-                        default_consecutive_checks=default_consecutive_checks[
-                            "latency"
-                        ],
-                    )
-                elif metric.metric == "packet_loss":
-                    self._evaluate_packet_loss(
-                        ip=ip,
-                        metric="packet_loss",
-                        value=metric.value,
-                        default_consecutive_checks=default_consecutive_checks[
-                            "packet_loss"
-                        ],
-                    )
-                elif metric.metric == "jitter":
-                    self._evaluate_jitter(
-                        ip=ip,
-                        metric="jitter",
-                        value=metric.value,
-                        default_consecutive_checks=default_consecutive_checks["jitter"],
-                    )
+                if metric.value is not None:
+                    if metric.metric == "latency":
+                        self._evaluate_latency(
+                            ip=ip,
+                            metric="latency",
+                            value=metric.value,
+                            default_consecutive_checks=default_consecutive_checks[
+                                "latency"
+                            ],
+                        )
+                    elif metric.metric == "packet_loss":
+                        self._evaluate_packet_loss(
+                            ip=ip,
+                            metric="packet_loss",
+                            value=metric.value,
+                            default_consecutive_checks=default_consecutive_checks[
+                                "packet_loss"
+                            ],
+                        )
+                    elif metric.metric == "jitter":
+                        self._evaluate_jitter(
+                            ip=ip,
+                            metric="jitter",
+                            value=metric.value,
+                            default_consecutive_checks=default_consecutive_checks[
+                                "jitter"
+                            ],
+                        )
 
     def _evaluate_latency(
         self, ip: str, metric: str, value: float, default_consecutive_checks: int
