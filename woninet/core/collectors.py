@@ -312,18 +312,24 @@ class PingCollector(BaseCollector):
                 else:
                     latency_metric, packet_loss_metric, jitter_metric = future_metric
 
-                    latency = (
+                    latency_metric.value = (
                         latency_metric.value if latency_metric.value != 0 else None
                     )
                     packet_loss_metric.value = (
                         packet_loss_metric.value
-                        if (future_device is not None and latency is not None)
-                        else 0.0
+                        if (
+                            future_device is not None
+                            and latency_metric.value is not None
+                        )
+                        else None
                     )
                     jitter_metric.value = (
                         jitter_metric.value
-                        if (future_device is not None and latency is not None)
-                        else 0.0
+                        if (
+                            future_device is not None
+                            and latency_metric.value is not None
+                        )
+                        else None
                     )
 
                 finally:
