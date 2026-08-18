@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-## [unreleased]
+## [2.1.0] - 2026-08-18
 
 ### Added
 - Added custom `PingUtilityNotFound` exception for when the `ping` command is not found on the `PATH`.
