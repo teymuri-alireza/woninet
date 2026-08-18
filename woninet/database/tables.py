@@ -20,9 +20,9 @@ class DeviceTable(Base):
     mac: Mapped[str | None] = mapped_column(
         String, unique=True, index=True, nullable=True
     )
-    latency: Mapped[float] = mapped_column(Float)
-    packet_loss: Mapped[int] = mapped_column(Integer)
-    jitter: Mapped[float] = mapped_column(Float)
+    latency: Mapped[float] = mapped_column(Float, nullable=True)
+    packet_loss: Mapped[int] = mapped_column(Integer, nullable=True)
+    jitter: Mapped[float] = mapped_column(Float, nullable=True)
     last_seen: Mapped[datetime] = mapped_column(
         DateTime(timezone=False), default=lambda: datetime.now(), index=True
     )
@@ -41,7 +41,7 @@ class MetricTable(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     device_ip: Mapped[str] = mapped_column(String, index=True)
     metric: Mapped[str] = mapped_column(String, index=True)
-    value: Mapped[float] = mapped_column(Float)
+    value: Mapped[float] = mapped_column(Float, nullable=True)
     timestamp: Mapped[datetime] = mapped_column(
         DateTime(timezone=False), default=lambda: datetime.now(), index=True
     )

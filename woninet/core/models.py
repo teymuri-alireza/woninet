@@ -13,10 +13,10 @@ class Device:
         exists (bool): If device responded to the last ARP scan.
         reachable (bool): If device responded to the last ICMP scan.
         mac (str): MAC address if known; Otherwise `None`.
-        latency (float): The last latency of host if reachable; Otherwise zero.
-        packet_loss (float): Most recent packet-loss ratio in the range [0.0, 100.0].
-            A value of 100.0 indicates 100% packet loss or that the device is unreachable.
-        jitter (float): The time delay in the sending of data packets.
+        latency (float|None): The last latency of host if reachable; Otherwise None.
+        packet_loss (float|None): Most recent packet-loss ratio in the range [0.0, 100.0].
+            A value of 100.0 indicates 100% packet loss.
+        jitter (float|None): The time delay in the sending of data packets.
     """
 
     def __init__(self, ip: str) -> None:
@@ -31,9 +31,9 @@ class Device:
         self.exists: bool = False
         self.reachable: bool = False
         self.mac: str | None = None
-        self.latency: float = 0
-        self.packet_loss: float = 100
-        self.jitter: float = 0.0
+        self.latency: float | None = None
+        self.packet_loss: float | None = None
+        self.jitter: float | None = None
 
     def update_seen(self) -> None:
         """
@@ -59,7 +59,7 @@ class MetricRecord:
         self,
         device_ip: str,
         metric: str,
-        value: float,
+        value: float | None,
         timestamp: datetime | None = None,
     ) -> None:
         """
@@ -68,7 +68,7 @@ class MetricRecord:
         Args:
             device_ip (str): IP address of the host the metric belongs to.
             metric (str): Name of the recorded metric.
-            value (float): Recorded value of the metric.
+            value (float): Recorded value of the metric, None if unreachable.
             timestamp (datetime|None): Timestamp of the measurement.
                 If omitted, the current time is used.
         """
@@ -98,9 +98,9 @@ class HostStatus:
         ip: str,
         exists: bool = False,
         reachable: bool = False,
-        latency: float = 0.0,
-        packet_loss: float = 100.0,
-        jitter: float = 0.0,
+        latency: float | None = None,
+        packet_loss: float | None = None,
+        jitter: float | None = None,
         mac: str | None = None,
     ) -> None:
         """
@@ -117,9 +117,9 @@ class HostStatus:
         self.ip: str = ip
         self.exists: bool = exists
         self.reachable: bool = reachable
-        self.latency: float = latency
-        self.packet_loss: float = packet_loss
-        self.jitter: float = jitter
+        self.latency: float | None = latency
+        self.packet_loss: float | None = packet_loss
+        self.jitter: float | None = jitter
         self.mac: str | None = mac
 
 
@@ -133,6 +133,6 @@ class ScanResult:
 
 @dataclass(frozen=True)
 class PingResult:
-    avg_rtt: float
-    packet_loss: float
-    jitter: float
+    avg_rtt: float | None
+    packet_loss: float | None
+    jitter: float | None
