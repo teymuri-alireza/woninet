@@ -22,10 +22,10 @@ class ManualIPEnumerator:
         Raises:
             ValueError: If the range notation is not in the last octet.
         """
-        base, last_octect = ip_range.rsplit(".", maxsplit=1)
+        base, last_octet = ip_range.rsplit(".", maxsplit=1)
         if "-" in base:
-            raise ValueError("Range enumeraton is only supported on the last octet.")
-        start, stop = last_octect.split("-")
+            raise ValueError("Range enumeration is only supported on the last octet.")
+        start, stop = last_octet.split("-")
         devices = {}
         for i in range(int(start), int(stop) + 1):
             ip = f"{base}.{i}"

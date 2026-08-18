@@ -24,7 +24,7 @@ class SubnetEnumerator:
         """
         ip_split = ip.split(".")
         subnet = f"{ip_split[0]}.{ip_split[1]}.{ip_split[2]}"
-        core_logger.debug(f"Building a dictionaty of IP addresses base on {subnet}.x")
+        core_logger.debug(f"Building a dictionary of IP addresses base on {subnet}.x")
         devices = {}
         for i in range(1, 255):
             ip = f"{subnet}.{i}"

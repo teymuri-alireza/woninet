@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Request, Path, status
+from fastapi import APIRouter, Request, Path, status, HTTPException
 from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
 from woninet.server.dependencies import get_monitor_gracefully
@@ -10,7 +10,10 @@ router = APIRouter(prefix="/api/devices", tags=["devices"])
 def list_devices(request: Request):
     monitor = get_monitor_gracefully()
     return JSONResponse(
-        content={"devices": jsonable_encoder(monitor.get_device_history())},
+        content={
+            "devices": jsonable_encoder(monitor.get_device_history()),
+            "gateway": monitor.default_gateway,
+        },
         status_code=status.HTTP_200_OK,
     )
 
@@ -26,7 +29,12 @@ def device_info_api(
         max_length=15,
     ),
 ):
+
     monitor = get_monitor_gracefully()
+
+    if not monitor.device_exists(ip=ip):
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Not Found")
+
     device, device_alert_state, device_recent_alert_events = monitor.get_device_info(
         ip=ip
     )

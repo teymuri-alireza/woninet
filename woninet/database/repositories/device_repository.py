@@ -8,7 +8,7 @@ class DeviceRepository:
     """
     Repository for persisting and retrieving Device entities.
 
-    Eencapsulate ORM operations on `DeviceTable` and expose a
+    Encapsulate ORM operations on `DeviceTable` and expose a
     simple API in terms of the domain model `Device`.
 
     Attributes:
@@ -35,14 +35,20 @@ class DeviceRepository:
         timestamp is set to `dev.last_seen` or the current time, and is only
         updated when device is reachable (`dev.latency > 0`).
 
-        All changes are committed immediatly.
+        All changes are committed immediately.
 
         Args:
             dev (Device): Domain `Device` instance.
         """
-        existing = self.session.query(DeviceTable).filter(DeviceTable.ip == dev.ip).first()
+        existing = (
+            self.session.query(DeviceTable).filter(DeviceTable.ip == dev.ip).first()
+        )
         if existing is None and dev.mac:
-            existing = self.session.query(DeviceTable).filter(DeviceTable.mac == dev.mac).first()
+            existing = (
+                self.session.query(DeviceTable)
+                .filter(DeviceTable.mac == dev.mac)
+                .first()
+            )
         now = datetime.now()
 
         if existing:
@@ -51,12 +57,14 @@ class DeviceRepository:
             if dev.latency > 0:
                 existing.last_seen = dev.last_seen or now
             existing.packet_loss = dev.packet_loss
+            existing.jitter = dev.jitter
         else:
             existing = DeviceTable(
                 ip=dev.ip,
                 mac=dev.mac,
                 latency=dev.latency,
                 packet_loss=dev.packet_loss,
+                jitter=dev.jitter,
                 last_seen=dev.last_seen or now,
             )
             self.session.add(existing)
@@ -75,6 +83,7 @@ class DeviceRepository:
             dev.mac = row.mac
             dev.latency = row.latency
             dev.packet_loss = row.packet_loss
+            dev.jitter = row.jitter
             dev.last_seen = row.last_seen
             result.append(dev)
         return result

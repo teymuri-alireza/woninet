@@ -31,7 +31,7 @@ class DatabaseEngine:
 
         Base.metadata.create_all(bind=self.engine)
 
-    def get_database_enigne(self) -> Engine:
+    def get_database_engine(self) -> Engine:
         """
         Return the SQLAlchemy Engine instance.
         """

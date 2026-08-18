@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "woninet"
-version = "2.0.3"
+version = "2.1.0"
 description = "A Python-based ARP+ICMP network monitoring tool"
 readme = "README.md"
 requires-python = ">=3.12"
@@ -52,4 +52,5 @@ woninet = "woninet.main:main"
 test = [
     "pytest>=9.1.1,<9.2",
     "httpx>=0.28.1,<0.29",
+    "ruff>=0.15.11,<0.16",
 ]

@@ -15,7 +15,7 @@ def detect_ip_range(ip: str) -> bool:
     """
     base, last_octet = ip.rsplit(".", maxsplit=1)
     if "-" in base:
-        raise ValueError("Ip addess range is only allowed in the last octet.")
+        raise ValueError("Ip address range is only allowed in the last octet.")
     if "-" in last_octet:
         return True
     return False

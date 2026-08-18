@@ -11,9 +11,10 @@ def create_config_json(config_json_path: str) -> None:
     The function writes a default configuration template containing monitoring
     settings, database file name, target IP list, and alert rules.
     """
+    # fmt: off
     template = {
         "monitoring": {
-            "arp_noise_limit": 300.0,
+            "arp_noise_limit": 0.0,
             "max_workers": 4
         },
         "database": "woninet.db",
@@ -28,9 +29,15 @@ def create_config_json(config_json_path: str) -> None:
                 "metric": "packet_loss",
                 "threshold": 0.0,
                 "consecutive_checks": 1
+            },
+            {
+                "metric": "jitter",
+                "threshold": 40.0,
+                "consecutive_checks": 3
             }
         ]
     }
+    # fmt: on
 
     with open(config_json_path, "w") as file:
         json.dump(template, file, indent=4)

@@ -6,7 +6,7 @@ from woninet.core.models import MetricRecord
 
 class MetricRepository:
     """
-    Repository for persisting and retrieving MetricRevord entities.
+    Repository for persisting and retrieving MetricRecord entities.
 
     Encapsulate OEM operations on `MetricTable` and expose a
     simple API in terms of the domain model `MetricRecord`.

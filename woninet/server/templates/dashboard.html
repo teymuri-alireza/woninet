@@ -16,6 +16,10 @@
                 <h1>woninet Dashboard</h1>
                 <p class="subtitle">Live device visibility and latency overview</p>
             </div>
+            <div class="gateway-info">
+                <span class="gateway-label">Gateway:</span>
+                <span id="gateway" class="gateway-value">—</span>
+            </div>
             <div class="api-status">
                 <span id="status_dot" class="status-dot"></span>
                 <span id="status_text">Connected</span>
@@ -88,6 +92,7 @@
                                 <th>Status</th>
                                 <th>IP Address</th>
                                 <th>Latency</th>
+                                <th>Jitter</th>
                                 <th>Packet Loss</th>
                                 <th>MAC Address</th>
                                 <th>Last Seen</th>
@@ -97,7 +102,7 @@
 
                         <tbody id="devices">
                             <tr>
-                                <td colspan="7">
+                                <td colspan="8">
                                     <div id="loader" class="loader"></div>
                                 </td>
                             </tr>

@@ -6,8 +6,11 @@ from typing import Generator, Any
 from icmplib import ping, SocketPermissionError, SocketAddressError
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from woninet.core.models import Device, MetricRecord, HostStatus, ScanResult
+from woninet.utilities.ping import system_ping
+from woninet.exc import PingUtilityNotFound
 
 core_logger = logging.getLogger("core")
+ping_method = "icmplib"
 
 
 def read_arp_table() -> dict[str, str]:
@@ -15,13 +18,13 @@ def read_arp_table() -> dict[str, str]:
     Return all valid MAC addresses from the ARP table.
 
     Returns:
-        dict[str,str]: Dictionary contaning IP addressses and the related MAC addresses.
+        dict[str,str]: Dictionary containing IP addresses and the related MAC addresses.
     """
     table = {}
     try:
         os_name = platform.system()
         command = ["arp", "-an"] if os_name != "Windows" else ["arp", "-a"]
-        # Suppress strerr to avoid clutter when ARP table is empty or limited
+        # Suppress stderr to avoid clutter when ARP table is empty or limited
         output = subprocess.check_output(command, stderr=subprocess.DEVNULL, text=True)
     except Exception:
         return table
@@ -43,7 +46,7 @@ def get_arp_mac(ip: str) -> str | None:
     try:
         os_name = platform.system()
         command = ["arp", "-an"] if os_name != "Windows" else ["arp", "-a"]
-        # Suppress strerr to avoid clutter when ARP table is empty or limited
+        # Suppress stderr to avoid clutter when ARP table is empty or limited
         output = subprocess.check_output(command, stderr=subprocess.DEVNULL, text=True)
     except Exception as e:
         core_logger.error(f"Failed to read ARP table: {e}")
@@ -81,7 +84,7 @@ def detect_host(
         timeout: Timeout for ICMP scan.
         stop_event: Event used to control the monitoring life cycle.
         arp_noise_limit: Threshold above which ARP fluctuations are treated as noise.
-        arp_table: Dictionary of ARP table contaning IP addressses and the related
+        arp_table: Dictionary of ARP table containing IP addresses and the related
             MAC addresses.
 
     Returns:
@@ -108,19 +111,37 @@ def detect_host(
         status.mac = mac
 
     # ICMP check
+    global ping_method
     try:
-        response = ping(
-            source=source_ip,
-            address=target_ip.strip(),
-            timeout=timeout,
-            count=2,
-            privileged=True,
-            interval=1,
-        )
+        if ping_method == "icmplib":
+            response = ping(
+                source=source_ip,
+                address=target_ip.strip(),
+                timeout=timeout,
+                count=2,
+                privileged=True,
+                interval=1,
+            )
+        else:
+            response = system_ping(
+                address=target_ip.strip(),
+                timeout=timeout,
+                count=2,
+                interval=1,
+            )
         if stop_event and stop_event.is_set():
             return None
     except (PermissionError, SocketPermissionError):
-        raise
+        try:
+            response = system_ping(
+                address=target_ip.strip(),
+                timeout=timeout,
+                count=2,
+                interval=1,
+            )
+            ping_method = "system_ping"
+        except PingUtilityNotFound:
+            raise
     except SocketAddressError:
         raise
     except Exception as e:
@@ -130,11 +151,12 @@ def detect_host(
         response = 0
 
     status.latency = response.avg_rtt
+    status.jitter = response.jitter
     status.packet_loss = response.packet_loss * 100
     latency: float = status.latency
     if latency == 0:
         # Latency 0 means device is offline.
-        # Packet loss shoulnd't be determined for offline devices.
+        # Packet loss shouldn't be determined for offline devices.
         status.packet_loss = 0.0
 
     # Classification logic
@@ -222,6 +244,8 @@ class PingCollector(BaseCollector):
                 raise
             except SocketAddressError:
                 raise
+            except PingUtilityNotFound:
+                raise
 
             # Update device state from status
             dev.exists = status.exists
@@ -230,6 +254,7 @@ class PingCollector(BaseCollector):
                 dev.mac = status.mac
             dev.latency = status.latency
             dev.packet_loss = status.packet_loss
+            dev.jitter = status.jitter
 
             if dev.reachable:
                 # Only consider reachable hosts as recently seen
@@ -256,6 +281,7 @@ class PingCollector(BaseCollector):
             recorded_metrics = [
                 MetricRecord(ip, "latency", dev.latency),
                 MetricRecord(ip, "packet_loss", dev.packet_loss),
+                MetricRecord(ip, "jitter", dev.jitter),
             ]
 
             if dev.reachable or is_known:
@@ -284,14 +310,25 @@ class PingCollector(BaseCollector):
                     core_logger.error(f"Error in PingCollector for {ip}: {e}")
                     continue
                 else:
-                    latency_metric, packet_loss_metric = future_metric
+                    latency_metric, packet_loss_metric, jitter_metric = future_metric
 
-                    latency = (
+                    latency_metric.value = (
                         latency_metric.value if latency_metric.value != 0 else None
                     )
-                    packet_loss_metric = (
+                    packet_loss_metric.value = (
                         packet_loss_metric.value
-                        if (future_device is not None and latency is not None)
+                        if (
+                            future_device is not None
+                            and latency_metric.value is not None
+                        )
+                        else None
+                    )
+                    jitter_metric.value = (
+                        jitter_metric.value
+                        if (
+                            future_device is not None
+                            and latency_metric.value is not None
+                        )
                         else None
                     )
 
@@ -300,4 +337,5 @@ class PingCollector(BaseCollector):
                         device=future_device,
                         latency=latency_metric,
                         packet_loss=packet_loss_metric,
+                        jitter=jitter_metric,
                     )

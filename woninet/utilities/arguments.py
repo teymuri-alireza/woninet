@@ -25,7 +25,7 @@ are collected continuously and processed through an alert engine."""
     subparsers = parser.add_subparsers(dest="command")
 
     device_parser = subparsers.add_parser(
-        "device", help="Fetch Device informations from the database."
+        "device", help="Fetch Device information from the database."
     )
     device_subparsers = device_parser.add_subparsers(dest="action", required=True)
 
@@ -62,7 +62,7 @@ are collected continuously and processed through an alert engine."""
         "--port",
         type=int,
         default=8080,
-        help="Port number to serve the web dashboard (defaut: %(default)s).",
+        help="Port number to serve the web dashboard (default: %(default)s).",
     )
 
     parser.add_argument(

@@ -5,7 +5,7 @@ from datetime import datetime
 from typing import Any
 from sqlalchemy import text, inspect
 from sqlalchemy.exc import SQLAlchemyError
-from icmplib import SocketPermissionError, SocketAddressError
+from icmplib import ping, SocketPermissionError, SocketAddressError
 from woninet.core.models import Device, MetricRecord
 from woninet.core.collectors import PingCollector
 from woninet.core.storage import StorageEngine
@@ -17,6 +17,8 @@ from woninet.database.engine import DatabaseEngine
 from woninet.database.tables import AlertEventTable
 from woninet.utilities.ip_validator import is_device_ip_valid
 from woninet.utilities.detect_ip_range import detect_ip_range
+from woninet.utilities.detect_gateway import get_default_gateway
+from woninet.exc import PingUtilityNotFound
 
 core_logger = logging.getLogger("core")
 
@@ -75,13 +77,15 @@ class NetworkMonitorCore:
         self._start_uptime = datetime.now()
 
         self.local_ip: str = local_ip
+        self.default_gateway: str = self.set_default_gateway()
+
         self.arp_noise_limit: float = arp_noise_limit
         self.max_thread_workers: int = max_thread_workers
 
         # Initialize database
         self.database_engine = DatabaseEngine(database_path=database_path)
         self.database_engine.init_db()
-        self._engine = self.database_engine.get_database_enigne()
+        self._engine = self.database_engine.get_database_engine()
         self.session_factory = self.database_engine.get_session_factory()
 
         core_logger.info(f"Initializing network monitor for {self.local_ip}")
@@ -103,8 +107,7 @@ class NetworkMonitorCore:
         )
 
         self.consecutive_checks = {
-            item["metric"]: item["consecutive_checks"]
-            for item in alert_rules
+            item["metric"]: item["consecutive_checks"] for item in alert_rules
         }
 
         self.graph_engine = GraphEngine()
@@ -122,6 +125,7 @@ class NetworkMonitorCore:
             target=self.worker_loop, name="woninet-worker", daemon=False
         )
         self._thread.start()
+        self.check_ping_preference()
 
     def stop(self) -> None:
         """
@@ -163,17 +167,22 @@ class NetworkMonitorCore:
                     try:
                         self.submit_to_history(
                             device=result.device,
-                            metrics=[result.latency, result.packet_loss],
+                            metrics=[result.latency, result.packet_loss, result.jitter],
                         )
                         if result.device is not None:
                             self.alert_engine.evaluate(
                                 ip=result.device.ip,
-                                metrics_list=[result.latency, result.packet_loss],
+                                metrics_list=[
+                                    result.latency,
+                                    result.packet_loss,
+                                    result.jitter,
+                                ],
                                 default_consecutive_checks={
                                     "latency": self.consecutive_checks["latency"],
                                     "packet_loss": self.consecutive_checks[
                                         "packet_loss"
                                     ],
+                                    "jitter": self.consecutive_checks["jitter"],
                                 },
                             )
                     except AttributeError:
@@ -186,6 +195,10 @@ class NetworkMonitorCore:
             self._stop_event.set()
         except SocketAddressError:
             core_logger.error("Network connection failed. Quitting.")
+            self._running = False
+            self._stop_event.set()
+        except PingUtilityNotFound:
+            core_logger.error("Couldn't find the ping command on PATH. Quitting.")
             self._running = False
             self._stop_event.set()
         except Exception as e:
@@ -351,3 +364,31 @@ class NetworkMonitorCore:
             pass
 
         return result
+
+    def check_ping_preference(self):
+        try:
+            ping(
+                source="127.0.0.1",
+                address="127.0.0.1",
+                timeout=1,
+                count=1,
+                privileged=True,
+                interval=1,
+            )
+        except SocketPermissionError:
+            warning_msg = (
+                "\nWARNING: Privileged ICMP is unavailable.\n"
+                "Falling back to the system 'ping' command.\n"
+                "The fallback typically works without CAP_NET_RAW or root privileges\n"
+                "but is generally slower because it launches an external process.\n"
+                "To restore native ICMP support, grant CAP_NET_RAW to Python:\n"
+                "   sudo setcap cap_net_raw=eip $(which python3)\n"
+            )
+            print(warning_msg)
+
+    def set_default_gateway(self) -> str:
+        """
+        A wrapper to set the default gateway using the `get_default_gateway()`
+        utility.
+        """
+        return get_default_gateway()

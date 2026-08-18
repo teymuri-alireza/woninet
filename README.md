@@ -44,6 +44,8 @@ IPs and filters out Wi‑Fi ARP‑delay noise.)
 
 ### Unix/Linux
 
+1. **Method 1 (recommended (Uses the `icmplib` module)):**
+
 Create and activate a virtual environment:
 
 ```shell
@@ -69,7 +71,28 @@ Then run:
 woninet --help
 ```
 
-#### macOS/Windows
+2. **Method 2 (Uses the system's `ping` command as a fallback):**
+
+Create and activate a virtual environment:
+
+```shell
+python3 -m venv venv
+source venv/bin/activate
+```
+
+Install from PyPI:
+
+```shell
+pip install woninet
+```
+
+Then run:
+
+```shell
+woninet --help
+```
+
+### macOS/Windows
 
 Install from PyPI:
 
@@ -146,7 +169,7 @@ sudo ../venv/bin/python3 -m woninet
 ## Configuration
 
 You can define alert rules in a JSON file. Rename the example file at
-`woninet/config.example.json` to `config.json`. The application will load the alert
+`config.example.json` to `config.json`. The application will load the alert
 rules from that file at startup.
 
 ### Example:
@@ -173,6 +196,11 @@ rules from that file at startup.
             "metric": "packet_loss",
             "threshold": 0.0,
             "consecutive_checks": 1
+        },
+        {
+            "metric": "jitter",
+            "threshold": 40.0,
+            "consecutive_checks": 3
         }
     ]
 }
@@ -197,7 +225,7 @@ Higher values may increase system load and latency.
 
 #### Alert Rules
 
-- **metric**: The metric name to evaluate (`latency` or `packet_loss`)
+- **metric**: The metric name to evaluate (`latency`, `packet_loss` or `jitter`)
 - **threshold**: The value that triggers the alert. For latency, this is in milliseconds.
 For packet loss, this is a percentage (0.0-100.0).
 - **consecutive_checks**: The number of consecutive evaluations required before the alert
@@ -208,10 +236,11 @@ state changes. Higher values reduce false positives.
 - **Packet Loss**: Values are in the range [0.0, 100.0]. A value of 100.0 indicates 100%
 packet loss. A value of 0.0 will trigger on any packet loss.
 - **Latency**: All latency thresholds are evaluated in milliseconds.
+- **Jitter**: All jitter thresholds are evaluated in milliseconds.
 
 ## Usage
 
-This [guide](./docs/usage.md) explains common ways to run *woninet* and how to resolve common issues.
+This [guide](https://github.com/teymuri-alireza/woninet/blob/main/docs/usage.md) explains common ways to run *woninet* and how to resolve common issues.
 
 ## Testing
 
@@ -236,10 +265,10 @@ The test suite currently focuses on API behavior and core logic, and it uses pyt
 
 ## Documentation
 
-if you have any question or need clarification, check the [documentation](./docs/documentation.md) guide.
+if you have any question or need clarification, check the [documentation](.https://github.com/teymuri-alireza/woninet/blob/main/docs/documentation.md) guide.
 
 ## Contribution
 
 Thanks for considering contributing to *woninet!*
 To help us maintain code quality, stability, and a predictable release process, please review
-and follow the guidelines in our [Contributing Guide.](./CONTRIBUTING.md)
+and follow the guidelines in our [Contributing Guide.](https://github.com/teymuri-alireza/woninet/blob/main/CONTRIBUTING.md)
