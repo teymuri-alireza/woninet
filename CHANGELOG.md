@@ -31,12 +31,15 @@ All notable changes to this project will be documented in this file.
 ### Changed
 
 - Disable ruff formatting in `create_configuration.py` module to preserve the `JSON` structure.
+- Changed metric variables to optional type (Union | None).
 
 ### Fixed
 
 - Added **404** `HTTPException` for unknown IP addresses in devices info API (`/api/devices/{ip}`).
 - change packet_loss value instead of packet_loss variable, to prevent packet_loss overwriting.
 - Create charts directory from server to prevent ImportError in pytest
+- Set metrics to None for offline or unreachable devices.
+- Disabled alert evaluation for offline devices.
 
 ---
 
