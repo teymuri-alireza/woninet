@@ -265,7 +265,7 @@ The test suite currently focuses on API behavior and core logic, and it uses pyt
 
 ## Documentation
 
-if you have any question or need clarification, check the [documentation](.https://github.com/teymuri-alireza/woninet/blob/main/docs/documentation.md) guide.
+if you have any question or need clarification, check the [documentation](https://github.com/teymuri-alireza/woninet/blob/main/docs/documentation.md) guide.
 
 ## Contribution
 
