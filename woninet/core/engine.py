@@ -297,7 +297,7 @@ class NetworkMonitorCore:
         if isinstance(device, Device):
             self.storage.store_device(device=device)
         for metric in metrics:
-            if isinstance(metric, MetricRecord) and metric.value != None:
+            if isinstance(metric, MetricRecord) and metric.value is not None:
                 self.storage.store_metric(metric=metric)
 
     def enumerate_candidate_devices(
