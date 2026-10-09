@@ -188,6 +188,7 @@ class NetworkMonitorCore:
                     except AttributeError:
                         # If the tuple doesn't have enough values to unpack
                         pass
+                self.delete_stale_devices()
                 time.sleep(1)
         except (PermissionError, SocketPermissionError):
             core_logger.error("woninet requires root privileges to scan.")
@@ -220,6 +221,18 @@ class NetworkMonitorCore:
         Return a list of all devices in the history.
         """
         return self.storage.list_device_history()
+
+    def delete_stale_devices(self) -> None:
+        """
+        Remove stale device records from storage.
+
+        Devices with a latency of zero and a MAC address of None are treated as stale
+        entries and are deleted from the database history.
+        """
+        device_records = self.get_device_history()
+        for device in device_records:
+            if device.latency == 0 and device.mac is None:
+                self.storage.delete_device(device=device)
 
     def get_device_info(
         self, ip: str

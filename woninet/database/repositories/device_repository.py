@@ -69,6 +69,24 @@ class DeviceRepository:
             )
             self.session.add(existing)
 
+    def delete(self, device: Device) -> None:
+        """
+        Delete a device from the database by its IP address.
+
+        Looks up the stored record matching `device.ip` and removes it from the
+        session if found.
+
+        Args:
+            device (Device): Domain `Device` instance whose database record should
+                be removed.
+        """
+        existing = (
+            self.session.query(DeviceTable).filter(DeviceTable.ip == device.ip).first()
+        )
+
+        if existing:
+            self.session.delete(existing)
+
     def fetch_devices(self) -> list[Device]:
         """
         Return all existing devices from the database.

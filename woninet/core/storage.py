@@ -41,6 +41,18 @@ class StorageEngine:
             repo.upsert(device)
             session.commit()
 
+    def delete_device(self, device: Device) -> None:
+        """
+        Delete a stored device from the database.
+
+        Args:
+            device (Device): Device instance to be removed.
+        """
+        with self.session_factory() as session:
+            repo = DeviceRepository(session)
+            repo.delete(device)
+            session.commit()
+
     def list_device_history(self) -> list[Device]:
         """
         Return all stored devices in the database.
