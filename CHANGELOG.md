@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [Unreleased]
+
+### Added
+
+- Added `delete_stale_devices()` to the `NetworkMonitorCore`, `delete_device()` to the `StorageEngine`, and `delete()` to the `DeviceRepository` classes to delete devices with a latency of zero and a MAC address of None.
+
+### Changed
+
+- Prevented storing null metrics to reduce SQL insertion time-costs.
+
+---
+
 ## [2.1.0] - 2026-08-18
 
 ### Added
