@@ -42,6 +42,18 @@ IPs and filters out Wi‑Fi ARP‑delay noise.)
 
 ## Installation from PyPI
 
+### Docker (Linux devices)
+
+Docker is also available for Linux devices. Clone the repository, and Run:
+
+```shell
+chmod +x build_docker.sh
+sudo ./build_docker.sh
+```
+
+This script uses the `docker compose up -d --build` command, and prints the device's private IP address
+to STDOUT for easier access to the web browser.
+
 ### Unix/Linux
 
 1. **Method 1 (recommended (Uses the `icmplib` module)):**

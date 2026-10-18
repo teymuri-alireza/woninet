@@ -1,0 +1,28 @@
+# Keep the build context small and avoid leaking local state into the image.
+.git
+.gitignore
+.github
+.vscode
+.ruff_cache
+.pytest_cache
+**/__pycache__
+**/*.py[cod]
+*.egg-info
+build
+dist
+venv
+*env*/
+
+# Local data and runtime output (never bake these into an image)
+data
+*.db
+*.db-journal
+*.log
+logs.txt
+charts
+config.json
+stats.json
+
+# Not needed to build the package
+tests
+docs

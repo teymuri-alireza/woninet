@@ -43,22 +43,7 @@ def get_arp_mac(ip: str) -> str | None:
     """
     Return MAC address from ARP table for the given IP, or None if not present.
     """
-    try:
-        os_name = platform.system()
-        command = ["arp", "-an"] if os_name != "Windows" else ["arp", "-a"]
-        # Suppress stderr to avoid clutter when ARP table is empty or limited
-        output = subprocess.check_output(command, stderr=subprocess.DEVNULL, text=True)
-    except Exception as e:
-        core_logger.error(f"Failed to read ARP table: {e}")
-        return None
-
-    regex = r"\((.*?)\)\s+at\s+([0-9a-fA-F:]+)"
-    if os_name == "Windows":
-        regex = rf"({re.escape(ip)})\s+([0-9a-fA-F-]+)"
-    match = re.search(regex, output)
-    if match:
-        return match.group(2)
-    return None
+    return read_arp_table().get(ip.strip())
 
 
 def detect_host(
