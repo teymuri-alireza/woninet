@@ -1,0 +1,34 @@
+services:
+  woninet:
+    # Build the image from the Dockerfile in this directory.
+    build: .
+    image: woninet:local
+    container_name: woninet
+
+    # REQUIRED on Linux: share the host's network stack so woninet can see the
+    # real LAN (ARP table, local IP, gateway). With the default bridge network
+    # the container would sit behind NAT and detect nothing useful.
+    # Because of this, the `ports:` option is not used; the dashboard listens
+    # directly on the host's IP (default port 8080).
+    network_mode: host
+
+    # Least privilege: drop every Linux capability, then add back only what is
+    # needed. NET_RAW allows the raw ICMP sockets that icmplib uses to ping.
+    # DAC_OVERRIDE lets root inside the container write to ./data even when the
+    # folder is owned by your host user; drop it if your folder permissions
+    # already allow writing.
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_RAW
+      - DAC_OVERRIDE
+
+    # Start on boot and after crashes, but stay stopped if you stop it yourself.
+    restart: unless-stopped
+
+    # Persist config.json and woninet.db on the host, in ./data next to this file.
+    volumes:
+      - ./data:/data
+
+    # Arguments passed to `woninet` (this replaces the Dockerfile's CMD).
+    command: ["--config", "/data/config.json"]
