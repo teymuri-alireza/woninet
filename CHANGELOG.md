@@ -9,10 +9,16 @@ All notable changes to this project will be documented in this file.
 ### Added
 
 - Added `delete_stale_devices()` to the `NetworkMonitorCore`, `delete_device()` to the `StorageEngine`, and `delete()` to the `DeviceRepository` classes to delete devices with a latency of zero and a MAC address of None.
+- Implemented docker configuration.
+- Added test for ARP lookup.
 
 ### Changed
 
 - Prevented storing null metrics to reduce SQL insertion time-costs.
+
+### Fix
+
+- Used **read_arp_table()** for looking up ARP to prevent assigning the first device's MAC address to the devices without a MAC address.
 
 ---
 
