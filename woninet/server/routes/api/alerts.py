@@ -7,8 +7,6 @@ router = APIRouter(prefix="/api/alerts", tags=["alerts"])
 
 @router.get("")
 def alerts():
-    from woninet.__init__ import __version__
-
     monitor = get_monitor_gracefully()
 
     return JSONResponse(

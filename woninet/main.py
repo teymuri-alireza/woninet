@@ -120,7 +120,7 @@ def create_monitor(
     max_thread_workers: int,
     logger: logging.Logger,
     alert_rules: dict,
-    config_file_path: str
+    config_file_path: str,
 ) -> NetworkMonitorCore:
     """
     Create an instance of NetworkMonitorCore.
@@ -151,7 +151,7 @@ def create_monitor(
             database_path=database_path,
             max_thread_workers=max_thread_workers,
             alert_rules=alert_rules,
-            config_file_path=config_file_path
+            config_file_path=config_file_path,
         )
     return monitor
 
@@ -220,7 +220,7 @@ def main() -> None:
             max_thread_workers=configuration["monitoring"]["max_workers"],
             logger=core_logger,
             alert_rules=configuration["alert_rules"],
-            config_file_path=arguments.config
+            config_file_path=arguments.config,
         )
 
         if hasattr(arguments, "func"):

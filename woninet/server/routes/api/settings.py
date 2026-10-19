@@ -22,14 +22,18 @@ def settings():
 
 
 @router.post("")
-def update_settings(request: Request, max_workers = Form(None), arp_noise_limit = Form(None)):
+def update_settings(
+    request: Request, max_workers=Form(None), arp_noise_limit=Form(None)
+):
     monitor = get_monitor_gracefully()
 
-    monitor.update_configuration(max_workers=max_workers, arp_noise_limit=arp_noise_limit)
+    monitor.update_configuration(
+        max_workers=max_workers, arp_noise_limit=arp_noise_limit
+    )
 
     return JSONResponse(
         content={
             "success": True,
         },
-        status_code=status.HTTP_201_CREATED
+        status_code=status.HTTP_201_CREATED,
     )

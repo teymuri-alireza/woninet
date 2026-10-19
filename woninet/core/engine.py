@@ -60,7 +60,7 @@ class NetworkMonitorCore:
         database_path: str,
         max_thread_workers: int,
         alert_rules: dict,
-        config_file_path: str
+        config_file_path: str,
     ) -> None:
         """
         Initialize the monitor core and prepare the persistence layer.
@@ -348,7 +348,9 @@ class NetworkMonitorCore:
             config = json.load(file)
         return config
 
-    def update_configuration(self, max_workers: int | None, arp_noise_limit: float | None) -> None:
+    def update_configuration(
+        self, max_workers: int | None, arp_noise_limit: float | None
+    ) -> None:
         """
         Update and persist the supplied configuration values.
 

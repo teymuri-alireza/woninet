@@ -1,7 +1,9 @@
 import json
 
 
-def update_config_json(config_json_path: str, max_workers: int | None, arp_noise_limit: float | None) -> None:
+def update_config_json(
+    config_json_path: str, max_workers: int | None, arp_noise_limit: float | None
+) -> None:
     """
     Update and the supplied configuration values and write in the configuration file.
 
