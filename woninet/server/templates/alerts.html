@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>woninet Alerts</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/alerts.css">
+</head>
+<body>
+    <div class="app">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div class="brand">
+                <i class="fa-solid fa-network-wired"></i>
+                <span>woninet</span>
+            </div>
+
+            <nav class="nav">
+                <p class="nav-label">Menu</p>
+                <a class="nav-link" href="/">
+                    <i class="fa-solid fa-server"></i>
+                    <span>Devices</span>
+                </a>
+                <a class="nav-link active" href="/alerts">
+                    <i class="fa-solid fa-bell"></i>
+                    <span>Alerts</span>
+                </a>
+                <a class="nav-link" href="/settings">
+                    <i class="fa-solid fa-gear"></i>
+                    <span>Settings</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="api-status">
+                    <span id="status_dot" class="status-dot"></span>
+                    <span id="status_text">Connected</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <div class="content">
+            <header class="topbar">
+                <div>
+                    <p class="eyebrow">Network Monitoring</p>
+                    <h1>Alerts</h1>
+                    <p class="subtitle">Trigger and recovery events across monitored devices</p>
+                </div>
+            </header>
+
+            <section class="panel">
+                <div class="panel-header">
+                    <div>
+                        <h2>Alert Events</h2>
+                        <p id="alert_count" class="panel-meta">Loading…</p>
+                    </div>
+                    <div class="toolbar">
+                        <div class="search-box">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input id="alert_search" type="text" placeholder="Search device IP address">
+                        </div>
+                        <select id="alert_type">
+                            <option value="all">All Event Types</option>
+                            <option value="trigger">Trigger</option>
+                            <option value="recover">Recover</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="alerts" class="alert-list">
+                    <div class="loader"></div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script src="/static/js/alerts.js"></script>
+</body>
+</html>
