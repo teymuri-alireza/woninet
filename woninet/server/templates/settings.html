@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>woninet Settings</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/settings.css">
+</head>
+<body>
+    <div class="app">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div class="brand">
+                <i class="fa-solid fa-network-wired"></i>
+                <span>woninet</span>
+            </div>
+
+            <nav class="nav">
+                <p class="nav-label">Menu</p>
+                <a class="nav-link" href="/">
+                    <i class="fa-solid fa-server"></i>
+                    <span>Devices</span>
+                </a>
+                <a class="nav-link" href="/alerts">
+                    <i class="fa-solid fa-bell"></i>
+                    <span>Alerts</span>
+                </a>
+                <a class="nav-link active" href="/settings">
+                    <i class="fa-solid fa-gear"></i>
+                    <span>Settings</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="api-status">
+                    <span id="status_dot" class="status-dot"></span>
+                    <span id="status_text">Connected</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <div class="content">
+            <header class="topbar">
+                <div>
+                    <p class="eyebrow">Configuration</p>
+                    <h1>Settings</h1>
+                    <p class="subtitle">Adjust how the monitor scans and evaluates your network</p>
+                </div>
+            </header>
+
+            <section class="panel settings-panel">
+                <div class="panel-header">
+                    <h2>Monitor Configuration</h2>
+                </div>
+
+                <div id="form_message" class="form-message" role="status" hidden></div>
+
+                <form id="settings_form" novalidate>
+
+                    <!-- MAX WORKERS -->
+                    <div class="setting-row">
+                        <div class="setting-info">
+                            <label for="max_workers" class="setting-title">Max Workers</label>
+                            <div class="setting-description">
+                                Maximum number of thread workers used to send ICMP pings
+                            </div>
+                        </div>
+                        <div class="setting-control">
+                            <input id="max_workers" name="max_workers" type="number" min="1" step="1" required disabled>
+                            <p class="field-error" id="max_workers_error"></p>
+                        </div>
+                    </div>
+
+                    <!-- ARP NOISE LIMIT -->
+                    <div class="setting-row">
+                        <div class="setting-info">
+                            <label for="arp_noise_limit" class="setting-title">ARP Noise Limit</label>
+                            <div class="setting-description">
+                                Threshold in milliseconds above which ARP fluctuations are treated as noise.
+                            </div>
+                        </div>
+                        <div class="setting-control">
+                            <input id="arp_noise_limit" name="arp_noise_limit" type="number" min="0" step="1" required disabled>
+                            <p class="field-error" id="arp_noise_limit_error"></p>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" id="reset_btn" class="btn btn-secondary" disabled>Reset</button>
+                        <button type="submit" id="save_btn" class="btn btn-primary" disabled>
+                            <i class="fa-solid fa-floppy-disk"></i>
+                            <span>Save Changes</span>
+                        </button>
+                    </div>
+                </form>
+            </section>
+        </div>
+    </div>
+
+    <script src="/static/js/settings.js"></script>
+</body>
+</html>
