@@ -32,7 +32,7 @@
     margin: 0 0 8px;
 }
 
-.setting-control input {
+.setting-control input, .setting-control textarea {
     width: 100%;
     background: #fff;
     color: var(--text);
@@ -45,18 +45,18 @@
     transition: border-color .15s, box-shadow .15s;
 }
 
-.setting-control input:focus {
+.setting-control input:focus .setting-control textarea:focus {
     border-color: var(--accent);
     box-shadow: 0 0 0 3px rgba(37,99,235,.15);
 }
 
-.setting-control input:disabled {
+.setting-control input:disabled .setting-control textarea:disabled {
     background: var(--panel-light);
     color: var(--muted);
     cursor: not-allowed;
 }
 
-.setting-control input.invalid {
+.setting-control input.invalid .setting-control textarea.invalid{
     border-color: var(--bad);
     box-shadow: 0 0 0 3px rgba(220,38,38,.12);
 }

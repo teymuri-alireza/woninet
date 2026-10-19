@@ -349,7 +349,10 @@ class NetworkMonitorCore:
         return config
 
     def update_configuration(
-        self, max_workers: int | None, arp_noise_limit: float | None
+        self,
+        max_workers: int | None,
+        arp_noise_limit: float | None,
+        target_ip_list: list[str] | None,
     ) -> None:
         """
         Update and persist the supplied configuration values.
@@ -362,13 +365,23 @@ class NetworkMonitorCore:
                 `None` to leave the current value unchanged.
             arp_noise_limit (float | None): ARP noise limit, or `None` to
                 leave the current value unchanged.
+            target_ip_list (list[str] | None): Target IP addresses to scan, or `None`
+                to scan all the IP addresses in the /24 subnet.
         """
-        update_config_json(self.config_file_path, max_workers, arp_noise_limit)
+        update_config_json(
+            self.config_file_path, max_workers, arp_noise_limit, target_ip_list
+        )
 
         if max_workers is not None:
             self.max_thread_workers = int(max_workers)
         if arp_noise_limit is not None:
             self.arp_noise_limit = float(arp_noise_limit)
+
+        self.candidate_devices = self.enumerate_candidate_devices(
+            [ip for ip in target_ip_list.split(",")]
+            if target_ip_list is not None
+            else []
+        )
 
     def uptime(self) -> int:
         """

@@ -15,6 +15,7 @@ def settings():
             "settings": {
                 "arp_noise_limit": data["monitoring"]["arp_noise_limit"],
                 "max_workers": data["monitoring"]["max_workers"],
+                "target_ip_list": data["target_ip_list"],
             }
         },
         status_code=status.HTTP_200_OK,
@@ -23,12 +24,17 @@ def settings():
 
 @router.post("")
 def update_settings(
-    request: Request, max_workers=Form(None), arp_noise_limit=Form(None)
+    request: Request,
+    max_workers=Form(None),
+    arp_noise_limit=Form(None),
+    target_ip_list=Form(None),
 ):
     monitor = get_monitor_gracefully()
 
     monitor.update_configuration(
-        max_workers=max_workers, arp_noise_limit=arp_noise_limit
+        max_workers=max_workers,
+        arp_noise_limit=arp_noise_limit,
+        target_ip_list=target_ip_list,
     )
 
     return JSONResponse(
