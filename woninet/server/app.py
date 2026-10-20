@@ -10,7 +10,6 @@ from woninet.server.routes.api.devices import router as devices_api
 from woninet.server.routes.api.stats import router as stats_api
 from woninet.server.routes.api.alerts import router as alerts_api
 from woninet.server.routes.api.settings import router as settings_api
-from woninet.server.routes.page.devices import router as devices_page
 from woninet.server.routes.page.alerts import router as alerts_page
 from woninet.server.routes.page.settings import router as settings_page
 from woninet.server.routes.page.about import router as about_page
@@ -75,7 +74,7 @@ app.include_router(devices_api)
 app.include_router(stats_api)
 app.include_router(alerts_api)
 app.include_router(settings_api)
-app.include_router(devices_page)
+# app.include_router(devices_page) # Temporarily disable the device info page
 app.include_router(alerts_page)
 app.include_router(settings_page)
 app.include_router(about_page)
