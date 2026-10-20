@@ -1,0 +1,141 @@
+/* About page — extends style.css */
+
+.about-panel {
+    max-width: 900px;
+    margin-bottom: 24px;
+}
+
+/* ---------- Service information ---------- */
+.info-list {
+    margin: 0;
+}
+
+.info-row {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    gap: 24px;
+    align-items: center;
+    padding: 18px 24px;
+    border-bottom: 1px solid var(--border);
+}
+
+.info-row:last-child {
+    border-bottom: none;
+}
+
+.info-row dt {
+    color: var(--muted);
+    font-size: .85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .6px;
+}
+
+.info-row dd {
+    margin: 0;
+    font-size: .95rem;
+    font-weight: 600;
+    color: var(--text);
+    word-break: break-word;
+}
+
+.version-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 999px;
+    background: #dbeafe;
+    color: var(--accent);
+    font-size: .85rem;
+    font-weight: 700;
+}
+
+.text-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--accent);
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.text-link:hover {
+    text-decoration: underline;
+}
+
+/* ---------- Feedback ---------- */
+.feedback-body {
+    padding: 24px;
+}
+
+.feedback-body p {
+    margin: 0 0 20px;
+    color: var(--muted);
+    font-size: .95rem;
+    line-height: 1.6;
+}
+
+.feedback-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+}
+
+.feedback-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 18px;
+    background: var(--panel-light);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    color: var(--text);
+    text-decoration: none;
+    transition: background .15s, border-color .15s, box-shadow .15s;
+}
+
+.feedback-card:hover {
+    background: #f1f5fd;
+    border-color: #bfdbfe;
+    box-shadow: var(--shadow);
+}
+
+.feedback-icon {
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    font-size: 1.05rem;
+}
+
+.feedback-icon.warning { background: #fef3c7; color: var(--warn); }
+.feedback-icon.primary { background: #dbeafe; color: var(--accent); }
+
+.feedback-text {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.feedback-text strong {
+    font-size: .95rem;
+}
+
+.feedback-text small {
+    color: var(--muted);
+    font-size: .8rem;
+    line-height: 1.4;
+}
+
+@media (max-width: 800px) {
+    .info-row {
+        grid-template-columns: 1fr;
+        gap: 6px;
+    }
+
+    .feedback-grid {
+        grid-template-columns: 1fr;
+    }
+}

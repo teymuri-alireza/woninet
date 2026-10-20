@@ -13,6 +13,7 @@ from woninet.server.routes.api.settings import router as settings_api
 from woninet.server.routes.page.devices import router as devices_page
 from woninet.server.routes.page.alerts import router as alerts_page
 from woninet.server.routes.page.settings import router as settings_page
+from woninet.server.routes.page.about import router as about_page
 from woninet.server.dependencies import get_static_path
 from woninet.main import get_monitor
 from woninet.__init__ import __version__
@@ -77,6 +78,7 @@ app.include_router(settings_api)
 app.include_router(devices_page)
 app.include_router(alerts_page)
 app.include_router(settings_page)
+app.include_router(about_page)
 
 
 # The root path
