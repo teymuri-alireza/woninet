@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,82 +9,118 @@
     <link rel="stylesheet" href="/static/css/style.css">
 </head>
 <body>
-    <div class="dashboard">
-        <header class="topbar">
-            <div>
-                <p class="eyebrow">Network Monitoring</p>
-                <h1>woninet Dashboard</h1>
-                <p class="subtitle">Live device visibility and latency overview</p>
-            </div>
-            <div class="gateway-info">
-                <span class="gateway-label">Gateway:</span>
-                <span id="gateway" class="gateway-value">—</span>
-            </div>
-            <div class="api-status">
-                <span id="status_dot" class="status-dot"></span>
-                <span id="status_text">Connected</span>
-            </div>
-        </header>
+    <div class="app">
 
-        <!-- KPI CARDS -->
-        <section class="overview-grid">
+        <aside class="sidebar">
+            <div class="brand">
+                <i class="fa-solid fa-network-wired"></i>
+                <span>woninet</span>
+            </div>
 
-            <div class="kpi-card">
-                <div class="kpi-icon">
+            <nav class="nav">
+                <p class="nav-label">Menu</p>
+                <a class="nav-link active" href="/">
                     <i class="fa-solid fa-server"></i>
-                    <span>Total Devices</span>
+                    <span>Devices</span>
+                </a>
+                <a class="nav-link" href="/alerts">
+                    <i class="fa-solid fa-bell"></i>
+                    <span>Alerts</span>
+                </a>
+                <a class="nav-link" href="/settings">
+                    <i class="fa-solid fa-gear"></i>
+                    <span>Settings</span>
+                </a>
+                <a class="nav-link" href="/about">
+                    <i class="fa-solid fa-circle-info"></i>
+                    <span>About</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="api-status">
+                    <span id="status_dot" class="status-dot"></span>
+                    <span id="status_text">Connected</span>
                 </div>
-                <h2 id="total_devices">0</h2>
             </div>
+        </aside>
 
-            <div class="kpi-card">
-                <div class="kpi-icon success">
-                    <i class="fa-solid fa-circle-check"></i>
-                    <span>Online</span>
+        <!-- MAIN CONTENT -->
+        <div class="content">
+            <header class="topbar">
+                <div>
+                    <p class="eyebrow">Network Monitoring</p>
+                    <h1>Devices</h1>
+                    <p class="subtitle">Live device visibility and latency overview</p>
                 </div>
-                <h2 id="online_devices">0</h2>
-            </div>
-
-            <div class="kpi-card">
-                <div class="kpi-icon primary">
-                    <i class="fa-solid fa-wave-square"></i>
-                    <span>Average Latency</span>
+                <div class="gateway-info">
+                    <i class="fa-solid fa-route"></i>
+                    <span class="gateway-label">Gateway</span>
+                    <span id="gateway" class="gateway-value">—</span>
                 </div>
-                <h2 id="avg_latency">0 ms</h2>
-            </div>
+            </header>
 
-            <div class="kpi-card">
-                <div class="kpi-icon warning">
-                    <i class="fa-solid fa-triangle-exclamation"></i>
-                    <span>Packet Loss</span>
-                </div>
-                <h2 id="avg_packet_loss">0%</h2>
-            </div>
-        </section>
-
-        <section class="toolbar">
-            <div class="search-box">
-                <i class="fa-solid fa-magnifying-glass"></i>
-                <input id="search" type="text" placeholder="Search IP address or MAC address">
-            </div>
-
-            <div>
-                <select id="filter_status">
-                    <option value="all">All Devices</option>
-                    <option value="online">Online</option>
-                    <option value="degraded">Degraded</option>
-                    <option value="offline">Offline</option>
-                </select>
-            </div>
-        </section>
-
-        <main class="main-layout">
-            <section class="panel">
-                <div class="panel-header">
-                    <div>
-                        <h2>Devices</h2>
+            <!-- KPI CARDS -->
+            <section class="overview-grid">
+                <div class="kpi-card">
+                    <div class="kpi-icon">
+                        <i class="fa-solid fa-server"></i>
+                    </div>
+                    <div class="kpi-body">
+                        <span class="kpi-label">Total Devices</span>
+                        <h2 id="total_devices">0</h2>
                     </div>
                 </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-icon success">
+                        <i class="fa-solid fa-circle-check"></i>
+                    </div>
+                    <div class="kpi-body">
+                        <span class="kpi-label">Online</span>
+                        <h2 id="online_devices">0</h2>
+                    </div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-icon primary">
+                        <i class="fa-solid fa-wave-square"></i>
+                    </div>
+                    <div class="kpi-body">
+                        <span class="kpi-label">Average Latency</span>
+                        <h2 id="avg_latency">0 ms</h2>
+                    </div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-icon warning">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                    </div>
+                    <div class="kpi-body">
+                        <span class="kpi-label">Packet Loss</span>
+                        <h2 id="avg_packet_loss">0%</h2>
+                    </div>
+                </div>
+            </section>
+
+            <!-- DEVICES PANEL -->
+            <section class="panel">
+                <div class="panel-header">
+                    <h2>Device List</h2>
+                    <div class="toolbar">
+                        <div class="search-box">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input id="search" type="text" placeholder="Search IP or MAC address">
+                        </div>
+                        <select id="filter_status">
+                            <option value="all">All Devices</option>
+                            <option value="online">Online</option>
+                            <option value="degraded">Degraded</option>
+                            <option value="offline">Offline</option>
+                        </select>
+                    </div>
+                </div>
+
                 <div class="table-wrapper">
                     <table class="device-table">
                         <thead>
@@ -96,10 +132,9 @@
                                 <th>Packet Loss</th>
                                 <th>MAC Address</th>
                                 <th>Last Seen</th>
-                                <th>Details</th>
+                                <th class="col-action">Details</th>
                             </tr>
                         </thead>
-
                         <tbody id="devices">
                             <tr>
                                 <td colspan="8">
@@ -110,12 +145,7 @@
                     </table>
                 </div>
             </section>
-            <aside class="events-panel">
-                <h3>Recent Events</h3>
-                <div id="events"></div>
-            </aside>
-        </main>
-
+        </div>
     </div>
 
     <script src="/static/js/app.js"></script>

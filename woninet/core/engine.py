@@ -1,3 +1,4 @@
+import json
 import time
 import logging
 import threading
@@ -18,6 +19,7 @@ from woninet.database.tables import AlertEventTable
 from woninet.utilities.ip_validator import is_device_ip_valid
 from woninet.utilities.detect_ip_range import detect_ip_range
 from woninet.utilities.detect_gateway import get_default_gateway
+from woninet.utilities.update_configuration import update_config_json
 from woninet.exc import PingUtilityNotFound
 
 core_logger = logging.getLogger("core")
@@ -58,6 +60,7 @@ class NetworkMonitorCore:
         database_path: str,
         max_thread_workers: int,
         alert_rules: dict,
+        config_file_path: str,
     ) -> None:
         """
         Initialize the monitor core and prepare the persistence layer.
@@ -70,6 +73,7 @@ class NetworkMonitorCore:
             database_path (str): Path to SQLite database.
             max_thread_workers (int): Maximum number of thread workers used to send ICMP pings.
             alert_rules (dict): Provided alert rules, loaded from config.json.
+            config_file_path (str): Path to the config file to load.
         """
         self._running: bool = False
         self._thread: threading.Thread | None = None
@@ -81,6 +85,7 @@ class NetworkMonitorCore:
 
         self.arp_noise_limit: float = arp_noise_limit
         self.max_thread_workers: int = max_thread_workers
+        self.config_file_path: str = config_file_path
 
         # Initialize database
         self.database_engine = DatabaseEngine(database_path=database_path)
@@ -331,6 +336,52 @@ class NetworkMonitorCore:
         if not is_device_ip_valid(candidate_devices):
             raise ValueError("IP address is not valid")
         return candidate_devices
+
+    def load_config_json(self) -> dict:
+        """
+        Load the application's JSON configuration file.
+
+        Returns:
+            dict: Parsed configuration data.
+        """
+        with open(self.config_file_path) as file:
+            config = json.load(file)
+        return config
+
+    def update_configuration(
+        self,
+        max_workers: int | None,
+        arp_noise_limit: float | None,
+        target_ip_list: list[str] | None,
+    ) -> None:
+        """
+        Update and persist the supplied configuration values.
+
+        Values set to `None` are left unchanged. After updating the JSON
+        configuration file, update the corresponding runtime attributes.
+
+        Args:
+            max_workers (int | None): Maximum number of worker threads, or
+                `None` to leave the current value unchanged.
+            arp_noise_limit (float | None): ARP noise limit, or `None` to
+                leave the current value unchanged.
+            target_ip_list (list[str] | None): Target IP addresses to scan, or `None`
+                to scan all the IP addresses in the /24 subnet.
+        """
+        update_config_json(
+            self.config_file_path, max_workers, arp_noise_limit, target_ip_list
+        )
+
+        if max_workers is not None:
+            self.max_thread_workers = int(max_workers)
+        if arp_noise_limit is not None:
+            self.arp_noise_limit = float(arp_noise_limit)
+
+        self.candidate_devices = self.enumerate_candidate_devices(
+            [ip for ip in target_ip_list.split(",")]
+            if target_ip_list is not None
+            else []
+        )
 
     def uptime(self) -> int:
         """

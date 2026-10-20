@@ -1,252 +1,113 @@
-let found_devices = new Map();
-let events = [];
-
-function addEvent(message) {
-
-    const timestamp = new Date().toLocaleTimeString();
-
-    events.unshift(`${timestamp} - ${message}`);
-
-    if(events.length > 15)
-        events.pop();
-
-    document.getElementById("events").innerHTML =
-        events.map(e => `<div class="event">${e}</div>`).join("");
-}
+let lastData = { devices: [], gateway: null };
 
 function getDeviceState(device) {
-
     const latency = device.latency ?? 0;
     const loss = device.packet_loss ?? 0;
 
-    if(latency === 0)
+    if (latency === 0)
         return "offline";
 
-    if(latency > 100 || loss > 2)
+    if (latency > 100 || loss > 2)
         return "degraded";
 
     return "online";
 }
 
-function createDeviceRow(device){
-
+function createDeviceRow(device) {
     const state = getDeviceState(device);
+    const isUp = (device.latency ?? 0) !== 0;
 
-    const latency =
-        device.latency !== 0
-            ? `${device.latency} ms`
-            : "--";
-
-    const jitter =
-        device.latency !== 0
-            ? `${(device.jitter ?? 0).toFixed(1)} ms`
-            : "--";
+    const latency = isUp ? `${device.latency} ms` : "--";
+    const jitter = isUp ? `${(device.jitter ?? 0).toFixed(1)} ms` : "--";
+    const loss = `${(device.packet_loss ?? 0).toFixed(1)}%`;
 
     return `
     <tr>
-
-        <td>
-
-            <span class="status-badge ${state}">
-                ${state}
-            </span>
-
-        </td>
-
-        <td>
-
-            <strong>${device.ip}</strong>
-
-        </td>
-
+        <td><span class="status-badge ${state}">${state}</span></td>
+        <td><strong>${device.ip}</strong></td>
         <td>${latency}</td>
-        
         <td>${jitter}</td>
-
-        <td>${(device.packet_loss ?? 0).toFixed(1)}%</td>
-
-        <td>${device.mac}</td>
-
-        <td>${device.last_seen}</td>
-
-        <td>
-
-            <a class="device-link"
-               href="/devices/${device.ip}">
+        <td>${loss}</td>
+        <td class="cell-mono">${device.mac ?? "--"}</td>
+        <td>${device.last_seen ?? "--"}</td>
+        <td class="cell-action">
+            <a class="device-link" href="/devices/${device.ip}" title="Device details">
                 <i class="fa fa-ellipsis-v"></i>
             </a>
-
         </td>
-
     </tr>
     `;
 }
 
-function updateOverview(devices){
-
+function updateOverview(devices) {
     const total = devices.length;
+    const reachable = devices.filter(d => (d.latency ?? 0) > 0);
 
-    const online =
-        devices.filter(d => (d.latency ?? 0) > 0).length;
-
-    const latencyDevices =
-        devices.filter(d => (d.latency ?? 0) > 0);
-
-    const avgLatency =
-        latencyDevices.length
-        ? Math.round(
-            latencyDevices.reduce(
-                (a,b)=>a+b.latency,0
-            ) / latencyDevices.length
-        )
+    const avgLatency = reachable.length
+        ? Math.round(reachable.reduce((sum, d) => sum + d.latency, 0) / reachable.length)
         : 0;
 
-    const validDevices = devices.filter(device => device.latency !== 0);
-    const avgLoss = validDevices.length
-        ? (
-            validDevices.reduce(
-                (sum, device) => sum + (device.packet_loss ?? 0), 0) / validDevices.length
-        ).toFixed(1)
+    const avgLoss = reachable.length
+        ? (reachable.reduce((sum, d) => sum + (d.packet_loss ?? 0), 0) / reachable.length).toFixed(1)
         : 0;
 
-    document.getElementById(
-        "total_devices"
-    ).textContent = total;
-
-    document.getElementById(
-        "online_devices"
-    ).textContent = online;
-
-    document.getElementById(
-        "avg_latency"
-    ).textContent = `${avgLatency} ms`;
-
-    document.getElementById(
-        "avg_packet_loss"
-    ).textContent = `${avgLoss}%`;
+    document.getElementById("total_devices").textContent = total;
+    document.getElementById("online_devices").textContent = reachable.length;
+    document.getElementById("avg_latency").textContent = `${avgLatency} ms`;
+    document.getElementById("avg_packet_loss").textContent = `${avgLoss}%`;
 }
 
-function renderDevices(data){
-
+function renderDevices(data) {
     const devices = data.devices || [];
 
     updateOverview(devices);
 
-    const search =
-        document.getElementById("search")
-        .value
-        .toLowerCase();
+    const search = document.getElementById("search").value.toLowerCase();
+    const filter = document.getElementById("filter_status").value;
 
-    const filter =
-        document.getElementById("filter_status")
-        .value;
+    const filtered = devices.filter(device => {
+        const matchesSearch =
+            device.ip.toLowerCase().includes(search) ||
+            (device.mac || "").toLowerCase().includes(search);
 
-    const filtered =
-        devices.filter(device => {
+        const matchesFilter =
+            filter === "all" || getDeviceState(device) === filter;
 
-            const state =
-                getDeviceState(device);
+        return matchesSearch && matchesFilter;
+    });
 
-            const matchesSearch =
-                device.ip.toLowerCase().includes(search) ||
-                (device.mac || "")
-                .toLowerCase()
-                .includes(search);
-
-            const matchesFilter =
-                filter === "all" ||
-                state === filter;
-
-            return matchesSearch &&
-                   matchesFilter;
-        });
-
-    document.getElementById(
-        "devices"
-    ).innerHTML =
-        filtered.map(createDeviceRow).join("");
+    document.getElementById("devices").innerHTML = filtered.length
+        ? filtered.map(createDeviceRow).join("")
+        : `<tr><td colspan="8" class="empty-row">No devices match the current filters.</td></tr>`;
 }
 
-async function loadDevices(){
-
-    const statusDot =
-        document.getElementById("status_dot");
+async function loadDevices() {
+    const statusDot = document.getElementById("status_dot");
     const statusText = document.getElementById("status_text");
 
-    try{
+    try {
+        const response = await fetch("/api/devices");
+        const data = await response.json();
 
-        const response =
-            await fetch("/api/devices");
-
-        const data =
-            await response.json();
-
+        lastData = data;
         renderDevices(data);
 
         const gatewayEl = document.getElementById("gateway");
         if (gatewayEl) gatewayEl.textContent = data.gateway || "—";
 
-        statusDot.style.background =
-            "#22c55e";
+        statusDot.classList.remove("disconnected");
         statusText.textContent = "Connected";
 
-    }catch(error){
-
-        statusDot.style.background =
-            "#ef4444";
+    } catch (error) {
+        statusDot.classList.add("disconnected");
         statusText.textContent = "Disconnected";
-
         console.error(error);
     }
 }
 
-document
-.getElementById("search")
-?.addEventListener(
-    "input",
-    loadDevices
-);
-
-document
-.getElementById("filter_status")
-?.addEventListener(
-    "change",
-    loadDevices
-);
-
-async function loadAlertEvents() {
-    try {
-        const response = await fetch("/api/stats");
-        const data = await response.json();
-
-        const alertEvents = data.recent_alert_events || [];
-
-        const alert_events = alertEvents.map(event => {
-            const time = new Date(event.timestamp)
-                .toLocaleString();
-            
-            const eventClass = event.event_type === "trigger" ? "event-trigger" : "event-recover";
-            const metricUnit = (event.metric === "latency" || event.metric === "jitter") ? "ms" : "%";
-
-            return `
-                <div class="event ${eventClass}">
-                    <strong>${event.event_type.toUpperCase()}</strong><br>
-                    ${event.device_ip} | ${event.metric}: ${event.value.toFixed(2)} ${metricUnit}
-                    <small>(${time})</small>
-                </div>
-            `;
-        }).slice(0, 15);
-
-        document.getElementById("events").innerHTML =
-            alert_events.join("");
-
-    } catch (error) {
-        console.error("Error loading alert events:", error);
-    }
-}
+// Search and filter re-render from the last response instead of refetching.
+document.getElementById("search")?.addEventListener("input", () => renderDevices(lastData));
+document.getElementById("filter_status")?.addEventListener("change", () => renderDevices(lastData));
 
 loadDevices();
-loadAlertEvents();
-
 setInterval(loadDevices, 5000);
-setInterval(loadAlertEvents, 5000);

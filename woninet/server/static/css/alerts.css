@@ -1,0 +1,86 @@
+/* Alerts page — extends style.css */
+
+.panel-meta {
+    margin: 4px 0 0;
+    color: var(--muted);
+    font-size: .85rem;
+}
+
+.alert-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 20px 24px;
+}
+
+.event {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    background: var(--panel-light);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--warn);
+    border-radius: 10px;
+    padding: 14px 18px;
+    font-size: .9rem;
+    transition: background .15s;
+}
+
+.event:hover {
+    background: #f1f5fd;
+}
+
+.event-main {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.event-type {
+    font-size: .75rem;
+    font-weight: 700;
+    letter-spacing: .6px;
+}
+
+.event-details {
+    color: var(--text);
+}
+
+.event-details .sep {
+    color: var(--muted);
+    margin: 0 6px;
+}
+
+.event-time {
+    color: var(--muted);
+    font-size: .8rem;
+    white-space: nowrap;
+}
+
+.event-trigger {
+    border-left-color: var(--warn);
+}
+
+.event-trigger .event-type {
+    color: var(--warn);
+}
+
+.event-recover {
+    border-left-color: var(--good);
+}
+
+.event-recover .event-type {
+    color: var(--good);
+}
+
+.no-alerts {
+    padding: 32px 20px;
+}
+
+@media (max-width: 800px) {
+    .event {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}

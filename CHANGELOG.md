@@ -12,10 +12,17 @@ All notable changes to this project will be documented in this file.
 - Implemented docker configuration.
 - Added test for ARP lookup.
 - Added the **build_docker.sh** bash script which uses the `docker compose up -d --build` command, and prints the device's private IP address to STDOUT for easier access to the web browser.
+- Added **setting.html** UI to control the settings from the dashboard.
+- Added **python-multipart** library which is required for the FastAPI **Form()** function
+- Added the **update_config_json()** utility
+- Added the **load_config_json()** and **update_configuration()** methods to the **NetworkMonitorCore** class.
+- Added test and test config for settings and alert APIs.
 
 ### Changed
 
 - Prevented storing null metrics to reduce SQL insertion time-costs.
+- Updated the dashboard UI and moved the recent alerts from the dashboard to **alerts.html** file.
+- Temporarily disable the device info page and its tests.
 
 ### Fix
 

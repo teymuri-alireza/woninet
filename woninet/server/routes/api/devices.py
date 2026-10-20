@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Request, Path, status, HTTPException
+from fastapi import APIRouter, Request, status
 from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
 from woninet.server.dependencies import get_monitor_gracefully
@@ -18,34 +18,36 @@ def list_devices(request: Request):
     )
 
 
-@router.get("/{ip}")
-def device_info_api(
-    request: Request,
-    ip: str = Path(
-        ...,
-        title="IP address",
-        description="IP address of the device.",
-        min_length=7,
-        max_length=15,
-    ),
-):
+# Temporarily disable the device info page
 
-    monitor = get_monitor_gracefully()
+# @router.get("/{ip}")
+# def device_info_api(
+#     request: Request,
+#     ip: str = Path(
+#         ...,
+#         title="IP address",
+#         description="IP address of the device.",
+#         min_length=7,
+#         max_length=15,
+#     ),
+# ):
 
-    if not monitor.device_exists(ip=ip):
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Not Found")
+#     monitor = get_monitor_gracefully()
 
-    device, device_alert_state, device_recent_alert_events = monitor.get_device_info(
-        ip=ip
-    )
-    monitor.graph_engine.design_device_latency_events(
-        ip=ip, recent_device_alert_events=device_recent_alert_events
-    )
-    return JSONResponse(
-        content={
-            "device": jsonable_encoder(device),
-            "device_alert_state": jsonable_encoder(device_alert_state),
-            "device_recent_alert_events": jsonable_encoder(device_recent_alert_events),
-        },
-        status_code=status.HTTP_200_OK,
-    )
+#     if not monitor.device_exists(ip=ip):
+#         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Not Found")
+
+#     device, device_alert_state, device_recent_alert_events = monitor.get_device_info(
+#         ip=ip
+#     )
+#     monitor.graph_engine.design_device_latency_events(
+#         ip=ip, recent_device_alert_events=device_recent_alert_events
+#     )
+#     return JSONResponse(
+#         content={
+#             "device": jsonable_encoder(device),
+#             "device_alert_state": jsonable_encoder(device_alert_state),
+#             "device_recent_alert_events": jsonable_encoder(device_recent_alert_events),
+#         },
+#         status_code=status.HTTP_200_OK,
+#     )
