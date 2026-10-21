@@ -129,11 +129,7 @@ function validateField(name) {
     if (name === TARGET_FIELD) {
         const targets = parseTargets(raw);
 
-        if (targets.length === 0) {
-            error = "At least one target IP address is required.";
-        } else {
-            error = targets.map(validateTarget).find(Boolean) || "";
-        }
+        error = targets.map(validateTarget).find(Boolean) || "";
 
     } else if (INT_RULES[name]) {
         const { min, label } = INT_RULES[name];

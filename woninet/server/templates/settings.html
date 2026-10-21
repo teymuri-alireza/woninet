@@ -100,10 +100,11 @@
                             <label for="target_ip_list" class="setting-title">Target IP addresses</label>
                             <div class="setting-description">
                                 List of IP addresses to scan, separated by comma (e.g. "192.168.1.1-100", "192.168.1.110", "192.168.1.120").
+                                An empty list will result in scanning all IP addresses in a /24 subnet.
                             </div>
                         </div>
                         <div class="setting-control">
-                            <textarea id="target_ip_list" name="target_ip_list" required disabled></textarea>
+                            <textarea id="target_ip_list" name="target_ip_list" disabled></textarea>
                             <p class="field-error" id="target_ip_list_error"></p>
                         </div>
                     </div>
