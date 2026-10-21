@@ -72,7 +72,7 @@ def test_update_settings_api_passes_values_to_monitor(client, fake_monitor):
     updates = {k: v for call in fake_monitor.config_updates for k, v in call.items()}
     assert updates["max_workers"] == "8"
     assert updates["arp_noise_limit"] == "100"
-    assert updates["target_ip_list"] == "192.168.1.1-50,192.168.1.60"
+    assert updates["target_ip_list"] == ["192.168.1.1-50", "192.168.1.60"]
 
 
 def test_update_settings_api_accepts_partial_form(client, fake_monitor):

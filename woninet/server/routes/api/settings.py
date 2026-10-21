@@ -34,7 +34,9 @@ def update_settings(
     monitor.update_configuration(
         max_workers=max_workers,
         arp_noise_limit=arp_noise_limit,
-        target_ip_list=target_ip_list,
+        target_ip_list=target_ip_list.split(",")
+        if target_ip_list is not None
+        else target_ip_list,
     )
 
     return JSONResponse(

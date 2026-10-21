@@ -99,6 +99,7 @@ class NetworkMonitorCore:
         self.manual_ip_enumerator = ManualIPEnumerator()
         self.storage = StorageEngine(session_factory=self.session_factory)
 
+        self._validate_config_file_target_ip_type()
         self.candidate_devices = self.enumerate_candidate_devices(target_ip)
 
         self.ping_collector = PingCollector()
@@ -378,10 +379,19 @@ class NetworkMonitorCore:
             self.arp_noise_limit = float(arp_noise_limit)
 
         self.candidate_devices = self.enumerate_candidate_devices(
-            [ip for ip in target_ip_list.split(",")]
-            if target_ip_list is not None
-            else []
+            target_ip_list if target_ip_list is not None else []
         )
+
+    def _validate_config_file_target_ip_type(self) -> None:
+        """
+        Ensures the type of the `target_ip_list` key in the
+        configuration file, is a list.
+        """
+        config = self.load_config_json()
+
+        if type(config["target_ip_list"]) is not list:
+            target_ips = config["target_ip_list"].split(",")
+            self.update_configuration(None, None, target_ips)
 
     def uptime(self) -> int:
         """

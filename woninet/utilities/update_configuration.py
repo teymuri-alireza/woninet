@@ -27,9 +27,7 @@ def update_config_json(
     if arp_noise_limit is not None:
         config_file["monitoring"]["arp_noise_limit"] = float(arp_noise_limit)
 
-    config_file["target_ip_list"] = (
-        [ip for ip in target_ip_list.split(",")] if target_ip_list is not None else []
-    )
+    config_file["target_ip_list"] = target_ip_list if target_ip_list is not None else []
 
     with open(config_json_path, "w") as file:
         json.dump(config_file, file, indent=4)
