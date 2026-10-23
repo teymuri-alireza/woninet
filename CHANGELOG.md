@@ -24,6 +24,7 @@ All notable changes to this project will be documented in this file.
 - Updated the dashboard UI and moved the recent alerts from the dashboard to `alerts.html` file.
 - Temporarily disable the device info page and its tests.
 - Normalize the `devices.last_seen` field in the devices page for readability.
+- Replaced the hardcoded swagger UI files with FastAPI swagger plugin library for easier swagger UI updates and managements.
 
 ### Fix
 
