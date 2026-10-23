@@ -7,7 +7,7 @@ works internally.
 
 ### 1. Core logic
 
-This section explains the full sequence of operations *woninet* performs to scan and
+This section explains the full sequence of operations Woninet performs to scan and
 monitor the local network.
 
 The [Core Logic](./core_logic.md) documentation.
@@ -20,12 +20,12 @@ The [Web Dashboard](./web_dashboard.md) documentation.
 
 ### 3. Usage
 
-This section explains common ways to run *woninet* and how to resolve common issues.
+This section explains common ways to run Woninet and how to resolve common issues.
 
 The [Usage](./usage.md) documentation.
 
 ### 4. Versioning
 
-This section explains the versioning system of *woninet*.
+This section explains the versioning system of Woninet.
 
 The [versioning](./versioning.md) documentation.

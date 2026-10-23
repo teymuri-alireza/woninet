@@ -1,22 +1,22 @@
 # Usage
 
-This guide explains common ways to run *woninet* and how to resolve common issues.
+This guide explains common ways to run Woninet and how to resolve common issues.
 
 # 1. Running Modes
 
 ## Web Dashboard
 
-The simplest way to run *woninet* is:
+The simplest way to run Woninet is:
 
 ```shell
 woninet
 ```
 
-This way you can serve *woninet* dashboard on port 8080. In this mode, core logging is set to ERROR to reduce unnecessary output
+This way you can serve Woninet dashboard on port 8080. In this mode, core logging is set to ERROR to reduce unnecessary output
 
 ## CLI mode
 
-You can run *woninet* in CLI mode with:
+You can run Woninet in CLI mode with:
 
 ```shell
 woninet --cli
@@ -86,7 +86,7 @@ Devices with latency equal to or higher than the arp_noise_limit value are consi
 will not be stored in the database.
 If you are on a weak or unstable network, you may want to adjust this threshold.
 
-**Note:** The `arp_noise_limit` value can be changed from the `config.json` file. Check the `Configuration` section in `README.md`.
+**Note:** The `arp_noise_limit` value can be changed from the `config.json` file or the settings page form the web dashboard. Check the `Configuration` section in `README.md`.
 
 **Examples:**
 
@@ -96,7 +96,7 @@ Stores all detected devices regardless of latency:
 "arp_noise_limit": 0.0,
 ```
 
-Only considers devices with latency above 800.0 as ARP noise:
+Only considers devices with latency above 300.0 as ARP noise:
 
 ```json
 "arp_noise_limit": 300.0
@@ -105,7 +105,7 @@ Only considers devices with latency above 800.0 as ARP noise:
 ## Database and Network Synchronization
 
 The `SQLite` database identifies devices using a combination of MAC and IP addresses.
-If you move *woninet* to a different network, the IP subnet will likely change (e.g.,
+If you move Woninet to a different network, the IP subnet will likely change (e.g.,
 from `192.168.1.x` to `192.168.2.x`).
 
 Using the same database across different subnets can lead to data inconsistency. Stale
@@ -119,7 +119,7 @@ to a different network to ensure data integrity. You can do this using:
 "database": "path_to_new_database"
 ```
 
-**Note:** The `database` value can be changed from the `config.json` file. Check the `Configuration` section in `README.md`.
+**Note:** The `database` value can be changed from the `config.json` file or the settings page form the web dashboard. Check the `Configuration` section in `README.md`.
 
 ### Accessing a Specific Database
 
@@ -127,7 +127,7 @@ If you are using a database file other than the default, you must specify it whe
 
 ## Address Already in Use
 
-The default port for server mode is `8080`. If *woninet* exits with an `Address already
+The default port for server mode is `8080`. If Woninet exits with an `Address already
 in use` error, use a different port:
 
 ```shell
