@@ -4,7 +4,7 @@ from fastapi import FastAPI, Request, HTTPException, status
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from fastapi.openapi.docs import get_swagger_ui_html
+from fastapi_swagger import patch_fastapi
 from contextlib import asynccontextmanager
 from woninet.server.routes.api.devices import router as devices_api
 from woninet.server.routes.api.stats import router as stats_api
@@ -59,8 +59,9 @@ app = FastAPI(
     lifespan=lifespan,
     version=__version__,
     docs_url=None,
-    redoc_url=None,
+    swagger_ui_oauth2_redirect_url=None,
 )
+patch_fastapi(app=app, redirect_from_root_to_docs=False)
 
 # Templates
 templates = Jinja2Templates(directory=TEMPLATES_DIR)
@@ -84,17 +85,6 @@ app.include_router(about_page)
 @app.get("/", response_class=HTMLResponse)
 def root(request: Request):
     return templates.TemplateResponse(request=request, name="dashboard.html")
-
-
-@app.get("/docs", include_in_schema=False)
-def custom_swagger_ui():
-    return get_swagger_ui_html(
-        openapi_url=app.openapi_url,
-        title="woninet - Swagger UI",
-        swagger_js_url="/static/swagger-ui/swagger-ui-bundle.js",
-        swagger_css_url="/static/swagger-ui/swagger-ui.css",
-        swagger_favicon_url="/static/swagger-ui/favicon-32x32.png",
-    )
 
 
 @app.exception_handler(404)
