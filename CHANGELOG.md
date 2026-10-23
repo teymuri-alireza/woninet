@@ -11,23 +11,23 @@ All notable changes to this project will be documented in this file.
 - Added `delete_stale_devices()` to the `NetworkMonitorCore`, `delete_device()` to the `StorageEngine`, and `delete()` to the `DeviceRepository` classes to delete devices with a latency of zero and a MAC address of None.
 - Implemented docker configuration.
 - Added test for ARP lookup.
-- Added the **build_docker.sh** bash script which uses the `docker compose up -d --build` command, and prints the device's private IP address to STDOUT for easier access to the web browser.
-- Added **setting.html** UI to control the settings from the dashboard.
-- Added **python-multipart** library which is required for the FastAPI **Form()** function
-- Added the **update_config_json()** utility
-- Added the **load_config_json()** and **update_configuration()** methods to the **NetworkMonitorCore** class.
+- Added the `build_docker.sh` bash script which uses the `docker compose up -d --build` command, and prints the device's private IP address to STDOUT for easier access to the web browser.
+- Added `setting.html` UI to control the settings from the dashboard.
+- Added `python-multipart` library which is required for the FastAPI `Form()` function
+- Added the `update_config_json()` utility
+- Added the `load_config_json()` and `update_configuration()` methods to the `NetworkMonitorCore` class.
 - Added test and test config for settings and alert APIs.
 
 ### Changed
 
 - Prevented storing null metrics to reduce SQL insertion time-costs.
-- Updated the dashboard UI and moved the recent alerts from the dashboard to **alerts.html** file.
+- Updated the dashboard UI and moved the recent alerts from the dashboard to `alerts.html` file.
 - Temporarily disable the device info page and its tests.
-- Normalize the devices.last_seen field in the devices page for readability.
+- Normalize the `devices.last_seen` field in the devices page for readability.
 
 ### Fix
 
-- Used **read_arp_table()** for looking up ARP to prevent assigning the first device's MAC address to the devices without a MAC address.
+- Used `read_arp_table()` for looking up ARP to prevent assigning the first device's MAC address to the devices without a MAC address.
 
 ---
 
