@@ -29,7 +29,7 @@ function createDeviceRow(device) {
         <td>${jitter}</td>
         <td>${loss}</td>
         <td class="cell-mono">${device.mac ?? "--"}</td>
-        <td>${device.last_seen ?? "--"}</td>
+        <td>${device.last_seen ? new Date(device.last_seen).toLocaleString() : "--"}</td>
         <td class="cell-action">
             <a class="device-link" href="/devices/${device.ip}" title="Device details">
                 <i class="fa fa-ellipsis-v"></i>
