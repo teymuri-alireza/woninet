@@ -30,6 +30,7 @@ dependencies = [
     "SQLAlchemy>=2.0.46,<2.1",
     "matplotlib>=3.11.0,<3.12",
     "python-multipart==0.0.32",
+    "fastapi-swagger>=0.4.64,<0.5",
 ]
 
 [tool.setuptools.package-data]
