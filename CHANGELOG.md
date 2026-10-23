@@ -23,6 +23,7 @@ All notable changes to this project will be documented in this file.
 - Prevented storing null metrics to reduce SQL insertion time-costs.
 - Updated the dashboard UI and moved the recent alerts from the dashboard to **alerts.html** file.
 - Temporarily disable the device info page and its tests.
+- Normalize the devices.last_seen field in the devices page for readability.
 
 ### Fix
 
