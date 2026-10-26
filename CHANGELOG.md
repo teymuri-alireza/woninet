@@ -32,6 +32,7 @@ All notable changes to this project will be documented in this file.
 ### Fix
 
 - Used `read_arp_table()` for looking up ARP to prevent assigning the first device's MAC address to the devices without a MAC address.
+- Prevented stale alert states from persisting in database by implementing `delete_stale_alert_states()`.
 
 ---
 
