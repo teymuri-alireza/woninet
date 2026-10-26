@@ -62,6 +62,12 @@ class AlertStateRepository:
         """
         self.session.add(state)
 
+    def fetch_alert_states(self) -> AlertStateTable:
+        """
+        Return all alert state records.
+        """
+        return self.session.query(AlertStateTable).all()
+
     def fetch_alert_state(self, ip: str) -> dict[str, str] | None:
         """
         Return current alert state for a given IP address.
@@ -79,3 +85,23 @@ class AlertStateRepository:
         for state in device_state:
             result[state.metric] = state.state
         return result
+
+    def delete(self, state: AlertStateTable) -> None:
+        """
+        Delete a alert state from the database by its IP address.
+
+        Looks up the stored record matching `state.device_ip` and removes it from the
+        session if found.
+
+        Args:
+            state (AlertStateTable): Domain `AlertStateTable` instance whose database record should
+                be removed.
+        """
+        existing = (
+            self.session.query(AlertStateTable)
+            .filter_by(device_ip=state.device_ip)
+            .first()
+        )
+
+        if existing:
+            self.session.delete(existing)

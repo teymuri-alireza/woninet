@@ -195,6 +195,7 @@ class NetworkMonitorCore:
                         # If the tuple doesn't have enough values to unpack
                         pass
                 self.delete_stale_devices()
+                self.delete_stale_alert_states()
                 time.sleep(1)
         except (PermissionError, SocketPermissionError):
             core_logger.error("woninet requires root privileges to scan.")
@@ -239,6 +240,20 @@ class NetworkMonitorCore:
         for device in device_records:
             if device.latency == 0 and device.mac is None:
                 self.storage.delete_device(device=device)
+
+    def delete_stale_alert_states(self) -> None:
+        """
+        Remove stale alert states from storage.
+
+        Alert state IP addresses that are not found in the devices history are treated
+        as stale.
+        """
+        ip_records = [device.ip for device in self.get_device_history()]
+        alert_state_records = self.storage.list_alert_states()
+
+        for record in alert_state_records:
+            if record.device_ip not in ip_records:
+                self.storage.delete_alert_state(state=record)
 
     def get_device_info(
         self, ip: str

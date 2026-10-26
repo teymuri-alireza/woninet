@@ -126,6 +126,14 @@ class StorageEngine:
                 ip=ip, metric=metric, consecutive_checks=consecutive_checks
             )
 
+    def list_alert_states(self) -> list[AlertStateTable]:
+        """
+        Return a list of all alert states in the history.
+        """
+        with self.session_factory() as session:
+            repo = AlertStateRepository(session=session)
+            return repo.fetch_alert_states()
+
     def update_alert_state(self, state: AlertStateTable) -> None:
         """
         Update an alert state.
@@ -145,6 +153,18 @@ class StorageEngine:
         with self.session_factory() as session:
             repo = AlertStateRepository(session)
             return repo.fetch_alert_state(ip=ip)
+
+    def delete_alert_state(self, state: AlertStateTable) -> None:
+        """
+        Delete a stored alert state from the database.
+
+        Args:
+            state: AlertStateTable instance to be removed.
+        """
+        with self.session_factory() as session:
+            repo = AlertStateRepository(session=session)
+            repo.delete(state=state)
+            session.commit()
 
     def store_alert_event(self, event: AlertEventTable) -> None:
         """
