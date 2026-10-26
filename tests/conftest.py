@@ -123,8 +123,11 @@ class FakeMonitor:
         global _start_uptime
         return (datetime.now() - _start_uptime).seconds
 
-    def classify_recent_alert_events(self):
+    def classify_recent_alert_events(self, limit: int = 10, offset: int = 0):
         return self.alert_events
+
+    def count_alert_events(self):
+        return len(self.alert_events)
 
 
 @pytest.fixture

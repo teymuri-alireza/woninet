@@ -158,13 +158,15 @@ class StorageEngine:
             repo.insert(event=event)
             session.commit()
 
-    def get_recent_alert_events(self) -> list[AlertEventTable]:
+    def get_recent_alert_events(
+        self, limit: int = 10, offset: int = 0
+    ) -> list[AlertEventTable]:
         """
         Return recent alert events of all devices.
         """
         with self.session_factory() as session:
             repo = AlertEventRepository(session)
-            return repo.fetch_recent_alert_events()
+            return repo.fetch_recent_alert_events(limit=limit, offset=offset)
 
     def get_recent_device_alert_events(self, ip: str) -> list[AlertEventTable]:
         """
@@ -173,3 +175,11 @@ class StorageEngine:
         with self.session_factory() as session:
             repo = AlertEventRepository(session=session)
             return repo.fetch_recent_device_alert_events(ip=ip)
+
+    def count_alert_events(self) -> int:
+        """
+        Return a count of alert events of all devices.
+        """
+        with self.session_factory() as session:
+            repo = AlertEventRepository(session=session)
+            return repo.count_alert_events()
