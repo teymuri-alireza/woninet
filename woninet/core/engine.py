@@ -235,7 +235,7 @@ class NetworkMonitorCore:
         Devices with a latency of zero and a MAC address of None are treated as stale
         entries and are deleted from the database history.
         """
-        device_records = self.get_device_history()
+        device_records = self.storage.list_device_history()
         for device in device_records:
             if device.latency == 0 and device.mac is None:
                 self.storage.delete_device(device=device)
