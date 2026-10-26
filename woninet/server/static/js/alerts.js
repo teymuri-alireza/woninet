@@ -1,4 +1,7 @@
 let allAlerts = [];
+let currentPage = 1;
+let totalPages = 0;
+const pageSize = 10;
 
 function escapeHtml(value) {
     return String(value ?? "").replace(/[&<>"']/g, ch => ({
@@ -52,13 +55,42 @@ function renderAlerts() {
         : `<div class="no-alerts">No alert events match the current filters.</div>`;
 }
 
-async function loadAlerts() {
+function PaginationBtnHandler() {
+    document.getElementById("previous-page").disabled = false;
+    document.getElementById("next-page").disabled = false;
+
+    if (currentPage === 1) {
+        document.getElementById("previous-page").disabled = true;
+
+    } else if (currentPage === totalPages) {
+        document.getElementById("next-page").disabled = true;
+    }
+}
+
+document.getElementById("next-page").addEventListener("click", () => {
+    if (currentPage < totalPages) {
+        loadAlerts(currentPage + 1).catch(console.error);
+    }
+});
+
+document.getElementById("previous-page").addEventListener("click", () => {
+    if (currentPage > 1) {
+        loadAlerts(currentPage - 1).catch(console.error);
+    }
+});
+
+async function loadAlerts(page = currentPage) {
     const statusDot = document.getElementById("status_dot");
     const statusText = document.getElementById("status_text");
 
     try {
-        const response = await fetch("/api/alerts");
+        const response = await fetch(`/api/alerts?page=${page}&page_size=${pageSize}`);
         const data = await response.json();
+
+        currentPage = data.page_details.page;
+        totalPages = data.page_details.total_pages;
+
+        document.getElementById("current-page").textContent = currentPage;
 
         allAlerts = extractAlerts(data)
             .slice()
@@ -68,6 +100,7 @@ async function loadAlerts() {
 
         statusDot.classList.remove("disconnected");
         statusText.textContent = "Connected";
+        PaginationBtnHandler();
 
     } catch (error) {
         statusDot.classList.add("disconnected");
@@ -80,5 +113,6 @@ async function loadAlerts() {
 document.getElementById("alert_search")?.addEventListener("input", renderAlerts);
 document.getElementById("alert_type")?.addEventListener("change", renderAlerts);
 
+PaginationBtnHandler();
 loadAlerts();
 setInterval(loadAlerts, 5000);
