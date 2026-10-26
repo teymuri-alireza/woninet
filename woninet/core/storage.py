@@ -175,3 +175,11 @@ class StorageEngine:
         with self.session_factory() as session:
             repo = AlertEventRepository(session=session)
             return repo.fetch_recent_device_alert_events(ip=ip)
+
+    def count_alert_events(self) -> int:
+        """
+        Return a count of alert events of all devices.
+        """
+        with self.session_factory() as session:
+            repo = AlertEventRepository(session=session)
+            return repo.count_alert_events()

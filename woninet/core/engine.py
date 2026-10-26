@@ -292,6 +292,12 @@ class NetworkMonitorCore:
             )
         return result
 
+    def count_alert_events(self) -> int:
+        """
+        Return a count of all alert events.
+        """
+        return self.storage.count_alert_events()
+
     def count_resources(self) -> tuple[int, int]:
         """
         Return number of devices and metrics in the history.

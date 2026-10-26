@@ -71,3 +71,9 @@ class AlertEventRepository:
             .limit(limit)
             .all()
         )
+
+    def count_alert_events(self) -> int:
+        """
+        Return a count of rows in the AlertEventTable.
+        """
+        return self.session.query(AlertEventTable).count()
