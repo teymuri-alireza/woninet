@@ -17,6 +17,9 @@ All notable changes to this project will be documented in this file.
 - Added the `update_config_json()` utility
 - Added the `load_config_json()` and `update_configuration()` methods to the `NetworkMonitorCore` class.
 - Added test and test config for settings and alert APIs.
+- Added `limit` and `offset` support to recent alert event methods and implemented pagination in the alerts API.
+- Added `count_alert_events()` to `engin.py`, `storage.py`, and `alert_event_repository.py`.
+- Updated `FakeMonitor` with `count_alert_events()` and default parameters for `classify_recent_alert_events()`.
 
 ### Changed
 
