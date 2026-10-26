@@ -271,13 +271,15 @@ class NetworkMonitorCore:
             return True
         return False
 
-    def classify_recent_alert_events(self) -> list[dict[str, Any]]:
+    def classify_recent_alert_events(
+        self, limit: int = 10, offset: int = 0
+    ) -> list[dict[str, Any]]:
         """
         Re-order and organize the recent alert events
         dictionary keys and values.
         """
         result = []
-        for event in self.storage.get_recent_alert_events():
+        for event in self.storage.get_recent_alert_events(limit=limit, offset=offset):
             result.append(
                 {
                     "device_ip": event.device_ip,

@@ -31,18 +31,22 @@ class AlertEventRepository:
         """
         self.session.add(event)
 
-    def fetch_recent_alert_events(self, limit: int = 10) -> list[AlertEventTable]:
+    def fetch_recent_alert_events(
+        self, limit: int = 10, offset: int = 0
+    ) -> list[AlertEventTable]:
         """
         Return the last 10 alert events of all devices.
 
         Args:
             limit (int): Apply a limit to search.
+            offset (int): Apply an offset to search.
 
         Returns: List of found events, or an empty list if found none
         """
         return (
             self.session.query(AlertEventTable)
             .order_by(AlertEventTable.id.desc())
+            .offset(offset)
             .limit(limit)
             .all()
         )
