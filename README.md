@@ -1,71 +1,75 @@
-# woninet
+# Woninet
+
+[![PyPI version](https://img.shields.io/pypi/v/woninet)](https://pypi.org/project/woninet/)
+[![Python](https://img.shields.io/badge/python-3.12-blue)](https://www.python.org/)
+[![License](https://img.shields.io/pypi/l/woninet)](https://github.com/teymuri-alireza/woninet/blob/main/LICENSE)
+[![Downloads](https://img.shields.io/pypi/dm/woninet)](https://pypi.org/project/woninet/)
 
 A local network monitoring system.
 
-**woninet** continuously monitors devices on a local network using ARP
-and ICMP probes. It enumerates candidate IP addresses in a /24 subnet,
-determines device availability, measures latency and packet loss, stores
-metrics in SQLite, and evaluates configurable alert rules in real time.
+**Woninet** continuously monitors devices on a local network using ARP and ICMP probes. It enumerates candidate IP addresses in a /24 subnet, determines device availability, measures latency, packet loss, and jitter, stores metrics in database, and evaluates configurable alert rules in real time.
 
-**Note: This script requires sudo privileges.**
+![Woninet dashboard](https://github.com/teymuri-alireza/woninet/blob/dev/public/img/woninet-dasboard.png)
+
+## Table of Contents
+
+- [Features](#features)
+- [Requirements](#requirements)
+- [Quick Start](#quick-start)
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [Usage](#usage)
+- [Platform Notes](#platform-notes)
+- [Testing](#testing)
+- [Known Issues](#known-issues)
+- [Documentation](#documentation)
+- [Contributing](#contributing)
+- [License](#license)
 
 ## Features
 
-- **ARP + ICMP Host Detection** (Distinguishes real devices from nonexistent
-IPs and filters out Wi‑Fi ARP‑delay noise.)
+- **ARP + ICMP host detection.** Distinguishes real devices from nonexistent IP addresses and filters out Wi-Fi ARP-delay noise.
+- **Alert engine.** Evaluates real-time alert rules, such as latency thresholds, against collected metrics.
+- **Threaded collectors.** Sends ICMP probes concurrently using a configurable number of worker threads.
+- **SQLite storage.** Persists devices, recorded metrics, alert states, and alert events.
+- **Database access from the CLI.** Accepts a positional argument for easier access to the database.
+- **Detailed logging.**
 
-- **Alert Engine** (Evaluates real‑time alert rules (e.g., latency thresholds))
+## Requirements
 
-- **Threaded Collectors**
+- Python 3.12 or later.
+- Elevated network privileges, because ARP and ICMP probing use raw sockets. On Linux, either of the following satisfies this requirement:
+  - the `cap_net_raw` capability granted to the Python interpreter (recommended, see [Installation](#installation)), or
+  - root privileges (discouraged for security reasons).
 
-- **SQLite database** (for devices, recorded metrics, alert states, and alert events.)
+## Quick Start
 
-- **Positional Argument for easier access to the database from the CLI**
-
-- **Detailed Logging**
-
-## Future Plans
-
-- Add ARP table caching to further reduce Wi‑Fi latency noise.
-- Accept MAC addresses as command‑line arguments.
-- Fetch MAC address from database for offline devices.
-- Use ARP noise limit as device state for styling in front-end.
-- Add CLI argument to accept target IP addresses from a file.
-
-## Known Issues
-
-- Monitoring Scope Limited to /24 Subnet
-
-## How To Run
-
-**Note:** *woninet* is under active development.
-
-## Installation from PyPI
-
-### Docker (Linux devices)
-
-Docker is also available for Linux devices. Clone the repository, and Run:
+On Linux, the minimal path is:
 
 ```shell
-chmod +x build_docker.sh
-sudo ./build_docker.sh
+python3 -m venv --copies venv
+source venv/bin/activate
+pip install woninet
+sudo setcap cap_net_raw=eip venv/bin/python3
+woninet --help
 ```
 
-This script uses the `docker compose up -d --build` command, and prints the device's private IP address
-to STDOUT for easier access to the web browser.
+For Docker, macOS, Windows, and source installs, see [Installation](#installation).
 
-### Unix/Linux
+## Installation
 
-1. **Method 1 (recommended (Uses the `icmplib` module)):**
+### Option 1: Install from PyPI
 
-Create and activate a virtual environment:
+#### Linux (recommended: `icmplib` with `cap_net_raw`)
+
+Create and activate a virtual environment. The `--copies` flag forces Python to copy the interpreter instead of symlinking it, which is required because the capability is applied directly to the interpreter binary:
 
 ```shell
 python3 -m venv --copies venv
 source venv/bin/activate
 ```
 
-Install woninet from PyPI:
+Install Woninet:
 
 ```shell
 pip install woninet
@@ -77,114 +81,102 @@ Grant the required capability to the Python interpreter:
 sudo setcap cap_net_raw=eip venv/bin/python3
 ```
 
-Then run:
+Run Woninet:
 
 ```shell
 woninet --help
 ```
 
-2. **Method 2 (Uses the system's `ping` command as a fallback):**
+#### Linux (fallback: system `ping`)
 
-Create and activate a virtual environment:
+If you do not grant the capability, Woninet falls back to the system `ping` command. Create the environment without `--copies`:
 
 ```shell
 python3 -m venv venv
 source venv/bin/activate
-```
-
-Install from PyPI:
-
-```shell
 pip install woninet
-```
-
-Then run:
-
-```shell
 woninet --help
 ```
 
-### macOS/Windows
-
-Install from PyPI:
+#### macOS and Windows
 
 ```shell
 pip install woninet
-```
-
-Then run:
-
-```shell
 woninet --help
 ```
 
-## Installation from Source
+See [Platform Notes](#platform-notes) for privilege considerations on these systems.
 
-### 1. Clone the repository
+### Option 2: Docker (Linux only)
 
-```shell
-git clone https://github.com/teymuri-alireza/woninet
-cd woninet
-```
-
-### 2. Create and activate a virtual environment:
-
-**Note:** Create the virtual environment outside the project directory to avoid
-`Multiple top-level packages discovered in a flat-layout` errors.
-
-**Unix/Linux note:** The `--copies` flag forces Python to copy the interpreter
-instead of using a symbolic link. This is required because you will apply Linux
-capabilities directly to the Python binary in the virtual environment.
-
-#### Linux/macOS
+Clone the repository and run:
 
 ```shell
-python3 -m venv --copies ../venv
-source ../venv/bin/activate
+chmod +x build_docker.sh
+sudo ./build_docker.sh
 ```
 
-#### Windows (PowerShell)
+The script runs `docker compose up -d --build` and prints the device's private IP address to standard output so you can open the web interface in a browser.
 
-```shell
-py -m venv ..\venv
-..\venv\Scripts\Activate.ps1
-```
+To open Woninet manually, type device's private IP address with the default `8080` port in the browser.
 
-### 3. Install woninet locally:
+### Option 3: Install from source
 
-```shell
-pip3 install .
-```
+1. Clone the repository:
 
-### 4. Run woninet
+    ```shell
+    git clone https://github.com/teymuri-alireza/woninet
+    cd woninet
+    ```
 
-**Unix/Linux only:** To allow raw ICMP without running as root, grant the required
-capability to the Python interpreter inside the virtual environment:
+2. Create and activate a virtual environment **outside** the project directory to avoid `Multiple top-level packages discovered in a flat-layout` errors.
 
-```shell
-sudo setcap cap_net_raw=eip ../venv/bin/python3
-```
+    Linux
 
-Finally, run woninet normally:
+    ```shell
+    python3 -m venv --copies ../venv
+    source ../venv/bin/activate
+    ```
 
-```shell
-woninet --version
-```
+    Windows (PowerShell):
 
-**Alternative (not recommended):** You can run woninet with sudo instead of using
-setcap, but this is discouraged for security reasons:
+    ```powershell
+    py -m venv ..\venv
+    ..\venv\Scripts\Activate.ps1
+    ```
 
-```shell
-sudo ../venv/bin/python3 -m woninet
-```
+3. Install Woninet locally:
+
+   ```shell
+   pip3 install .
+   ```
+
+4. Grant raw-socket access and run.
+
+   **Linux:** grant the capability to the virtual environment's interpreter, then run Woninet:
+
+   ```shell
+   sudo setcap cap_net_raw=eip ../venv/bin/python3
+   woninet --version
+   ```
+
+   Running with `sudo` instead is possible but discouraged for security reasons:
+
+   ```shell
+   sudo ../venv/bin/python3 -m woninet
+   ```
+
+   **macOS and Windows:** run `woninet --version` after installation.
 
 ## Configuration
 
-You can define alert rules in a JSON file. Rename the example file at
-`config.example.json` to `config.json`. The application will load the alert
-rules from that file at startup.
+Alert rules and monitoring settings are defined in a JSON file. Rename `config.example.json` to `config.json`; Woninet loads it at startup.
 
-### Example:
+When installing from PyPI, `config.example.json` is not included, so Woninet creates a `config.json` file with default values.
+
+To use a different configuration file, pass its path with the `--config` CLI flag.
+
+### Example
 
 ```json
 {
@@ -194,11 +186,9 @@ rules from that file at startup.
     },
     "database": "woninet.db",
     "target_ip_list": [
-        "192.168.1.1-100"
-        // or
-        "192.168.1.1", "192.168.1.10", "192.168.1.20"
+        "192.168.1.1", "192.168.1.10", "192.168.1.20-30"
     ],
-    "alert_rules":[
+    "alert_rules": [
         {
             "metric": "latency",
             "threshold": 100,
@@ -218,45 +208,60 @@ rules from that file at startup.
 }
 ```
 
-### Explanations:
+### Settings reference
 
-#### Monitoring Settings
+#### Monitoring
 
-- **arp_noise_limit**: Latency threshold in milliseconds used to filter ARP
-resolution noise. Set to 0 to disable filtering. Helps eliminate Wi‑Fi latency spikes.
-- **max_workers**: Maximum number of thread workers used to send ICMP pings.
-Higher values may increase system load and latency.
+| Key | Description |
+|---|---|
+| `arp_noise_limit` | Latency threshold in milliseconds used to filter ARP resolution noise. Set to `0` to disable filtering. Helps eliminate Wi-Fi latency spikes. |
+| `max_workers` | Maximum number of worker threads used to send ICMP pings. Higher values may increase system load and latency. |
 
 #### Database
 
-- **database**: The path to the SQLite database file where metrics and alerts are stored.
+| Key | Description |
+|---|---|
+| `database` | Path to the SQLite database file where metrics and alerts are stored. |
 
-#### Target IP List
+#### Target IP list
 
-- A single or range of target IP addresses to scan.
+| Key | Description |
+|---|---|
+| `target_ip_list` | A single address, a list of addresses, or a range (for example `192.168.1.1-100`) to scan. Monitoring is currently limited to a /24 subnet (see [Known Issues](#known-issues)). |
 
-#### Alert Rules
+#### Alert rules
 
-- **metric**: The metric name to evaluate (`latency`, `packet_loss` or `jitter`)
-- **threshold**: The value that triggers the alert. For latency, this is in milliseconds.
-For packet loss, this is a percentage (0.0-100.0).
-- **consecutive_checks**: The number of consecutive evaluations required before the alert
-state changes. Higher values reduce false positives.
+| Key | Description |
+|---|---|
+| `metric` | The metric to evaluate: `latency`, `packet_loss`, or `jitter`. |
+| `threshold` | The value that triggers the alert. |
+| `consecutive_checks` | Number of consecutive evaluations required before the alert state changes. Higher values reduce false positives. |
 
-#### Notes
+#### Units and ranges
 
-- **Packet Loss**: Values are in the range [0.0, 100.0]. A value of 100.0 indicates 100%
-packet loss. A value of 0.0 will trigger on any packet loss.
-- **Latency**: All latency thresholds are evaluated in milliseconds.
-- **Jitter**: All jitter thresholds are evaluated in milliseconds.
+- **Latency:** thresholds are evaluated in milliseconds.
+- **Jitter:** thresholds are evaluated in milliseconds.
+- **Packet loss:** values are percentages in the range 0.0 to 100.0. A value of 100.0 indicates 100% packet loss, and a threshold of 0.0 triggers on any packet loss.
 
 ## Usage
 
-This [guide](https://github.com/teymuri-alireza/woninet/blob/main/docs/usage.md) explains common ways to run *woninet* and how to resolve common issues.
+See the [usage guide](https://github.com/teymuri-alireza/woninet/blob/main/docs/usage.md) for common ways to run Woninet and how to resolve common issues.
+
+## Platform Notes
+
+| Platform | Probing method | Privileges |
+|---|---|---|
+| Linux | `icmplib` (recommended) or system `ping` (fallback) | `cap_net_raw` on the interpreter, or root |
+| macOS | Untested | Untested |
+| Windows | Untested | Untested |
+
+Woninet has been developed and tested on Linux. macOS and Windows have not been tested, so installation and behavior on those platforms are not guaranteed. Feedback and bug reports from users on these systems are welcome.
+
+Docker deployment is available on Linux only.
 
 ## Testing
 
-If you want to run the test suite locally, install the optional test dependencies:
+Install the optional test dependencies:
 
 ```shell
 pip install -e ".[test]"
@@ -268,19 +273,20 @@ Then run:
 pytest
 ```
 
-The test suite currently focuses on API behavior and core logic, and it uses pytest for automated verification.
+The test suite currently focuses on API behavior and core logic and uses pytest for automated verification.
 
-## Requirements
+## Known Issues
 
-- Python >= 3.12
-- Root privileges
+- Monitoring is currently limited to a single /24 subnet.
 
 ## Documentation
 
-if you have any question or need clarification, check the [documentation](https://github.com/teymuri-alireza/woninet/blob/main/docs/documentation.md) guide.
+For questions or clarification, see the [documentation](https://github.com/teymuri-alireza/woninet/blob/main/docs/documentation.md).
 
-## Contribution
+## Contributing
 
-Thanks for considering contributing to *woninet!*
-To help us maintain code quality, stability, and a predictable release process, please review
-and follow the guidelines in our [Contributing Guide.](https://github.com/teymuri-alireza/woninet/blob/main/CONTRIBUTING.md)
+Thank you for considering a contribution to Woninet. To help maintain code quality, stability, and a predictable release process, please review the [Contributing Guide](https://github.com/teymuri-alireza/woninet/blob/main/CONTRIBUTING.md) before submitting changes.
+
+## License
+
+This project is licensed under the terms of the MIT license.
