@@ -13,7 +13,6 @@ from woninet.core.storage import StorageEngine
 from woninet.core.alerts import AlertEngine, AlertRule
 from woninet.core.subnet_enumerator import SubnetEnumerator
 from woninet.core.manual_ip_enumerator import ManualIPEnumerator
-from woninet.core.graph import GraphEngine
 from woninet.database.engine import DatabaseEngine
 from woninet.database.tables import AlertEventTable
 from woninet.utilities.ip_validator import is_device_ip_valid
@@ -121,8 +120,6 @@ class NetworkMonitorCore:
         self.consecutive_checks = {
             item["metric"]: item["consecutive_checks"] for item in alert_rules
         }
-
-        self.graph_engine = GraphEngine()
 
     def start(self) -> None:
         """

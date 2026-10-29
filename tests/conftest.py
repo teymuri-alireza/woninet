@@ -65,15 +65,9 @@ def db_session():
         session.close()
 
 
-class FakeGraphEngine:
-    def design_device_latency_events(self, ip, recent_device_alert_events):
-        pass
-
-
 class FakeMonitor:
     def __init__(self, devices: list[DeviceTable] = TEST_DEVICES):
         self.devices = devices
-        self.graph_engine = FakeGraphEngine()
         self.local_ip = "192.168.200.100"
         self.default_gateway = "192.168.200.1"
         self.config: dict = TEST_CONFIG
