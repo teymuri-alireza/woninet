@@ -1,7 +1,7 @@
 import asyncio
 from pathlib import Path
 from fastapi import FastAPI, Request, HTTPException, status
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi_swagger import patch_fastapi
@@ -89,6 +89,10 @@ def root(request: Request):
 
 @app.exception_handler(404)
 def custom_not_found_exception(request: Request, exc: HTTPException):
+    if request.url.path.startswith("/api/"):
+        return JSONResponse(
+            status_code=status.HTTP_404_NOT_FOUND, content={"detail": "Not Found"}
+        )
     return templates.TemplateResponse(
         request=request,
         name="404.html",
