@@ -19,7 +19,6 @@ data
 *.db-journal
 *.log
 logs.txt
-charts
 config.json
 stats.json
 

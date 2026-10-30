@@ -28,10 +28,12 @@ dependencies = [
     "uvicorn>=0.44.0,<0.45",
     "PyYAML>=6.0.3,<6.1",
     "SQLAlchemy>=2.0.46,<2.1",
-    "matplotlib>=3.11.0,<3.12",
     "python-multipart==0.0.32",
     "fastapi-swagger>=0.4.64,<0.5",
 ]
+
+[tool.setuptools.packages.find]
+include = ["woninet*"]
 
 [tool.setuptools.package-data]
 woninet = [

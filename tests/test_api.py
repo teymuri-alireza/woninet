@@ -10,25 +10,31 @@ def test_devices_api_returns_mocked_devices(client):
     assert response.json()["devices"][0]["ip"] == "192.168.1.10"
 
 
-# Temporarily disable the device info page.
+def test_device_availability_api_returns_mocked_availability(client, fake_monitor):
+    response = client.get("/api/devices/192.168.100.1/availability")
 
-# def test_device_info_api_returns_mocked_device(client):
-#     response = client.get("/api/devices/192.168.100.1")
-
-#     assert response.status_code == 200
-#     assert response.json()["device"]["ip"] == "192.168.100.1"
-
-
-# def test_device_info_page_returns_mocked_device(client):
-#     response = client.get("/devices/192.168.100.2")
-
-#     assert response.status_code == 200
+    assert response.status_code == 200
+    assert response.json() == {
+        "ip": "192.168.100.1",
+        "granularity": "day",
+        "buckets": [],
+        "summary": {"uptime": None, "checks": 0},
+    }
+    assert fake_monitor.availability_calls == [("192.168.100.1", 90, "day")]
 
 
-# def test_device_info_page_returns_unknown_device(client):
-#     response = client.get("/devices/192.168.100.10")
+def test_device_info_page_serves_availability_dashboard(client):
+    response = client.get("/devices/192.168.100.2")
 
-#     assert response.status_code == 404
+    assert response.status_code == 200
+    assert "Availability history and live metrics" in response.text
+    assert 'id="heatmap"' in response.text
+
+
+def test_device_info_page_rejects_unknown_device(client):
+    response = client.get("/devices/192.168.100.10")
+
+    assert response.status_code == 404
 
 
 def test_stats_api_returns_mocked_devices(client):

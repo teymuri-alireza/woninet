@@ -28,9 +28,6 @@ build/
 # vs code directory
 .vscode/
 
-# Statistics Charts
-charts/
-
 # Configuration JSON file
 !config.example.json
 

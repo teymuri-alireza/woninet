@@ -65,20 +65,28 @@ def db_session():
         session.close()
 
 
-class FakeGraphEngine:
-    def design_device_latency_events(self, ip, recent_device_alert_events):
-        pass
+class FakeStorage:
+    def __init__(self):
+        self.calls = []
+
+    def record_availability(self, checks, hour_start):
+        self.calls.append((checks, hour_start))
 
 
 class FakeMonitor:
-    def __init__(self, devices: list[DeviceTable] = TEST_DEVICES):
+    def __init__(
+        self,
+        devices: list[DeviceTable] = TEST_DEVICES,
+        storage: FakeStorage | None = None,
+    ):
+        self.storage = storage if storage is not None else FakeStorage()
         self.devices = devices
-        self.graph_engine = FakeGraphEngine()
         self.local_ip = "192.168.200.100"
         self.default_gateway = "192.168.200.1"
         self.config: dict = TEST_CONFIG
         self.config_updates: list[dict] = []
         self.alert_events: list[dict] = list(TEST_ALERT_EVENTS)
+        self.availability_calls: list[tuple[int, str]] = []
 
     def load_config_json(self):
         return dict(self.config)
@@ -129,10 +137,24 @@ class FakeMonitor:
     def count_alert_events(self):
         return len(self.alert_events)
 
+    def get_availability(self, ip: str, days: int = 90, granularity: str = "day"):
+        self.availability_calls.append((ip, days, granularity))
+        return {
+            "ip": ip,
+            "granularity": granularity,
+            "buckets": [],
+            "summary": {"uptime": None, "checks": 0},
+        }
+
 
 @pytest.fixture
-def fake_monitor():
-    return FakeMonitor()
+def fake_storage():
+    return FakeStorage()
+
+
+@pytest.fixture
+def fake_monitor(fake_storage):
+    return FakeMonitor(storage=fake_storage)
 
 
 @pytest.fixture
