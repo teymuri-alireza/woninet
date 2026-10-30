@@ -20,14 +20,22 @@ All notable changes to this project will be documented in this file.
 - Added `limit` and `offset` support to recent alert event methods and implemented pagination in the alerts API.
 - Added `count_alert_events()` to `engine.py`, `storage.py`, and `alert_event_repository.py`.
 - Updated `FakeMonitor` with `count_alert_events()` and added default parameters to `classify_recent_alert_events()`.
+- Added `AvailabilityTable` and `AvailabilityRepository` to persist device availability.
+- Replaced the graph statistics and its dependencies with availability statistics in `device_info` API.
+- Added tests for availability statistics.
 
 ### Changed
 
 - Avoided storing null metrics to reduce SQL insertion time-costs.
 - Updated the dashboard UI and moved the recent alerts to `alerts.html`.
-- Temporarily disable the device info page and its tests.
 - Normalize the `devices.last_seen` field on the devices page for improved readability.
 - Replaced the hardcoded swagger UI files with FastAPI's swagger plugin library to simplify updates and maintenance.
+- Replaced `TemplateResponse` with `JSONResponse` for `404` status in `/api` endpoints.
+
+### Removed
+
+- Removed `GraphEngine`, and its dependencies in `NetworkMonitorCore`.
+- Removed `matplotlib` library from pyproject.toml dependencies.
 
 ### Fixed
 
