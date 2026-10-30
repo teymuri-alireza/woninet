@@ -1,9 +1,11 @@
+from datetime import date, datetime
 from woninet.core.models import Device, MetricRecord
 from woninet.database.tables import AlertStateTable, AlertEventTable
 from woninet.database.repositories.device_repository import DeviceRepository
 from woninet.database.repositories.metric_repository import MetricRepository
 from woninet.database.repositories.alert_state_repository import AlertStateRepository
 from woninet.database.repositories.alert_event_repository import AlertEventRepository
+from woninet.database.repositories.availability_repository import AvailabilityRepository
 
 
 class StorageEngine:
@@ -39,6 +41,18 @@ class StorageEngine:
         with self.session_factory() as session:
             repo = DeviceRepository(session)
             repo.upsert(device)
+            session.commit()
+
+    def delete_device(self, device: Device) -> None:
+        """
+        Delete a stored device from the database.
+
+        Args:
+            device (Device): Device instance to be removed.
+        """
+        with self.session_factory() as session:
+            repo = DeviceRepository(session)
+            repo.delete(device)
             session.commit()
 
     def list_device_history(self) -> list[Device]:
@@ -114,6 +128,14 @@ class StorageEngine:
                 ip=ip, metric=metric, consecutive_checks=consecutive_checks
             )
 
+    def list_alert_states(self) -> list[AlertStateTable]:
+        """
+        Return a list of all alert states in the history.
+        """
+        with self.session_factory() as session:
+            repo = AlertStateRepository(session=session)
+            return repo.fetch_alert_states()
+
     def update_alert_state(self, state: AlertStateTable) -> None:
         """
         Update an alert state.
@@ -134,6 +156,18 @@ class StorageEngine:
             repo = AlertStateRepository(session)
             return repo.fetch_alert_state(ip=ip)
 
+    def delete_alert_state(self, state: AlertStateTable) -> None:
+        """
+        Delete a stored alert state from the database.
+
+        Args:
+            state: AlertStateTable instance to be removed.
+        """
+        with self.session_factory() as session:
+            repo = AlertStateRepository(session=session)
+            repo.delete(state=state)
+            session.commit()
+
     def store_alert_event(self, event: AlertEventTable) -> None:
         """
         Store the new alert event.
@@ -146,13 +180,15 @@ class StorageEngine:
             repo.insert(event=event)
             session.commit()
 
-    def get_recent_alert_events(self) -> list[AlertEventTable]:
+    def get_recent_alert_events(
+        self, limit: int = 10, offset: int = 0
+    ) -> list[AlertEventTable]:
         """
         Return recent alert events of all devices.
         """
         with self.session_factory() as session:
             repo = AlertEventRepository(session)
-            return repo.fetch_recent_alert_events()
+            return repo.fetch_recent_alert_events(limit=limit, offset=offset)
 
     def get_recent_device_alert_events(self, ip: str) -> list[AlertEventTable]:
         """
@@ -161,3 +197,68 @@ class StorageEngine:
         with self.session_factory() as session:
             repo = AlertEventRepository(session=session)
             return repo.fetch_recent_device_alert_events(ip=ip)
+
+    def count_alert_events(self) -> int:
+        """
+        Return a count of alert events of all devices.
+        """
+        with self.session_factory() as session:
+            repo = AlertEventRepository(session=session)
+            return repo.count_alert_events()
+
+    def record_availability(
+        self, checks: list[tuple[str, bool]], hour_start: datetime
+    ) -> None:
+        """
+        Store availability check results for an hour.
+
+        Args:
+            checks: IP addresses and their availability results.
+            hour_start: Start of the hour the checks belong to.
+        """
+        with self.session_factory() as session:
+            repo = AvailabilityRepository(session)
+            repo.record_checks(checks, hour_start)
+            session.commit()
+
+    def delete_old_availability(self, cutoff: datetime) -> int:
+        """
+        Delete availability records older than the cutoff.
+
+        Args:
+            cutoff: Records before this datetime are deleted.
+
+        Returns:
+            int: The number of deleted records.
+        """
+        with self.session_factory() as session:
+            repo = AvailabilityRepository(session)
+            deleted = repo.delete_older_than(cutoff)
+            session.commit()
+            return deleted
+
+    def get_daily_availability(
+        self, ip: str, since: datetime
+    ) -> dict[date, tuple[int, int]]:
+        """
+        Fetch daily availability totals for a device since a datetime.
+
+        Args:
+            ip: IP address of the device.
+            since: Earliest datetime to include.
+        """
+        with self.session_factory() as session:
+            return AvailabilityRepository(session).fetch_daily(ip, since)
+
+    def get_hourly_availability(
+        self, ip: str, since: datetime
+    ) -> dict[datetime, tuple[int, int]]:
+        """
+        Fetch hourly availability totals for a device since a datetime.
+
+        Args:
+            ip: IP address of the device.
+            since: Earliest datetime to include.
+        """
+        with self.session_factory() as session:
+            return AvailabilityRepository(session).fetch_hourly(ip, since)

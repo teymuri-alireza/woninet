@@ -1,93 +1,159 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Device Info</title>
+    <title>woninet Device</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/device_info.css">
 </head>
 <body>
-    <div class="dashboard">
-        <header class="topbar">
-            <div>
-                <p class="eyebrow">Device Details</p>
-                <h1 id="device-ip"></h1>
-                <p class="subtitle">Live monitoring and alert history</p>
-            </div>
-        </header>
+    <div class="app">
 
-        <section class="overview-grid">
-            <div class="kpi-card">
-                <div class="kpi-icon primary">
-                    <i class="fa-solid fa-network-wired"></i>
-                    <span>MAC Address</span>
-                </div>
-                <h2 style="font-size: 1rem;" id="device-mac"></h2>
+        <aside class="sidebar">
+            <div class="brand">
+                <i class="fa-solid fa-network-wired"></i>
+                <span>woninet</span>
             </div>
-            <div class="kpi-card">
-                <div class="kpi-icon primary">
-                    <i class="fa-solid fa-wave-square"></i>
-                    <span>Latency</span>
-                </div>
-                <h2 id="device-latency"></h2>
-            </div>
-            <div class="kpi-card">
-                <div class="kpi-icon warning">
-                    <i class="fa-solid fa-triangle-exclamation"></i>
-                    <span>Packet Loss</span>
-                </div>
-                <h2 id="device-packet-loss"></h2>
-            </div>
-        </section>
 
-        <main class="main-layout">
-            <section class="panel">
-                <div class="panel-header">
-                    <h2>Device Details</h2>
+            <nav class="nav">
+                <p class="nav-label">Menu</p>
+                <a class="nav-link" href="/">
+                    <i class="fa-solid fa-server"></i>
+                    <span>Devices</span>
+                </a>
+                <a class="nav-link" href="/alerts">
+                    <i class="fa-solid fa-bell"></i>
+                    <span>Alerts</span>
+                </a>
+                <a class="nav-link" href="/settings">
+                    <i class="fa-solid fa-gear"></i>
+                    <span>Settings</span>
+                </a>
+                <a class="nav-link" href="/about">
+                    <i class="fa-solid fa-circle-info"></i>
+                    <span>About</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="api-status">
+                    <span id="status_dot" class="status-dot"></span>
+                    <span id="status_text">Connected</span>
                 </div>
-                <div class="device-grid">
-                    <article class="device-card" id="device-card">
-                        <div class="device-header">
-                            <div class="device-status" id="device-status"></div>
-                        </div>
-                        
-                        <div class="metrics">
-                            <div class="metric">
-                                <div class="metric-label">Last Seen</div>
-                                <div class="metric-value" id="device-last-seen"></div>
-                            </div>
-                            <div class="metric">
-                                <div class="metric-label">Latency State</div>
-                                <div class="metric-value" id="alert-state-latency"></div>
-                            </div>
-                            <div class="metric">
-                                <div class="metric-label">Packet Loss State</div>
-                                <div class="metric-value" id="alert-state-packet-loss">}</div>
-                            </div>
-                        </div>
-                    </article>
+            </div>
+        </aside>
+
+        <div class="content">
+            <header class="topbar">
+                <div>
+                    <p class="eyebrow">Device Details</p>
+                    <h1 class="device-title">
+                        <span id="device_ip">—</span>
+                        <span id="device_state" class="status-badge offline">offline</span>
+                    </h1>
+                    <p class="subtitle">Availability history and live metrics</p>
+                </div>
+                <a class="gateway-info back-button" href="/">
+                    <i class="fa-solid fa-arrow-left"></i>
+                    <span class="gateway-label">Back to devices</span>
+                </a>
+            </header>
+
+            <div id="page_error" class="page-error" hidden></div>
+
+            <section class="overview-grid">
+                <div class="kpi-card">
+                    <div class="kpi-icon success">
+                        <i class="fa-solid fa-circle-check"></i>
+                    </div>
+                    <div class="kpi-body">
+                        <span class="kpi-label" id="uptime_label">Uptime</span>
+                        <h2 id="uptime">--</h2>
+                    </div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-icon primary">
+                        <i class="fa-solid fa-wave-square"></i>
+                    </div>
+                    <div class="kpi-body">
+                        <span class="kpi-label">Latency</span>
+                        <h2 id="latency">--</h2>
+                    </div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-icon primary">
+                        <i class="fa-solid fa-chart-line"></i>
+                    </div>
+                    <div class="kpi-body">
+                        <span class="kpi-label">Jitter</span>
+                        <h2 id="jitter">--</h2>
+                    </div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-icon warning">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                    </div>
+                    <div class="kpi-body">
+                        <span class="kpi-label">Packet Loss</span>
+                        <h2 id="packet_loss">--</h2>
+                    </div>
                 </div>
             </section>
 
-            <aside class="events-panel">
-                <h3>Alert Events</h3>
-                <div id="events"></div>
-            </aside>
-        </main>
+            <div class="device-layout">
+                <section class="panel">
+                    <div class="panel-header">
+                        <div>
+                            <h2>Availability</h2>
+                            <p class="panel-meta" id="availability_meta">Loading…</p>
+                        </div>
+                        <div class="toolbar">
+                            <div class="segmented" role="group" aria-label="Granularity">
+                                <button type="button" class="active" data-granularity="day">Daily</button>
+                                <button type="button" data-granularity="hour">Hourly</button>
+                            </div>
+                            <select id="range" aria-label="Time range"></select>
+                        </div>
+                    </div>
 
-        <br />
-        <section class="panel">
-            <h2>Recent Device Events Graph</h2>
-            <img width="100%" src="placeholder" alt="Device recent events line graph" id="device-recent-events-line-graph"/>
-        </section>
+                    <div class="availability-body">
+                        <div id="heatmap" class="heatmap-scroll" aria-live="polite">
+                            <div class="loader"></div>
+                        </div>
 
-        <div style="margin-top: 20px;">
-            <a href="/" class="back-link">Back to Dashboard</a>
+                        <div class="legend">
+                            <span class="legend-item"><i class="cell lvl-none"></i>No checks</span>
+                            <span class="legend-item"><i class="cell lvl-bad"></i>Below 90%</span>
+                            <span class="legend-item"><i class="cell lvl-ok"></i>90-99%</span>
+                            <span class="legend-item"><i class="cell lvl-good"></i>99% or more</span>
+                        </div>
+                    </div>
+                </section>
+
+                <aside class="device-aside">
+                    <section class="panel">
+                        <div class="panel-header">
+                            <h2>Device</h2>
+                        </div>
+                        <dl class="detail-list">
+                            <div><dt>IP address</dt><dd id="detail_ip">--</dd></div>
+                            <div><dt>MAC address</dt><dd id="detail_mac" class="cell-mono">--</dd></div>
+                            <div><dt>Last seen</dt><dd id="detail_last_seen">--</dd></div>
+                            <div><dt>Checks in range</dt><dd id="detail_checks">--</dd></div>
+                        </dl>
+                    </section>
+                </aside>
+            </div>
         </div>
     </div>
 
+    <div id="tooltip" class="tooltip" role="tooltip" hidden></div>
     <script src="/static/js/device_info.js"></script>
 </body>
 </html>

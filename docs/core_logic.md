@@ -1,11 +1,11 @@
 # Core Logic
 
-This section explains the full sequence of operations *woninet* performs to scan and
+This section explains the full sequence of operations Woninet performs to scan and
 monitor the local network.
 
 ## 1. Determining the Source IP
 
-*woninet* begins by identifying the local machine’s primary IPv4 address.
+Woninet begins by identifying the local machine’s primary IPv4 address.
 
 It does this by:
 
@@ -26,7 +26,7 @@ The core receives:
 - The source IP address
 - Initial settings (intervals, alert rule)
 - The full state containers (devices, history, alerts)
-- The arp-noise-limit parameter, which will be passed to PingCollector instance.
+- The arp_noise_limit, and max_thread_workers parameter, which will be passed to PingCollector instance.
 
 The core is responsible for orchestrating:
 
@@ -35,14 +35,16 @@ The core is responsible for orchestrating:
 - Metric collection
 - Data storage
 - Alert evaluation
+- Configuration file update
+- Default gateway adjustment
 - Logging
 
 It is the central controller of the system.
 
 ## 3. Subnet Enumeration (/24 Range)
 
-*woninet* uses the SubnetEnumerator class to generate a dictionary of candidate devices
-within the local `/24` subnet.
+Woninet uses the SubnetEnumerator class to generate a dictionary of candidate devices 
+using the user-provided target IP address or all the IP addresses within the local `/24` subnet.
 
 For a source IP such as:
 
@@ -73,7 +75,7 @@ For each candidate device, a two‑stage detection pipeline runs:
 
 ### Stage A — ARP Check
 
-*woninet* checks the system ARP table to see if the target IP already has a known MAC address.
+Woninet checks the system ARP table to see if the target IP already has a known MAC address.
 
 This determines:
 
@@ -92,15 +94,15 @@ performed to prevent stale ARP cache.
 
 ### Stage B — ICMP Ping
 
-*woninet* sends an ICMP ping using `icmplib`.
+Woninet sends an ICMP ping using `icmplib`.
 
 Latency is interpreted carefully:
 
 - latency < arp-noise-limit → valid response
 - latency ≥ arp-noise-limit → considered "ARP delay noise," treated as unreachable
 
-**Note:** The `--arp-noise-limit` parameter is passed via CLI argument and has the
-default value of 300.0.
+**Note:** The `arp-noise-limit` parameter is passed via config.json file and has the
+default value of 0.0.
 
 ## 5. History Storage
 
@@ -109,7 +111,9 @@ The StorageEngine manages the database session and handles the database API:
 ### Current database tables:
 
 - Device Table (device discoveries and status updates)
-- Metric Table (device IP, metric name (e.g, latency), and value)
+- Metric Table (device IP, metric name (e.g, latency, packet loss, jitter), and value)
+- Alert State Table (device alert state (e.g. ok, warning))
+- Alert Event Table (device alert events types and timestamp (e.g. recover, trigger))
 
 ### 1. Device Table
 
@@ -119,6 +123,8 @@ Each device-related update is stored as a Device class, containing:
 - IP address
 - MAC address
 - Latency
+- Packer Loss
+- Jitter
 - last_seen
 
 The `Device` class has 2 more additional fields which are used in the scanning logic only:
@@ -144,6 +150,7 @@ Each unique IP and metric is stored as an `AlertStateTable`, containing:
 - IP address
 - metric
 - state
+- Consecutive_checks
 - triggered_at
 
 ### 4. Alert Event Table

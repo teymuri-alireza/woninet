@@ -1,8 +1,9 @@
+import json
 import time
 import logging
 import threading
-from datetime import datetime
-from typing import Any
+from datetime import date, datetime, timedelta, time as dt_time
+from typing import Literal, Any
 from sqlalchemy import text, inspect
 from sqlalchemy.exc import SQLAlchemyError
 from icmplib import ping, SocketPermissionError, SocketAddressError
@@ -12,12 +13,12 @@ from woninet.core.storage import StorageEngine
 from woninet.core.alerts import AlertEngine, AlertRule
 from woninet.core.subnet_enumerator import SubnetEnumerator
 from woninet.core.manual_ip_enumerator import ManualIPEnumerator
-from woninet.core.graph import GraphEngine
 from woninet.database.engine import DatabaseEngine
 from woninet.database.tables import AlertEventTable
 from woninet.utilities.ip_validator import is_device_ip_valid
 from woninet.utilities.detect_ip_range import detect_ip_range
 from woninet.utilities.detect_gateway import get_default_gateway
+from woninet.utilities.update_configuration import update_config_json
 from woninet.exc import PingUtilityNotFound
 
 core_logger = logging.getLogger("core")
@@ -46,6 +47,10 @@ class NetworkMonitorCore:
             latency-based threshold breaches.
         candidate_devices (list): A list of IP addresses identified during
             the initial enumeration phase.
+        availability_retention_days (int): Number of days to retain availability
+            data.
+        _last_availability_prune (date | None): Date availability data was
+            last pruned, or `None` if pruning has not run yet.
         _stop_event (threading.Event): Primitive used to signal graceful
             shutdown to the background worker thread.
     """
@@ -58,6 +63,7 @@ class NetworkMonitorCore:
         database_path: str,
         max_thread_workers: int,
         alert_rules: dict,
+        config_file_path: str,
     ) -> None:
         """
         Initialize the monitor core and prepare the persistence layer.
@@ -70,17 +76,21 @@ class NetworkMonitorCore:
             database_path (str): Path to SQLite database.
             max_thread_workers (int): Maximum number of thread workers used to send ICMP pings.
             alert_rules (dict): Provided alert rules, loaded from config.json.
+            config_file_path (str): Path to the config file to load.
         """
         self._running: bool = False
         self._thread: threading.Thread | None = None
         self._stop_event: threading.Event = threading.Event()
         self._start_uptime = datetime.now()
+        self.availability_retention_days: int = 90
+        self._last_availability_prune: date | None = None
 
         self.local_ip: str = local_ip
         self.default_gateway: str = self.set_default_gateway()
 
         self.arp_noise_limit: float = arp_noise_limit
         self.max_thread_workers: int = max_thread_workers
+        self.config_file_path: str = config_file_path
 
         # Initialize database
         self.database_engine = DatabaseEngine(database_path=database_path)
@@ -94,6 +104,7 @@ class NetworkMonitorCore:
         self.manual_ip_enumerator = ManualIPEnumerator()
         self.storage = StorageEngine(session_factory=self.session_factory)
 
+        self._validate_config_file_target_ip_type()
         self.candidate_devices = self.enumerate_candidate_devices(target_ip)
 
         self.ping_collector = PingCollector()
@@ -109,8 +120,6 @@ class NetworkMonitorCore:
         self.consecutive_checks = {
             item["metric"]: item["consecutive_checks"] for item in alert_rules
         }
-
-        self.graph_engine = GraphEngine()
 
     def start(self) -> None:
         """
@@ -156,6 +165,9 @@ class NetworkMonitorCore:
                 if not self._running or self._stop_event.is_set():
                     break
 
+                cycle_started = datetime.now()
+                cycle_checks: list[tuple[str, bool]] = []
+
                 for result in self.ping_collector.collect(
                     candidate_devices=self.candidate_devices,
                     local_ip=self.local_ip,
@@ -170,6 +182,9 @@ class NetworkMonitorCore:
                             metrics=[result.latency, result.packet_loss, result.jitter],
                         )
                         if result.device is not None:
+                            cycle_checks.append(
+                                (result.device.ip, result.device.reachable)
+                            )
                             self.alert_engine.evaluate(
                                 ip=result.device.ip,
                                 metrics_list=[
@@ -188,6 +203,10 @@ class NetworkMonitorCore:
                     except AttributeError:
                         # If the tuple doesn't have enough values to unpack
                         pass
+                self.record_availability(cycle_checks, cycle_started)
+                self.prune_availability()
+                self.delete_stale_devices()
+                self.delete_stale_alert_states()
                 time.sleep(1)
         except (PermissionError, SocketPermissionError):
             core_logger.error("woninet requires root privileges to scan.")
@@ -221,6 +240,128 @@ class NetworkMonitorCore:
         """
         return self.storage.list_device_history()
 
+    def record_availability(
+        self, checks: list[tuple[str, bool]], when: datetime
+    ) -> None:
+        """
+        Record a finished scan cycle in the hourly availability counters.
+
+        Args:
+            checks (list[tuple[str, bool]]): List of tuples, indicating device IP
+                address and reachability.
+            when (datetime): Datetime when the scan cycle started.
+        """
+        if len(checks) >= 2 and not any(reachable for device, reachable in checks):
+            core_logger.warning("No device responded during this scan cycle")
+            core_logger.warning("Skipping availability recording")
+            return
+
+        hour_start = when.replace(minute=0, second=0, microsecond=0)
+        self.storage.record_availability(checks=checks, hour_start=hour_start)
+
+    def get_availability(
+        self,
+        ip: str,
+        days: int = 90,
+        granularity: Literal["day", "hour"] = "day",
+        now: datetime | None = None,
+    ) -> dict[str, Any]:
+        """
+        Return availability statistics for a device over the requested period.
+
+        The result contains one bucket per day or hour, along with aggregate
+        uptime and check counts. Missing periods are included with zero checks.
+
+        Args:
+            ip: Device IP address.
+            days: Number of days to include. For hourly granularity, this spans
+                ``days * 24`` hourly buckets.
+            granularity: Bucket size, either ``"day"`` or ``"hour"``.
+            now: Reference datetime for the end of the period; defaults to the
+                current local datetime.
+
+        Returns:
+            dict[str, Any]: A dictionary with the device IP, granularity, buckets, and summary.
+                Each bucket includes its ISO-formatted start, check counts, and
+                uptime percentage (or ``None`` when there are no checks).
+        """
+        now = now or datetime.now()
+
+        if granularity == "hour":
+            last = now.replace(minute=0, second=0, microsecond=0)
+            starts = [last - timedelta(hours=i) for i in range(days * 24 - 1, -1, -1)]
+            counters = self.storage.get_hourly_availability(ip, since=starts[0])
+        else:
+            today = now.date()
+            starts = [today - timedelta(days=i) for i in range(days - 1, -1, -1)]
+            counters = self.storage.get_daily_availability(
+                ip, since=datetime.combine(starts[0], dt_time.min)
+            )
+
+        buckets = []
+        total_checks = total_up = 0
+        for start in starts:
+            checks, up_checks = counters.get(start, (0, 0))
+            total_checks += checks
+            total_up += up_checks
+            buckets.append(
+                {
+                    "start": start.isoformat(),
+                    "checks": checks,
+                    "up_checks": up_checks,
+                    "uptime": round(up_checks * 100 / checks, 2) if checks else None,
+                }
+            )
+
+        return {
+            "ip": ip,
+            "granularity": granularity,
+            "buckets": buckets,
+            "summary": {
+                "uptime": round(total_up * 100 / total_checks, 2)
+                if total_checks
+                else None,
+                "checks": total_checks,
+            },
+        }
+
+    def prune_availability(self) -> None:
+        """
+        Delete counters older than the retention period, at most once per day.
+        """
+        today = date.today()
+        if self._last_availability_prune == today:
+            return
+        self._last_availability_prune = today
+        cutoff = datetime.now() - timedelta(days=self.availability_retention_days)
+        self.storage.delete_old_availability(cutoff=cutoff)
+
+    def delete_stale_devices(self) -> None:
+        """
+        Remove stale device records from storage.
+
+        Devices with a latency of zero and a MAC address of None are treated as stale
+        entries and are deleted from the database history.
+        """
+        device_records = self.storage.list_device_history()
+        for device in device_records:
+            if device.latency == 0 and device.mac is None:
+                self.storage.delete_device(device=device)
+
+    def delete_stale_alert_states(self) -> None:
+        """
+        Remove stale alert states from storage.
+
+        Alert state IP addresses that are not found in the devices history are treated
+        as stale.
+        """
+        ip_records = [device.ip for device in self.get_device_history()]
+        alert_state_records = self.storage.list_alert_states()
+
+        for record in alert_state_records:
+            if record.device_ip not in ip_records:
+                self.storage.delete_alert_state(state=record)
+
     def get_device_info(
         self, ip: str
     ) -> tuple[Device | None, dict[str, str] | None, list[AlertEventTable]]:
@@ -252,13 +393,15 @@ class NetworkMonitorCore:
             return True
         return False
 
-    def classify_recent_alert_events(self) -> list[dict[str, Any]]:
+    def classify_recent_alert_events(
+        self, limit: int = 10, offset: int = 0
+    ) -> list[dict[str, Any]]:
         """
         Re-order and organize the recent alert events
         dictionary keys and values.
         """
         result = []
-        for event in self.storage.get_recent_alert_events():
+        for event in self.storage.get_recent_alert_events(limit=limit, offset=offset):
             result.append(
                 {
                     "device_ip": event.device_ip,
@@ -270,6 +413,12 @@ class NetworkMonitorCore:
                 }
             )
         return result
+
+    def count_alert_events(self) -> int:
+        """
+        Return a count of all alert events.
+        """
+        return self.storage.count_alert_events()
 
     def count_resources(self) -> tuple[int, int]:
         """
@@ -284,7 +433,7 @@ class NetworkMonitorCore:
         if isinstance(device, Device):
             self.storage.store_device(device=device)
         for metric in metrics:
-            if isinstance(metric, MetricRecord):
+            if isinstance(metric, MetricRecord) and metric.value is not None:
                 self.storage.store_metric(metric=metric)
 
     def enumerate_candidate_devices(
@@ -318,6 +467,61 @@ class NetworkMonitorCore:
         if not is_device_ip_valid(candidate_devices):
             raise ValueError("IP address is not valid")
         return candidate_devices
+
+    def load_config_json(self) -> dict:
+        """
+        Load the application's JSON configuration file.
+
+        Returns:
+            dict: Parsed configuration data.
+        """
+        with open(self.config_file_path) as file:
+            config = json.load(file)
+        return config
+
+    def update_configuration(
+        self,
+        max_workers: int | None,
+        arp_noise_limit: float | None,
+        target_ip_list: list[str] | None,
+    ) -> None:
+        """
+        Update and persist the supplied configuration values.
+
+        Values set to `None` are left unchanged. After updating the JSON
+        configuration file, update the corresponding runtime attributes.
+
+        Args:
+            max_workers (int | None): Maximum number of worker threads, or
+                `None` to leave the current value unchanged.
+            arp_noise_limit (float | None): ARP noise limit, or `None` to
+                leave the current value unchanged.
+            target_ip_list (list[str] | None): Target IP addresses to scan, or `None`
+                to scan all the IP addresses in the /24 subnet.
+        """
+        update_config_json(
+            self.config_file_path, max_workers, arp_noise_limit, target_ip_list
+        )
+
+        if max_workers is not None:
+            self.max_thread_workers = int(max_workers)
+        if arp_noise_limit is not None:
+            self.arp_noise_limit = float(arp_noise_limit)
+
+        self.candidate_devices = self.enumerate_candidate_devices(
+            target_ip_list if target_ip_list is not None else []
+        )
+
+    def _validate_config_file_target_ip_type(self) -> None:
+        """
+        Ensures the type of the `target_ip_list` key in the
+        configuration file, is a list.
+        """
+        config = self.load_config_json()
+
+        if type(config["target_ip_list"]) is not list:
+            target_ips = config["target_ip_list"].split(",")
+            self.update_configuration(None, None, target_ips)
 
     def uptime(self) -> int:
         """

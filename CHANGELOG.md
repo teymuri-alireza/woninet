@@ -4,6 +4,46 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [2.2.0] - 2026-10-30
+
+### Added
+
+- Added `delete_stale_devices()` to `NetworkMonitorCore`, `delete_device()` to `StorageEngine`, and `delete()` to `DeviceRepository` to delete devices with zero latency and no MAC address.
+- Implemented Docker configuration.
+- Added tests for ARP lookup.
+- Added the `build_docker.sh` bash script to execute `docker compose up -d --build` command, and print the device's private IP address to STDOUT for easier access to the web browser.
+- Added `setting.html` UI to control the settings from the dashboard.
+- Added `python-multipart` library which is required for the FastAPI `Form()` function.
+- Added the `update_config_json()` utility.
+- Added `load_config_json()` and `update_configuration()` to `NetworkMonitorCore`.
+- Added test and test config for settings and alert APIs.
+- Added `limit` and `offset` support to recent alert event methods and implemented pagination in the alerts API.
+- Added `count_alert_events()` to `engine.py`, `storage.py`, and `alert_event_repository.py`.
+- Updated `FakeMonitor` with `count_alert_events()` and added default parameters to `classify_recent_alert_events()`.
+- Added `AvailabilityTable` and `AvailabilityRepository` to persist device availability.
+- Replaced the graph statistics and its dependencies with availability statistics in `device_info` API.
+- Added tests for availability statistics.
+
+### Changed
+
+- Avoided storing null metrics to reduce SQL insertion time-costs.
+- Updated the dashboard UI and moved the recent alerts to `alerts.html`.
+- Normalize the `devices.last_seen` field on the devices page for improved readability.
+- Replaced the hardcoded swagger UI files with FastAPI's swagger plugin library to simplify updates and maintenance.
+- Replaced `TemplateResponse` with `JSONResponse` for `404` status in `/api` endpoints.
+
+### Removed
+
+- Removed `GraphEngine`, and its dependencies in `NetworkMonitorCore`.
+- Removed `matplotlib` library from pyproject.toml dependencies.
+
+### Fixed
+
+- Used `read_arp_table()` for ARP lookups to prevent devices without a MAC address from being assigned the first device's MAC address.
+- Prevented stale alert states from persisting in database by implementing `delete_stale_alert_states()`.
+
+---
+
 ## [2.1.0] - 2026-08-18
 
 ### Added

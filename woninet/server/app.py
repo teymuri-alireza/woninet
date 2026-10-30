@@ -1,14 +1,19 @@
 import asyncio
 from pathlib import Path
 from fastapi import FastAPI, Request, HTTPException, status
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from fastapi.openapi.docs import get_swagger_ui_html
+from fastapi_swagger import patch_fastapi
 from contextlib import asynccontextmanager
 from woninet.server.routes.api.devices import router as devices_api
 from woninet.server.routes.api.stats import router as stats_api
+from woninet.server.routes.api.alerts import router as alerts_api
+from woninet.server.routes.api.settings import router as settings_api
 from woninet.server.routes.page.devices import router as devices_page
+from woninet.server.routes.page.alerts import router as alerts_page
+from woninet.server.routes.page.settings import router as settings_page
+from woninet.server.routes.page.about import router as about_page
 from woninet.server.dependencies import get_static_path
 from woninet.main import get_monitor
 from woninet.__init__ import __version__
@@ -55,8 +60,9 @@ app = FastAPI(
     lifespan=lifespan,
     version=__version__,
     docs_url=None,
-    redoc_url=None,
+    swagger_ui_oauth2_redirect_url=None,
 )
+patch_fastapi(app=app, redirect_from_root_to_docs=False)
 
 # Templates
 templates = Jinja2Templates(directory=TEMPLATES_DIR)
@@ -68,7 +74,12 @@ app.mount("/charts", StaticFiles(directory=CHARTS_DIR), name="charts")
 # Routes
 app.include_router(devices_api)
 app.include_router(stats_api)
+app.include_router(alerts_api)
+app.include_router(settings_api)
 app.include_router(devices_page)
+app.include_router(alerts_page)
+app.include_router(settings_page)
+app.include_router(about_page)
 
 
 # The root path
@@ -77,19 +88,12 @@ def root(request: Request):
     return templates.TemplateResponse(request=request, name="dashboard.html")
 
 
-@app.get("/docs", include_in_schema=False)
-def custom_swagger_ui():
-    return get_swagger_ui_html(
-        openapi_url=app.openapi_url,
-        title="woninet - Swagger UI",
-        swagger_js_url="/static/swagger-ui/swagger-ui-bundle.js",
-        swagger_css_url="/static/swagger-ui/swagger-ui.css",
-        swagger_favicon_url="/static/swagger-ui/favicon-32x32.png",
-    )
-
-
 @app.exception_handler(404)
 def custom_not_found_exception(request: Request, exc: HTTPException):
+    if request.url.path.startswith("/api/"):
+        return JSONResponse(
+            status_code=status.HTTP_404_NOT_FOUND, content={"detail": "Not Found"}
+        )
     return templates.TemplateResponse(
         request=request,
         name="404.html",

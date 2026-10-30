@@ -128,8 +128,6 @@ Before submitting a Pull Request:
 
 - Ensure all tests pass.
 - Run Ruff formatting and linting.
-- Update documentation if necessary.
-- Update the CHANGELOG when the change affects users.
 - Keep Pull Requests focused on a single logical change.
 - Link related GitHub issues when applicable.
 

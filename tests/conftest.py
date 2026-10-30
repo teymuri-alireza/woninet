@@ -5,6 +5,8 @@ from woninet.server.app import app
 import woninet.server.routes.api.devices as devices_route
 import woninet.server.routes.page.devices as device_page_route
 import woninet.server.routes.api.stats as stats_route
+import woninet.server.routes.api.settings as settings_route
+import woninet.server.routes.api.alerts as alerts_route
 from woninet.database.engine import DatabaseEngine
 from woninet.database.tables import DeviceTable
 
@@ -15,6 +17,38 @@ TEST_DEVICES = [
     DeviceTable(ip="192.168.100.1", latency=12, packet_loss=0),
     DeviceTable(ip="192.168.100.2", latency=8, packet_loss=0),
 ]
+
+TEST_ALERT_EVENTS = [
+    {
+        "event_type": "trigger",
+        "device_ip": "192.168.1.10",
+        "metric": "latency",
+        "value": 150.5,
+        "timestamp": "2026-10-19T10:15:00",
+    },
+    {
+        "event_type": "recover",
+        "device_ip": "192.168.1.10",
+        "metric": "latency",
+        "value": 30.0,
+        "timestamp": "2026-10-19T10:20:00",
+    },
+    {
+        "event_type": "trigger",
+        "device_ip": "192.168.100.1",
+        "metric": "packet_loss",
+        "value": 5.0,
+        "timestamp": "2026-10-19T10:25:00",
+    },
+]
+
+TEST_CONFIG = {
+    "monitoring": {
+        "max_workers": 16,
+        "arp_noise_limit": 50,
+    },
+    "target_ip_list": "192.168.1.1-100,192.168.1.110",
+}
 
 
 @pytest.fixture
@@ -31,17 +65,43 @@ def db_session():
         session.close()
 
 
-class FakeGraphEngine:
-    def design_device_latency_events(self, ip, recent_device_alert_events):
-        pass
+class FakeStorage:
+    def __init__(self):
+        self.calls = []
+
+    def record_availability(self, checks, hour_start):
+        self.calls.append((checks, hour_start))
 
 
 class FakeMonitor:
-    def __init__(self, devices: list[DeviceTable] = TEST_DEVICES):
+    def __init__(
+        self,
+        devices: list[DeviceTable] = TEST_DEVICES,
+        storage: FakeStorage | None = None,
+    ):
+        self.storage = storage if storage is not None else FakeStorage()
         self.devices = devices
-        self.graph_engine = FakeGraphEngine()
         self.local_ip = "192.168.200.100"
         self.default_gateway = "192.168.200.1"
+        self.config: dict = TEST_CONFIG
+        self.config_updates: list[dict] = []
+        self.alert_events: list[dict] = list(TEST_ALERT_EVENTS)
+        self.availability_calls: list[tuple[int, str]] = []
+
+    def load_config_json(self):
+        return dict(self.config)
+
+    def update_configuration(self, **kwargs):
+        self.config_updates.append(kwargs)
+        for k, v in kwargs.items():
+            if v is not None:
+                if k == "target_ip_list":
+                    self.config.update({k: v})
+                else:
+                    self.config["monitoring"].update({k: v})
+
+    def get_alert_events(self):
+        return self.alert_events
 
     def get_device_history(self):
         return self.devices
@@ -71,14 +131,34 @@ class FakeMonitor:
         global _start_uptime
         return (datetime.now() - _start_uptime).seconds
 
-    def classify_recent_alert_events(self):
-        return {}
+    def classify_recent_alert_events(self, limit: int = 10, offset: int = 0):
+        return self.alert_events
+
+    def count_alert_events(self):
+        return len(self.alert_events)
+
+    def get_availability(self, ip: str, days: int = 90, granularity: str = "day"):
+        self.availability_calls.append((ip, days, granularity))
+        return {
+            "ip": ip,
+            "granularity": granularity,
+            "buckets": [],
+            "summary": {"uptime": None, "checks": 0},
+        }
 
 
 @pytest.fixture
-def client(monkeypatch):
-    fake_monitor = FakeMonitor()
+def fake_storage():
+    return FakeStorage()
 
+
+@pytest.fixture
+def fake_monitor(fake_storage):
+    return FakeMonitor(storage=fake_storage)
+
+
+@pytest.fixture
+def client(monkeypatch, fake_monitor):
     def fake_get_monitor_gracefully():
         return fake_monitor
 
@@ -96,6 +176,18 @@ def client(monkeypatch):
 
     monkeypatch.setattr(
         stats_route,
+        "get_monitor_gracefully",
+        fake_get_monitor_gracefully,
+    )
+
+    monkeypatch.setattr(
+        settings_route,
+        "get_monitor_gracefully",
+        fake_get_monitor_gracefully,
+    )
+
+    monkeypatch.setattr(
+        alerts_route,
         "get_monitor_gracefully",
         fake_get_monitor_gracefully,
     )

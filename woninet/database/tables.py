@@ -88,3 +88,23 @@ class AlertEventTable(Base):
     timestamp: Mapped[datetime] = mapped_column(
         DateTime(timezone=False), default=lambda: datetime.now(), index=True
     )
+
+
+class AvailabilityTable(Base):
+    """
+    ORM model representing the availability counters of a device for one hour.
+
+    Each row stores how many scan cycles checked the device during the hour
+    and how many of those found it reachable. Storing counts keeps longer
+    periods exact: uptime of a day is `sum(up_checks) / sum(checks)`.
+    An hour without a row means no data was collected.
+    """
+
+    __tablename__ = "availability"
+
+    device_ip: Mapped[str] = mapped_column(String, primary_key=True)
+    hour_start: Mapped[datetime] = mapped_column(
+        DateTime(timezone=False), primary_key=True
+    )
+    checks: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    up_checks: Mapped[int] = mapped_column(Integer, nullable=False, default=0)

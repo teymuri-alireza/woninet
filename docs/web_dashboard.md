@@ -6,7 +6,7 @@ This section explains the sequence of operations performed to serve the web dash
 
 ## 1. Determining the Source IP
 
-*woninet* begins by identifying the local machine’s primary IPv4 address.
+Woninet begins by identifying the local machine’s primary IPv4 address.
 
 It does this by:
 
@@ -24,9 +24,13 @@ An instance of the **FastAPI** class is created to power the dashboard and provi
 RESTful endpoints.
 This object defines and manages the following routes:
 
-- `/devices`
-- `/stats`
-- `/health`
+- `/api/devices`
+- `/api/stats`
+- `/api/alerts`
+- `/alerts`
+- `/api/settings`
+- `/settings`
+- `/about`
 - `/ (root dashboard interface)`
 
 The root route ("/") serves **dashboard.html**, which provides the main user interface
@@ -44,10 +48,9 @@ consistent state management across all API routes.
 
 Each API route serves a distinct operational purpose. Details are outlined below.
 
-### /devices - Device Discovery
+### /api/devices - Device Discovery
 
-The `/devices` route invokes `list_devices()`, which calls the **device service** to enumerate
-all currently active network devices.
+The `/api/devices` route invokes `list_devices()`, which calls the **device service** to enumerate all network devices.
 
 Internally:
 
@@ -58,10 +61,96 @@ Internally:
 
 This endpoint dynamically reflects real-time network topology.
 
-### /stats — Network Statistics
+**Example Response:**
 
-The `/stats` route accesses `get_network_stats()` from the `stats_service` module to
-retrieve basic network performance and status metrics.
+```json
+{
+  "devices": [
+    {
+      "ip": "192.168.138.99",
+      "last_seen": "2026-10-20T13:14:33.842041",
+      "exists": false,
+      "reachable": false,
+      "mac": "a6:aa:81:83:b7:14",
+      "latency": 12.473,
+      "packet_loss": 0,
+      "jitter": 2.438
+    },
+    {
+      "ip": "192.168.138.101",
+      "last_seen": "2026-10-23T13:38:15.753042",
+      "exists": false,
+      "reachable": false,
+      "mac": "f6:ff:80:89:b6:13",
+      "latency": 32.937,
+      "packet_loss": 0,
+      "jitter": 61.889
+    }
+  ],
+  "gateway": "192.168.138.99"
+}
+```
+
+### /api/alerts - Recent Alert Events
+
+The `/api/alerts` route calls `monitor.classify_recent_alert_events()` which returns the last ten recent alerts events.
+
+**Example Response:**
+
+```json
+{
+  "recent_alert_events": [
+    {
+      "device_ip": "192.168.138.99",
+      "id": 3,
+      "metric": "latency",
+      "event_type": "recover",
+      "value": 8.927,
+      "timestamp": "2026-10-23T10:21:42.146328"
+    },
+    {
+      "device_ip": "192.168.138.99",
+      "id": 2,
+      "metric": "latency",
+      "event_type": "trigger",
+      "value": 6.239,
+      "timestamp": "2026-10-23T10:19:46.817318"
+    },
+    {
+      "device_ip": "192.168.138.99",
+      "id": 1,
+      "metric": "jitter",
+      "event_type": "trigger",
+      "value": 1.693,
+      "timestamp": "2026-10-23T10:18:56.677247"
+    }
+  ]
+}
+```
+
+### /api/settings - Configuration Settings
+
+The `/api/settings` route calls `monitor.load_config_json()` which returns the parsed application's JSON configuration file.
+
+This route accepts two methods: `GET` for retrieving settings, and `POST` for updating settings.
+
+**Example Response:**
+
+```json
+{
+  "settings": {
+    "arp_noise_limit": 0,
+    "max_workers": 16,
+    "target_ip_list": [
+      "192.168.138.90-110"
+    ]
+  }
+}
+```
+
+### /api/stats — Network Statistics
+
+The `/api/stats` route accesses `get_network_stats()` to retrieve basic network performance and status metrics.
 This endpoint responds with a JSON object that includes the following sections:
 
 1. **identity:** Basic service identification information.
@@ -92,7 +181,7 @@ This endpoint responds with a JSON object that includes the following sections:
 {
   "identity": {
     "service": "woninet",
-    "version": "1.4.0",
+    "version": "2.1.0",
     "server_ip": "192.168.120.56",
   },
   "health": {
@@ -131,7 +220,7 @@ This endpoint responds with a JSON object that includes the following sections:
       "event_type": "trigger",
       "value": 259.642,
       "timestamp": "2026-05-14T20:49:52.681306"
-    },
+    }
   ]
 }
 ```

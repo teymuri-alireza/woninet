@@ -28,12 +28,11 @@ build/
 # vs code directory
 .vscode/
 
-# Statistics Charts
-charts/
-
 # Configuration JSON file
 !config.example.json
 
 # Pytest
 .pytest_cache/
 
+# Used by Docker
+data/
