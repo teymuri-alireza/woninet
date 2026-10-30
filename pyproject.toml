@@ -32,6 +32,9 @@ dependencies = [
     "fastapi-swagger>=0.4.64,<0.5",
 ]
 
+[tool.setuptools.packages.find]
+include = ["woninet*"]
+
 [tool.setuptools.package-data]
 woninet = [
     "server/static/**/*",
