@@ -1,4 +1,6 @@
-from fastapi import APIRouter, Request, status
+from typing import Literal
+from ipaddress import IPv4Address
+from fastapi import APIRouter, HTTPException, Path, Query, Request, status
 from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
 from woninet.server.dependencies import get_monitor_gracefully
@@ -18,36 +20,27 @@ def list_devices(request: Request):
     )
 
 
-# Temporarily disable the device info page
+@router.get("/{ip}/availability")
+def device_availability(
+    ip: IPv4Address = Path(
+        ..., title="IP address", description="IPv4 address of the device."
+    ),
+    days: int = Query(default=90, ge=1, le=365),
+    granularity: Literal["day", "hour"] = Query(default="day"),
+):
+    if granularity == "hour" and days > 7:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+            detail="Hourly granularity supports at most 7 days.",
+        )
 
-# @router.get("/{ip}")
-# def device_info_api(
-#     request: Request,
-#     ip: str = Path(
-#         ...,
-#         title="IP address",
-#         description="IP address of the device.",
-#         min_length=7,
-#         max_length=15,
-#     ),
-# ):
+    monitor = get_monitor_gracefully()
+    ip = str(ip)
 
-#     monitor = get_monitor_gracefully()
+    if not monitor.device_exists(ip=ip):
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Not Found")
 
-#     if not monitor.device_exists(ip=ip):
-#         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Not Found")
-
-#     device, device_alert_state, device_recent_alert_events = monitor.get_device_info(
-#         ip=ip
-#     )
-#     monitor.graph_engine.design_device_latency_events(
-#         ip=ip, recent_device_alert_events=device_recent_alert_events
-#     )
-#     return JSONResponse(
-#         content={
-#             "device": jsonable_encoder(device),
-#             "device_alert_state": jsonable_encoder(device_alert_state),
-#             "device_recent_alert_events": jsonable_encoder(device_recent_alert_events),
-#         },
-#         status_code=status.HTTP_200_OK,
-#     )
+    return JSONResponse(
+        content=monitor.get_availability(ip=ip, days=days, granularity=granularity),
+        status_code=status.HTTP_200_OK,
+    )
