@@ -168,45 +168,50 @@ class NetworkMonitorCore:
                 cycle_started = datetime.now()
                 cycle_checks: list[tuple[str, bool]] = []
 
-                for result in self.ping_collector.collect(
-                    candidate_devices=self.candidate_devices,
-                    local_ip=self.local_ip,
-                    device_records=self.get_device_history(),
-                    stop_event=self._stop_event,
-                    arp_noise_limit=self.arp_noise_limit,
-                    max_thread_workers=self.max_thread_workers,
-                ):
-                    try:
-                        self.submit_to_history(
-                            device=result.device,
-                            metrics=[result.latency, result.packet_loss, result.jitter],
-                        )
-                        if result.device is not None:
-                            cycle_checks.append(
-                                (result.device.ip, result.device.reachable)
-                            )
-                            self.alert_engine.evaluate(
-                                ip=result.device.ip,
-                                metrics_list=[
+                if self.candidate_devices != {}:
+                    for result in self.ping_collector.collect(
+                        candidate_devices=self.candidate_devices,
+                        local_ip=self.local_ip,
+                        device_records=self.get_device_history(),
+                        stop_event=self._stop_event,
+                        arp_noise_limit=self.arp_noise_limit,
+                        max_thread_workers=self.max_thread_workers,
+                    ):
+                        try:
+                            self.submit_to_history(
+                                device=result.device,
+                                metrics=[
                                     result.latency,
                                     result.packet_loss,
                                     result.jitter,
                                 ],
-                                default_consecutive_checks={
-                                    "latency": self.consecutive_checks["latency"],
-                                    "packet_loss": self.consecutive_checks[
-                                        "packet_loss"
-                                    ],
-                                    "jitter": self.consecutive_checks["jitter"],
-                                },
                             )
-                    except AttributeError:
-                        # If the tuple doesn't have enough values to unpack
-                        pass
-                self.record_availability(cycle_checks, cycle_started)
-                self.prune_availability()
-                self.delete_stale_devices()
-                self.delete_stale_alert_states()
+                            if result.device is not None:
+                                cycle_checks.append(
+                                    (result.device.ip, result.device.reachable)
+                                )
+                                self.alert_engine.evaluate(
+                                    ip=result.device.ip,
+                                    metrics_list=[
+                                        result.latency,
+                                        result.packet_loss,
+                                        result.jitter,
+                                    ],
+                                    default_consecutive_checks={
+                                        "latency": self.consecutive_checks["latency"],
+                                        "packet_loss": self.consecutive_checks[
+                                            "packet_loss"
+                                        ],
+                                        "jitter": self.consecutive_checks["jitter"],
+                                    },
+                                )
+                        except AttributeError:
+                            # If the tuple doesn't have enough values to unpack
+                            pass
+                    self.record_availability(cycle_checks, cycle_started)
+                    self.prune_availability()
+                    self.delete_stale_devices()
+                    self.delete_stale_alert_states()
                 time.sleep(1)
         except (PermissionError, SocketPermissionError):
             core_logger.error("woninet requires root privileges to scan.")
@@ -441,8 +446,8 @@ class NetworkMonitorCore:
     ) -> dict[str, Device]:
         """
         Control enumeration based on user-provided IP addresses. Use range enumeration
-        if IP range is detected, otherwise use the single IP address. Enumerate on the
-        /24 subnet if no target IP address is provided.
+        if IP range is detected, otherwise use the single IP address. An empty list
+        indicates no enumeration.
 
         Args:
             target_ip (list[str]|None): Target IP addresses to create candidate devices on.
@@ -463,7 +468,8 @@ class NetworkMonitorCore:
                 else:
                     candidate_devices[target_ip] = Device(ip=target_ip)
         else:
-            candidate_devices.update(self.subnet_enumerator.enumerate(self.local_ip))
+            candidate_devices = {}
+
         if not is_device_ip_valid(candidate_devices):
             raise ValueError("IP address is not valid")
         return candidate_devices

@@ -227,7 +227,7 @@ To use a different configuration file, pass its path with the `--config` CLI fla
 
 | Key | Description |
 |---|---|
-| `target_ip_list` | A single address, a list of addresses, or a range (for example `192.168.1.1-100`) to scan. Monitoring is currently limited to a /24 subnet (see [Known Issues](#known-issues)). |
+| `target_ip_list` | A single address, a list of addresses, or a range (for example `192.168.1.1-100`) to scan. An empty list indicates that no scan cycle will run. Monitoring is currently limited to a /24 subnet (see [Known Issues](#known-issues)). |
 
 #### Alert rules
 
