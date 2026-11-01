@@ -441,8 +441,8 @@ class NetworkMonitorCore:
     ) -> dict[str, Device]:
         """
         Control enumeration based on user-provided IP addresses. Use range enumeration
-        if IP range is detected, otherwise use the single IP address. Enumerate on the
-        /24 subnet if no target IP address is provided.
+        if IP range is detected, otherwise use the single IP address. An empty list
+        indicates no enumeration.
 
         Args:
             target_ip (list[str]|None): Target IP addresses to create candidate devices on.
@@ -463,7 +463,8 @@ class NetworkMonitorCore:
                 else:
                     candidate_devices[target_ip] = Device(ip=target_ip)
         else:
-            candidate_devices.update(self.subnet_enumerator.enumerate(self.local_ip))
+            candidate_devices = {}
+
         if not is_device_ip_valid(candidate_devices):
             raise ValueError("IP address is not valid")
         return candidate_devices
