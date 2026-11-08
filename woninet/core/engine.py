@@ -211,6 +211,7 @@ class NetworkMonitorCore:
                     self.record_availability(cycle_checks, cycle_started)
                     self.prune_availability()
                     self.delete_stale_devices()
+                    self.delete_stale_availability()
                     self.delete_stale_alert_states()
                 time.sleep(1)
         except (PermissionError, SocketPermissionError):
@@ -352,6 +353,20 @@ class NetworkMonitorCore:
         for device in device_records:
             if device.latency == 0 and device.mac is None:
                 self.storage.delete_device(device=device)
+
+    def delete_stale_availability(self) -> None:
+        """
+        Remove stable availability records from storage.
+
+        Availability records that are not found in the devices history are treated
+        as stable.
+        """
+        ip_records = [device.ip for device in self.get_device_history()]
+        availability_records = self.storage.list_availability()
+
+        for record in availability_records:
+            if record.device_ip not in ip_records:
+                self.storage.delete_availability(record=record)
 
     def delete_stale_alert_states(self) -> None:
         """

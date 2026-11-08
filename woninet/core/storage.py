@@ -1,6 +1,6 @@
 from datetime import date, datetime
 from woninet.core.models import Device, MetricRecord
-from woninet.database.tables import AlertStateTable, AlertEventTable
+from woninet.database.tables import AlertStateTable, AlertEventTable, AvailabilityTable
 from woninet.database.repositories.device_repository import DeviceRepository
 from woninet.database.repositories.metric_repository import MetricRepository
 from woninet.database.repositories.alert_state_repository import AlertStateRepository
@@ -206,6 +206,13 @@ class StorageEngine:
             repo = AlertEventRepository(session=session)
             return repo.count_alert_events()
 
+    def list_availability(self) -> list[AvailabilityTable]:
+        """
+        Return a list of all device's availabilities in the history.
+        """
+        with self.session_factory() as session:
+            return AvailabilityRepository(session).fetch_all()
+
     def record_availability(
         self, checks: list[tuple[str, bool]], hour_start: datetime
     ) -> None:
@@ -236,6 +243,17 @@ class StorageEngine:
             deleted = repo.delete_older_than(cutoff)
             session.commit()
             return deleted
+
+    def delete_availability(self, record: AvailabilityTable) -> None:
+        """
+        Delete a stored availability from the database.
+
+        Args:
+            record: AvailabilityTable instance to be removed.
+        """
+        with self.session_factory() as session:
+            AvailabilityRepository(session=session).delete(record=record)
+            session.commit()
 
     def get_daily_availability(
         self, ip: str, since: datetime

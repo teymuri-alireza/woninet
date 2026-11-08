@@ -23,6 +23,12 @@ class AvailabilityRepository:
         """
         self.session: Session = session
 
+    def fetch_all(self) -> list[AvailabilityTable]:
+        """
+        Return a list device's availability records form the database.
+        """
+        return self.session.query(AvailabilityTable).all()
+
     def record_checks(
         self, checks: list[tuple[str, bool]], hour_start: datetime
     ) -> None:
@@ -111,3 +117,14 @@ class AvailabilityRepository:
             .filter(AvailabilityTable.hour_start < cutoff)
             .delete(synchronize_session=False)
         )
+
+    def delete(self, record: AvailabilityTable) -> None:
+        """
+        Delete a availability record from the database.
+
+        Args:
+            record: AvailabilityTable instance to be removed.
+        """
+        self.session.query(AvailabilityTable).filter_by(
+            device_ip=record.device_ip,
+        ).delete(synchronize_session=False)
