@@ -209,10 +209,7 @@ class NetworkMonitorCore:
                             # If the tuple doesn't have enough values to unpack
                             pass
                     self.record_availability(cycle_checks, cycle_started)
-                    self.prune_availability()
-                    self.delete_stale_devices()
-                    self.delete_stale_availability()
-                    self.delete_stale_alert_states()
+                    self.clean_up_database()
                 time.sleep(1)
         except (PermissionError, SocketPermissionError):
             core_logger.error("woninet requires root privileges to scan.")
@@ -381,6 +378,16 @@ class NetworkMonitorCore:
         for record in alert_state_records:
             if record.device_ip not in ip_records:
                 self.storage.delete_alert_state(state=record)
+
+    def clean_up_database(self) -> None:
+        """
+        Control methods responsible for deleting stale records for
+        keeping the database clean.
+        """
+        self.prune_availability()
+        self.delete_stale_devices()
+        self.delete_stale_availability()
+        self.delete_stale_alert_states()
 
     def get_device_info(
         self, ip: str
