@@ -1,4 +1,5 @@
 let allAlerts = [];
+let totalEvents = 0;
 let currentPage = 1;
 let totalPages = 0;
 const pageSize = 10;
@@ -48,7 +49,7 @@ function renderAlerts() {
     });
 
     document.getElementById("alert_count").textContent =
-        `Showing ${filtered.length} of ${allAlerts.length} events`;
+        `Showing ${filtered.length} of ${totalEvents} events`;
 
     document.getElementById("alerts").innerHTML = filtered.length
         ? filtered.map(createAlertCard).join("")
@@ -95,6 +96,7 @@ async function loadAlerts(page = currentPage) {
 
         currentPage = data.page_details.page;
         totalPages = data.page_details.total_pages;
+        totalEvents = data.total_events;
 
         document.getElementById("current-page").textContent = currentPage;
 
