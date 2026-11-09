@@ -59,6 +59,12 @@ function PaginationBtnHandler() {
     document.getElementById("previous-page").disabled = false;
     document.getElementById("next-page").disabled = false;
 
+    if (totalPages === 1) {
+        document.getElementById("previous-page").disabled = true;
+        document.getElementById("next-page").disabled = true;
+        return;
+    }
+
     if (currentPage === 1) {
         document.getElementById("previous-page").disabled = true;
 
