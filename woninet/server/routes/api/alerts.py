@@ -23,8 +23,7 @@ def alerts(
             "page_details": {
                 "page": page,
                 "page_size": page_size,
-                "total_pages": (total_events + page_size - 1)
-                // page_size,
+                "total_pages": (total_events + page_size - 1) // page_size,
             },
         },
         status_code=status.HTTP_200_OK,
