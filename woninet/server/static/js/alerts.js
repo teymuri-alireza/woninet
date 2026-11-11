@@ -48,8 +48,15 @@ function renderAlerts() {
         return matchesIp && matchesType;
     });
 
+    resultStart = (currentPage * 10) - 9;
+    if (currentPage * 10 > totalEvents) {
+        resultEnd = totalEvents;
+    } else {
+        resultEnd = currentPage * 10;
+    }
+
     document.getElementById("alert_count").textContent =
-        `Showing ${filtered.length} of ${totalEvents} events`;
+        `Showing ${resultStart} - ${resultEnd} of ${totalEvents} events`;
 
     document.getElementById("alerts").innerHTML = filtered.length
         ? filtered.map(createAlertCard).join("")
