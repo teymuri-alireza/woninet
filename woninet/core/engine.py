@@ -243,6 +243,15 @@ class NetworkMonitorCore:
         """
         return self.storage.list_device_history()
 
+    def get_device(self, ip: str) -> Device | None:
+        """
+        Return a device for the given IP address or None if not found.
+
+        Args:
+            The IP address of device to look for.
+        """
+        return self.storage.fetch_device_info(ip=ip)
+
     def record_availability(
         self, checks: list[tuple[str, bool]], when: datetime
     ) -> None:
