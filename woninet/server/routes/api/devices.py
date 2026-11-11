@@ -9,8 +9,17 @@ router = APIRouter(prefix="/api/devices", tags=["devices"])
 
 
 @router.get("")
-def list_devices(request: Request):
+def list_devices(request: Request, ip: str = Query(None)):
     monitor = get_monitor_gracefully()
+
+    if ip is not None:
+        return JSONResponse(
+            content={
+                "device": jsonable_encoder(monitor.get_device(ip=ip)),
+            },
+            status_code=status.HTTP_200_OK,
+        )
+
     return JSONResponse(
         content={
             "devices": jsonable_encoder(monitor.get_device_history()),

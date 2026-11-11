@@ -95,10 +95,10 @@ function renderDevice(device) {
 
 async function loadDevice() {
     try {
-        const response = await fetch("/api/devices");
+        const response = await fetch(`/api/devices?ip=${encodeURIComponent(ip)}`);
         const data = await response.json();
         setConnected(true);
-        renderDevice((data.devices || []).find(device => device.ip === ip));
+        renderDevice(data.device || "");
     } catch (error) {
         setConnected(false);
         console.error(error);
