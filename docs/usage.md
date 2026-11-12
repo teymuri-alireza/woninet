@@ -116,10 +116,13 @@ may no longer correctly correlate with the new network topology.
 to a different network to ensure data integrity. You can do this using:
 
 ```json
-"database": "path_to_new_database"
+"database": {
+    "type": "Current database type",
+    "path":"path_to_new_database"
+}
 ```
 
-**Note:** The `database` value can be changed from the `config.json` file or the settings page form the web dashboard. Check the `Configuration` section in `README.md`.
+**Note:** The `database` value can be changed from the `config.json` file. Check the `Configuration` section in `README.md`.
 
 ### Accessing a Specific Database
 

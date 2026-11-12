@@ -31,7 +31,7 @@ A local network monitoring system.
 - **ARP + ICMP host detection.** Distinguishes real devices from nonexistent IP addresses and filters out Wi-Fi ARP-delay noise.
 - **Alert engine.** Evaluates real-time alert rules, such as latency thresholds, against collected metrics.
 - **Threaded collectors.** Sends ICMP probes concurrently using a configurable number of worker threads.
-- **SQLite storage.** Persists devices, recorded metrics, alert states, and alert events.
+- **Custom SQL database (PostgreSQL, SQLite).** Persists devices, recorded metrics, alert states, and alert events.
 - **Database access from the CLI.** Accepts a positional argument for easier access to the database.
 - **Detailed logging.**
 
@@ -184,7 +184,10 @@ To use a different configuration file, pass its path with the `--config` CLI fla
         "arp_noise_limit": 300.0,
         "max_workers": 4
     },
-    "database": "woninet.db",
+    "database": {
+        "type": "sqlite",
+        "path": "woninet.db"
+    },
     "target_ip_list": [
         "192.168.1.1", "192.168.1.10", "192.168.1.20-30"
     ],
@@ -221,7 +224,44 @@ To use a different configuration file, pass its path with the `--config` CLI fla
 
 | Key | Description |
 |---|---|
-| `database` | Path to the SQLite database file where metrics and alerts are stored. |
+| `database.type` | The database backend: `sqlite` or `postgresql`. |
+| `database.path` | The database location. For `sqlite`, this is the path to the database file. For `postgresql`, this is a connection URL (see below). |
+
+For PostgreSQL, set `type` to `postgresql` and provide the connection URL as `path`:
+
+```json
+"database": {
+    "type": "postgresql",
+    "path": "postgresql+psycopg://user:password@localhost:5432/woninet_db"
+}
+```
+
+The URL format is `postgresql+psycopg://<username>:<password>@<host>:<port>/<database>`. If the password contains special characters (such as `@`, `:` or `/`), percent-encode them.
+
+**Note: For the PostgreSQL database, it's recommended to provide the path through `.env`**
+
+A connection URL contains credentials, so storing it in `config.json` is discouraged. Instead, define the `WONINET_DATABASE_URL` variable in a `.env` file. When set, it **overrides** `database.path` in `config.json`:
+
+```shell
+WONINET_DATABASE_URL=postgresql+psycopg://user:password@localhost:5432/woninet
+```
+
+In this case, `config.json` only needs the backend type:
+
+```json
+"database": {
+    "type": "postgresql"
+}
+```
+
+The precedence order is:
+
+1. `WONINET_DATABASE_URL` (`.env` file)
+2. `database.path` in `config.json`
+
+The `.env` file is optional. SQLite users can set `path` directly in `config.json`.
+
+The `.env` should be kept in the project's root directory.
 
 #### Target IP list
 
