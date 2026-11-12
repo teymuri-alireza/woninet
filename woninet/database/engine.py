@@ -35,7 +35,7 @@ class DatabaseEngine:
 
         if self.database_type.lower() == "sqlite":
             self.engine = create_engine(
-                f"sqlite:///{self.woninet_database_url}", echo=False, future=True
+                f"sqlite:///{self.database_path}", echo=False, future=True
             )
         elif self.database_type.lower() == "postgresql":
             self.engine = create_engine(self.woninet_database_url, echo=False)
