@@ -3,7 +3,10 @@
         "arp_noise_limit": 0.0,
         "max_workers": 4
     },
-    "database": "woninet.db",
+    "database": {
+        "type": "sqlite",
+        "path": "woninet.db"
+    },
     "target_ip_list": [
         "192.168.1.1-100"
     ],
