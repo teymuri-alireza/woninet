@@ -115,7 +115,7 @@ def configure_logger(arguments: Namespace) -> logging.Logger:
 def create_monitor(
     local_ip: str,
     target_ip: str,
-    database_path: str,
+    database_config: dict[str, str],
     arp_noise_limit: float,
     max_thread_workers: int,
     logger: logging.Logger,
@@ -128,7 +128,7 @@ def create_monitor(
     Args:
         local_ip (str): IP address of device.
         target_ip (str): A single or range of user-provided IP addresses to scan.
-        database_path (str): Path to SQLite database.
+        database_config (dict[str, str]): The database configuration, including the database type and path.
         arp_noise_limit (float): Threshold above which ARP fluctuations are treated as noise.
         max_thread_workers (int): The concurrency limit for the
             `ThreadPoolExecutor` handling ICMP probes
@@ -142,13 +142,13 @@ def create_monitor(
     global monitor
     if monitor is None:
         logger.debug(f"ARP noise limit set to {arp_noise_limit}")
-        logger.trace(f"Using {database_path} as SQLite database.")
+        logger.trace(f"Using {database_config.get('type')} as database.")
         logger.trace(f"Max thread workers for scanning set to {max_thread_workers}.")
         monitor = NetworkMonitorCore(
             local_ip=local_ip,
             target_ip=target_ip,
             arp_noise_limit=arp_noise_limit,
-            database_path=database_path,
+            database_config=database_config,
             max_thread_workers=max_thread_workers,
             alert_rules=alert_rules,
             config_file_path=config_file_path,
@@ -215,7 +215,7 @@ def main() -> None:
         monitor = create_monitor(
             local_ip=local_ip,
             target_ip=target_ip,
-            database_path=configuration["database"],
+            database_config=configuration["database"],
             arp_noise_limit=configuration["monitoring"]["arp_noise_limit"],
             max_thread_workers=configuration["monitoring"]["max_workers"],
             logger=core_logger,
