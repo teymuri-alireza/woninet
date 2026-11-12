@@ -93,11 +93,7 @@ class NetworkMonitorCore:
         self.max_thread_workers: int = max_thread_workers
         self.config_file_path: str = config_file_path
         self.database_type: str = database_config.get("type")
-        self.database_path: str = (
-            None
-            if database_config.get("path").strip() == ""
-            else database_config.get("path")
-        )
+        self.database_path: str = database_config.get("path")
 
         # Initialize database
         self.database_engine = DatabaseEngine(

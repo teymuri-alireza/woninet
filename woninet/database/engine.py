@@ -83,6 +83,10 @@ class DatabaseEngine:
                 "Missing required key 'type' under 'database' in 'config.json'."
             )
 
+        if self.database_type == "sqlite":
+            if self.database_path is None or self.database_path.strip() == "":
+                raise ValueError("The database URL or path is not defined.")
+
         try:
             settings = get_settings()
             self.woninet_database_url = settings.woninet_database_url
