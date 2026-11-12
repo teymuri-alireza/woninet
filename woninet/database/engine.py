@@ -50,9 +50,16 @@ class DatabaseEngine:
         """
         Initialize the database and create missing tables.
         """
-        import woninet.database.tables  # noqa: F401
+        try:
+            import woninet.database.tables  # noqa: F401
 
-        Base.metadata.create_all(bind=self.engine)
+            Base.metadata.create_all(bind=self.engine)
+        except OperationalError:
+            host = self.engine.url.host
+            port = self.engine.url.port
+            raise DatabaseConnectionFailed(
+                f"Could not connect to database at {host}:{port}"
+            )
 
     def get_database_engine(self) -> Engine:
         """

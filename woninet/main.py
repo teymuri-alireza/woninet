@@ -10,6 +10,7 @@ from woninet.core.engine import NetworkMonitorCore
 from woninet.utilities.arguments import args
 from woninet.utilities.logger import get_core_logger, TRACE_LEVEL
 from woninet.utilities.create_configuration import create_config_json
+from woninet.exc import DatabaseConnectionFailed
 
 # Global Variables
 LOGGING_YAML_PATH = Path(__file__).parent / "logging.yaml"
@@ -240,6 +241,8 @@ def main() -> None:
     except FileNotFoundError:
         core_logger.error("Can not find the config.json file. Quitting.")
     except OperationalError as e:
+        core_logger.error(e)
+    except DatabaseConnectionFailed as e:
         core_logger.error(e)
     finally:
         if hasattr(monitor, "stop"):
