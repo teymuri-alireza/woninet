@@ -1,6 +1,7 @@
 from datetime import date, datetime
 from sqlalchemy import func, select
-from sqlalchemy.dialects.sqlite import insert
+from sqlalchemy.dialects.sqlite import insert as sqlite_insert
+from sqlalchemy.dialects.postgresql import insert as postgresql_insert
 from sqlalchemy.orm import Session
 from woninet.database.tables import AvailabilityTable
 
@@ -30,7 +31,7 @@ class AvailabilityRepository:
         return self.session.query(AvailabilityTable).all()
 
     def record_checks(
-        self, checks: list[tuple[str, bool]], hour_start: datetime
+        self, checks: list[tuple[str, bool]], hour_start: datetime, database_type: str
     ) -> None:
         """
         Add one check per device to the counters of the given hour (atomic upsert).
@@ -48,7 +49,11 @@ class AvailabilityRepository:
             for ip, reachable in checks
         ]
 
-        stmt = insert(AvailabilityTable)
+        stmt = (
+            sqlite_insert(AvailabilityTable)
+            if database_type.lower() == "sqlite"
+            else postgresql_insert(AvailabilityTable)
+        )
         stmt = stmt.on_conflict_do_update(
             index_elements=["device_ip", "hour_start"],
             set_={

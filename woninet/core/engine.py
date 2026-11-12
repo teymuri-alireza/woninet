@@ -278,7 +278,9 @@ class NetworkMonitorCore:
             return
 
         hour_start = when.replace(minute=0, second=0, microsecond=0)
-        self.storage.record_availability(checks=checks, hour_start=hour_start)
+        self.storage.record_availability(
+            checks=checks, hour_start=hour_start, database_type=self.database_type
+        )
 
     def get_availability(
         self,
