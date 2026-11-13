@@ -45,11 +45,11 @@ woninet = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/teymuri-alireza/woninet"
-Documentation = "https://github.com/teymuri-alireza/woninet/tree/main/docs"
-Repository = "https://github.com/teymuri-alireza/woninet"
-Issues = "https://github.com/teymuri-alireza/woninet/issues"
-Changelog = "https://github.com/teymuri-alireza/woninet/blob/main/CHANGELOG.md"
+Homepage = "https://github.com/woninet/woninet"
+Documentation = "https://github.com/woninet/woninet/tree/main/docs"
+Repository = "https://github.com/woninet/woninet"
+Issues = "https://github.com/woninet/woninet/issues"
+Changelog = "https://github.com/woninet/woninet/blob/main/CHANGELOG.md"
 
 [project.scripts]
 woninet = "woninet.main:main"
