@@ -14,7 +14,7 @@ woninet
 
 This way you can serve Woninet dashboard on port 8080. In this mode, core logging is set to ERROR to reduce unnecessary output
 
-## CLI mode
+## CLI mode (deprecated)
 
 You can run Woninet in CLI mode with:
 

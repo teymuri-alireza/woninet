@@ -230,6 +230,7 @@ def main() -> None:
             return
 
         if arguments.cli:
+            core_logger.warning("The CLI interface is deprecated. Run `woninet` to use server mode instead.")
             monitor.start()
             monitor.wait()
         else:

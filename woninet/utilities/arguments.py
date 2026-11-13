@@ -54,7 +54,7 @@ are collected continuously and processed through an alert engine."""
     parser.add_argument(
         "--cli",
         action="store_true",
-        help="Run woninet in CLI mode.",
+        help="Run woninet in CLI mode. (deprecated)",
     )
 
     parser.add_argument(
