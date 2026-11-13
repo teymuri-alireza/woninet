@@ -85,7 +85,7 @@ class AvailabilityRepository:
             .group_by(day)
         )
         return {
-            date.fromisoformat(d): (int(checks), int(up_checks))
+            date.fromisoformat(str(d)): (int(checks), int(up_checks))
             for d, checks, up_checks in self.session.execute(stmt)
         }
 
