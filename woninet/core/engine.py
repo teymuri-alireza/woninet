@@ -31,7 +31,7 @@ class NetworkMonitorCore:
 
     This class acts as the orchestrator for the network monitoring lifecycle,
     managing thread pools for asynchronous ICMP polling and interfacing with
-    the SQLite persistence layer via SQLAlchemy.
+    the database layer via SQLAlchemy.
 
     Attributes:
         local_ip (str): The source interface IP used for packet origination.
@@ -60,7 +60,7 @@ class NetworkMonitorCore:
         local_ip: str,
         target_ip: str,
         arp_noise_limit: float,
-        database_path: str,
+        database_config: dict[str, str],
         max_thread_workers: int,
         alert_rules: dict,
         config_file_path: str,
@@ -73,7 +73,8 @@ class NetworkMonitorCore:
             target_ip (str): User-provided IP address or range to scan.
             arp_noise_limit (float): Threshold in milliseconds above which ARP
                 fluctuations are treated as noise.
-            database_path (str): Path to SQLite database.
+            database_config (dict[str, str]): The database configuration, including the
+                database type and path.
             max_thread_workers (int): Maximum number of thread workers used to send ICMP pings.
             alert_rules (dict): Provided alert rules, loaded from config.json.
             config_file_path (str): Path to the config file to load.
@@ -91,9 +92,13 @@ class NetworkMonitorCore:
         self.arp_noise_limit: float = arp_noise_limit
         self.max_thread_workers: int = max_thread_workers
         self.config_file_path: str = config_file_path
+        self.database_type: str = database_config.get("type")
+        self.database_path: str = database_config.get("path")
 
         # Initialize database
-        self.database_engine = DatabaseEngine(database_path=database_path)
+        self.database_engine = DatabaseEngine(
+            database_type=self.database_type, database_path=self.database_path
+        )
         self.database_engine.init_db()
         self._engine = self.database_engine.get_database_engine()
         self.session_factory = self.database_engine.get_session_factory()
@@ -269,7 +274,9 @@ class NetworkMonitorCore:
             return
 
         hour_start = when.replace(minute=0, second=0, microsecond=0)
-        self.storage.record_availability(checks=checks, hour_start=hour_start)
+        self.storage.record_availability(
+            checks=checks, hour_start=hour_start, database_type=self.database_type
+        )
 
     def get_availability(
         self,

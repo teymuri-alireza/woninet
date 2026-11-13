@@ -20,6 +20,7 @@ data
 *.log
 logs.txt
 config.json
+.env
 stats.json
 
 # Not needed to build the package

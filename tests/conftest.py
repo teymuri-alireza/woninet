@@ -53,7 +53,7 @@ TEST_CONFIG = {
 
 @pytest.fixture
 def db_session():
-    db_engine = DatabaseEngine(database_path=":memory:")
+    db_engine = DatabaseEngine(database_type="sqlite", database_path=":memory:")
     db_engine.init_db()
 
     session_factory = db_engine.get_session_factory()
@@ -69,7 +69,7 @@ class FakeStorage:
     def __init__(self):
         self.calls = []
 
-    def record_availability(self, checks, hour_start):
+    def record_availability(self, checks, hour_start, database_type):
         self.calls.append((checks, hour_start))
 
 
@@ -84,6 +84,7 @@ class FakeMonitor:
         self.local_ip = "192.168.200.100"
         self.default_gateway = "192.168.200.1"
         self.config: dict = TEST_CONFIG
+        self.database_type: str = "sqlite"
         self.config_updates: list[dict] = []
         self.alert_events: list[dict] = list(TEST_ALERT_EVENTS)
         self.availability_calls: list[tuple[int, str]] = []
@@ -137,7 +138,13 @@ class FakeMonitor:
     def count_alert_events(self):
         return len(self.alert_events)
 
-    def get_availability(self, ip: str, days: int = 90, granularity: str = "day"):
+    def get_availability(
+        self,
+        ip: str,
+        days: int = 90,
+        granularity: str = "day",
+        database_type: str = "sqlite",
+    ):
         self.availability_calls.append((ip, days, granularity))
         return {
             "ip": ip,

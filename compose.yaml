@@ -12,6 +12,11 @@ services:
     # directly on the host's IP (default port 8080).
     network_mode: host
 
+    # Environment variable file
+    env_file:
+      - path: .env
+        required: false
+
     # Least privilege: drop every Linux capability, then add back only what is
     # needed. NET_RAW allows the raw ICMP sockets that icmplib uses to ping.
     # DAC_OVERRIDE lets root inside the container write to ./data even when the

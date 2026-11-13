@@ -214,7 +214,7 @@ class StorageEngine:
             return AvailabilityRepository(session).fetch_all()
 
     def record_availability(
-        self, checks: list[tuple[str, bool]], hour_start: datetime
+        self, checks: list[tuple[str, bool]], hour_start: datetime, database_type: str
     ) -> None:
         """
         Store availability check results for an hour.
@@ -225,7 +225,7 @@ class StorageEngine:
         """
         with self.session_factory() as session:
             repo = AvailabilityRepository(session)
-            repo.record_checks(checks, hour_start)
+            repo.record_checks(checks, hour_start, database_type)
             session.commit()
 
     def delete_old_availability(self, cutoff: datetime) -> int:

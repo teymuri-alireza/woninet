@@ -17,7 +17,10 @@ def create_config_json(config_json_path: str) -> None:
             "arp_noise_limit": 0.0,
             "max_workers": 4
         },
-        "database": "woninet.db",
+        "database": {
+            "type": "sqlite",
+            "path": "woninet.db"
+        },
         "target_ip_list": [],
         "alert_rules":[
             {

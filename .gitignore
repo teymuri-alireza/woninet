@@ -36,3 +36,6 @@ build/
 
 # Used by Docker
 data/
+
+# Environment Variables
+.env
