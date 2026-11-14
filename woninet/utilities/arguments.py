@@ -9,9 +9,9 @@ def args() -> argparse.Namespace:
     check `woninet -h` for more info.
     """
     description = """
-A local network monitoring system. It enumerates all candidate IP addresses in your /24 subnet
-and performs ARP + ICMP host detection to determine existence, reachability, and latency. Metrics
-are collected continuously and processed through an alert engine."""
+A local network monitoring system that detects network hosts, tracks their availability,
+and measures latency, packet loss, and jitter. It continuously collects metrics and evaluates
+configurable alert rules in real time."""
 
     epilog = ""
 

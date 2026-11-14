@@ -7,7 +7,7 @@
 
 A local network monitoring system.
 
-**Woninet** continuously monitors devices on a local network using ARP and ICMP probes. It determines device availability, measures latency, packet loss, and jitter, stores metrics in database, and evaluates configurable alert rules in real time.
+**Woninet** detects network hosts, tracks their availability, and measures latency, packet loss, and jitter. It continuously collects metrics and evaluates configurable alert rules in real time.
 
 ![Woninet dashboard](https://raw.githubusercontent.com/teymuri-alireza/woninet/refs/heads/dev/public/img/woninet-dasboard.png)
 
